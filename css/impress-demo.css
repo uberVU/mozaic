@@ -58,7 +58,7 @@ body {
     line-height: 1;
 }
 ol, ul {
-    list-style: none;
+/*    list-style: none; */
 }
 blockquote, q {
     quotes: none;
@@ -712,13 +712,16 @@ padding-left: 30px;  /* width of the image plus a little extra padding */
 display: block;  /* may not need this, but I've found I do */
 }
 
-.fixed
-{
-position:absolute;
-left:100px;
-top:150px;
+/* Add shifting space for a sublist. */
+.sublist {
+  padding-left: 40px;
 }
 
-.list {
-padding: 20px;
+.font-40 {
+  font-size: 40px;
+}
+
+/* Add padding between list items. */
+.spacing {
+  padding: 20px;
 }
