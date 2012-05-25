@@ -1,0 +1,4 @@
+<form id="new-task">
+    <input name="name" type="text" placeholder="What needs to be done?"/>
+    <input name="add" type="submit" value="Add it!"/>
+</form>

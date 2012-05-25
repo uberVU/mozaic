@@ -1,4 +1,2 @@
-Mozaic
+todoVU
 ======
-
-JS Framework for building SPA

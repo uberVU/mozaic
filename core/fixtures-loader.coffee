@@ -1,0 +1,1 @@
+define ['fixtures.js'], -> Fixtures

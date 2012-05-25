@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>TodoVU</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+    <script src="core/libs/jquery/jquery-1.7.1.js"></script>
+    <script src="core/libs/jquery/jquery-ui-1.8.20.custom.min.js"></script>
+    <script src="core/libs/jquery/jquery.timeago.js"></script>
+    <script src="core/libs/underscore-1.3.1.js"></script>
+    <script src="core/libs/backbone/backbone-0.9.1.js"></script>
+    <script src="core/libs/backbone/backbone.queryparams.js"></script>
+    <script src="core/libs/backbone/backbone-forms.js"></script>
+    <script src="core/libs/handlebars-1.0.beta.6.js"></script>
+    <script src="core/libs/underscore.string.js"></script>     
+    <script type="text/javascript" src="core/core_modules.js"></script>
+    <script type="text/javascript" src="conf/general.js"></script>
+    <script type="text/javascript" src="conf/datasource.js"></script>
+    <script type="text/javascript" src="conf/modules.js"></script>
+    <script type="text/javascript" src="conf/urls.js"></script>
+    <script data-main="rconf_main" src="require.js"></script>
+    <script type="text/javascript">
+        require(["cs!loader", "cs!utils", "cs!logger"], function(loader) {
+            logger.level(App.general.LOG_LEVEL);
+            loader.load_module("cs!router",       // Class to load & instantiate
+                               function(router) { // Run this when class was loaded and instantiated
+                                 Backbone.history.start();
+                               },
+                               true,              // Instantiate the router
+                               App.urls);         // Pass these params to the constructor of Router
+        });
+    </script>
+</head>
+
+<body>
+    <div class="ubervu-logo"></div>
+    <center><h1>TodoVU</h1></center>
+    <div id="page-content"></div>
+</body>
+</html>
