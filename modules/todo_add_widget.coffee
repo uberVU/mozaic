@@ -4,20 +4,16 @@ define ['cs!widget'], (Widget) ->
         template_name: 'templates/todo_add_widget.hjs'
 
         events:
-            "keydown": "newTodo"
+            'click input[type="submit"]': 'newTodo'
 
         initialize: =>
             @renderLayout()
 
         newTodo: (event) =>
-            if event.keyCode == 13 # enter code
-                window.ceva = $('#new-task input') 
-                k = $('#new-task input').val()
-                event.preventDefault()
-                # TODO: trimite acum acel k care e textul introdus
-                # la enter
-                # @addChannel('/todos', {'id': '3', 'task' : k})
-
-            console.log(event.keyCode)
+            input = @view.$el.find('input[name="task"]')
+            task_name = input.attr('value')
+            @addChannel('/todos', {task: task_name})
+            input.attr('value', '')
+            return false
 
     return TodoAddWidget
