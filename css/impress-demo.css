@@ -232,7 +232,7 @@ a:focus {
     font-size: 50px;
     line-height: 72px;
 
-    margin-top: 100px;
+    margin-top: 80px;
 }
 
 .slide q strong {
@@ -701,3 +701,24 @@ a:focus {
     Thanks for reading. I hope you enjoyed it at least as much as I enjoyed writing it
     for you.
 */
+
+#logo
+{
+padding-top:10px;
+background-repeat: no-repeat;
+padding-bottom: 300px;
+padding-left: 30px;  /* width of the image plus a little extra padding */
+
+display: block;  /* may not need this, but I've found I do */
+}
+
+.fixed
+{
+position:absolute;
+left:100px;
+top:150px;
+}
+
+.list {
+padding: 20px;
+}
