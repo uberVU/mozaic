@@ -338,6 +338,12 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             widget_method = @_getWidgetMethod(channel, widget_data.widget)
 
             model = new @data[collection].model(dict)
+
+            if not @_getConfig(channel).url
+                model.id = @data[collection].last().id + 1
+                @data[collection].add(model)
+                return
+
             # Bind all events of the model to the widget's method (get_tags, etc)
             model.on('all', widget_method, widget_data.widget)
             # Copy the url of the collection to the model, until the model 
