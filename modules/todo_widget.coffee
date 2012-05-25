@@ -5,6 +5,9 @@ define ['cs!widget'], (Widget) ->
         template_name: 'templates/todo_widget.hjs'
 
         get_todos: (params) =>
+            ###
+                Whenever any field of a TODO item changes, re-render it completely.
+            ###
             @renderLayout({"task" : params.model.get('task')})
 
     return TodoWidget
