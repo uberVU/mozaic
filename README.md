@@ -1,3 +1,3 @@
 Our very own home-brewed Coffeescript framework :)
 
-https://github.com/uberVU/mozaic/mozaic.pdf
+https://github.com/uberVU/mozaic/blob/master/mozaic.pdf
