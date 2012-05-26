@@ -10,4 +10,8 @@ App.urls = {
 		'controller': 'TodoPage',
 		'layout': 'templates/todo_page.hjs'
 	},
+  'news': {
+    'controller': 'NewsPage',
+    'layout': 'templates/news_page.hjs'
+  }
 };
