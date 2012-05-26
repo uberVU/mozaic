@@ -42,7 +42,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             # Requests for adding new data to a given channel
             @pipe.subscribe('/add', @addToDataChannel)
 
-            setTimeout(@checkForUnusedCollections, @checkIntervalForUnusedCollections)
+            setInterval(@checkForUnusedCollections, @checkIntervalForUnusedCollections)
 
         _getConfig: (channel) =>
             ###
@@ -388,14 +388,14 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                     # Subscribe the widget to the events of the channel
                     @_bindWidgetToChannel(channel, real_channel, widget_data)
                     collection = channels_utils.getChannelKey(real_channel)
-                    @meta_data[collection]['reference_count'] = @meta_data[collection]['reference_count'] + 1
+                    @meta_data[collection]['reference_count'] = (@meta_data[collection]['reference_count'] ? 0) + 1
                     @meta_data[collection]['time_of_reference_expiry'] = null
 
         destroyWidget: (widget_data) =>
 
-            logger.info "Destroy #{widget_data} widget in DataSource"
+            logger.info "Destroy #{widget_data.name} widget in DataSource"
 
-            for fake_channel, channel of widget_data
+            for fake_channel, channel of widget_data.channels
                 collection = channel
                 @meta_data[collection]['reference_count'] = @meta_data[collection]['reference_count'] - 1
                 if @meta_data[collection]['reference_count'] == 0
@@ -407,7 +407,9 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                     continue
 
                 if Date.now() - @meta_data[collection]['time_of_reference_expiry'] > @checkIntervalForUnusedCollections
-                    alert 'expired'
+                  #channel expired
+                  logger.info("#{collection} collection expired.")
+                  @meta_data[collection]['time_of_reference_expiry'] = null
 
         _checkForNewlyArrivedAndAwaitedModels: (channel) =>
             ###
