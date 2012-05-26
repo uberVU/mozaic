@@ -9,9 +9,17 @@ define ['cs!module'], (Module) ->
         constructor: ->
 
         widgetCheckInterval: 50 # ms
+        checkIntervalForRemovedWidgets: 1000
 
         initialize: =>
             setInterval(@checkForNewWidgets, @widgetCheckInterval)
+            setInterval(@checkForRemovedWidgets, @checkIntervalForRemovedWidgets)
+
+        checkForRemovedWidgets: =>
+            for widget_id of loader.widgets
+                if $("[data-guid='#{widget_id}']").length == 0
+                    loader.widgets[widget_id].destroy()
+                    delete loader.widgets[widget_id]
 
         widgetCanBeStarted: (params) =>
             ###
