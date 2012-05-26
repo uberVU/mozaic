@@ -30,7 +30,8 @@ define ['cs!widget'], (Widget) ->
             # Fetch models
             models = params.collection.models
             # Store ids
-            @ids = (model.get 'id' for model in models when model.get 'checked')
+            @ids = ((model.get('id') or model.id) for model in models when model.get 'checked')
+            
             # Re-render the clean HTML
             @renderLayout()
             # Inject the TODO widgets

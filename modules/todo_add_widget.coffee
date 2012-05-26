@@ -12,6 +12,13 @@ define ['cs!widget'], (Widget) ->
             ###
             @renderLayout()
 
+            # Fetch input and add keyup events
+            @input = @view.$el.find('input[name="task"]')
+            @input.on('keyup', @onKeyUp)
+
+            # Fetch button
+            @button = @view.$el.find('input[type="submit"]')
+
         newTodo: (event) =>
             ###
                 Whenever user clicks on submit to add a new TODO,
@@ -23,15 +30,25 @@ define ['cs!widget'], (Widget) ->
                 is not necessary).
             ###
             # Get the value from the HTML form
-            input = @view.$el.find('input[name="task"]')
-            task_name = input.attr('value')
+            task_name = @input.attr('value')
             
             # Publish the message to the datasource
             # (this method is in widget.coffee, the base class)
             @addChannel('/todos', {name: task_name})
 
             # Reset the HTML form
-            input.attr('value', '')
+            @input.attr('value', '')
             return false
+
+        onKeyUp: (e) =>
+            
+
+            if e.keyCode == 13
+                @button.click()
+                e.preventDefault()
+            if $(e.currentTarget).val()
+                @button.prop('disabled', false)
+            else
+                @button.prop('disabled', true)
 
     return TodoAddWidget

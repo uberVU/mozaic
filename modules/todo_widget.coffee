@@ -10,6 +10,9 @@ define ['cs!widget'], (Widget) ->
             'click a.unstar': 'unstar'
             'click a.delete': 'remove'
 
+        params_defaults:
+            id: 'data-params'
+
         get_todos: (params) =>
             ###
                 Whenever any field of a TODO item changes, re-render it completely.
@@ -18,12 +21,12 @@ define ['cs!widget'], (Widget) ->
             if not params or not params.type == 'change'
                 return
 
-            # Fetch model    
+            # Fetch model
             model = params.model
             
             # Render layout
             @renderLayout
-                id: model.get('id')
+                id: model.get('id') or model.id
                 name: model.get('name')
                 checked: model.get('checked')
                 starred: model.get('starred')
@@ -45,8 +48,7 @@ define ['cs!widget'], (Widget) ->
             return new Date().getTime()
 
         remove: (e) =>
-            # FIXME
-        	@view.$el.remove()
-        	false
+            @removeChannel '/todos', { id: @id }
+            false
 
     return TodoWidget
