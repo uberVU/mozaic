@@ -1,3 +1,5 @@
-<div id="todo-list-container">
-</div>
+<table class="table table-bordered table-striped">
+<tbody id="todo-list-container">
+</tbody>
+</table>
 <a href="#clear" class="clear-items">clear checked items</a>

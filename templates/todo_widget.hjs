@@ -1,3 +1,5 @@
+<tr>
+      <td>
 <span class="list-item" data-id="{{id}}">
 	{{#if checked}}
 		<input type="checkbox" name="checked" value="1" checked>
@@ -12,3 +14,5 @@
 	{{name}}
 	<a href="#delete" class="delete">delete</a></span>
 </span>
+</td>
+</th>

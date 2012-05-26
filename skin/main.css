@@ -54,3 +54,8 @@ h1 {
  padding-top: 2em;
  text-align:center;
 }
+
+.list {
+	background-color: #fff;
+	border: solid 1px #bdbdbd;
+}
