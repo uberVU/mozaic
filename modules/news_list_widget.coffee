@@ -11,7 +11,13 @@ define ['cs!widget'], (Widget) ->
                 (There is another type of channel as well, which can store raw
                 JSON data).
             ###
-            @renderLayout({"news" : params.collection.models})
+            news = _.map(params.collection.models , (model, key) -> {
+                  id: model.id
+                  newsText: model.get('newsText')
+                })
+            @renderLayout({
+              "news" : news
+            }, stringify = false)
 
     return NewsListWidget
 
