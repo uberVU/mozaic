@@ -485,6 +485,8 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
 
         destroy: ->
             @el.remove()
+            pipe = loader.get_module('pubsub')
+            pipe.publish('/destroy_widget', _.values(@.channel_mapping), @)
 
         renderLayout: (layout_params = {}, stringify = true) =>
             @layout = new Layout(@template_name, layout_params)
