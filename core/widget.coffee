@@ -375,9 +375,12 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
             # Translate the channel using the channel mapping received
             # from the controller.
             translated_channel = channels_utils.translateChannel(channel, @channel_mapping)
+            message = {
+                widget: @
+            }
 
             pipe = loader.get_module('pubsub')
-            pipe.publish('/add', translated_channel, dict)
+            pipe.publish('/add', translated_channel, dict, message)
 
         removeChannel: (channel, dict) ->
             ###
