@@ -16,7 +16,7 @@
 
 </span>
 <a href="#delete" class="btn btn-danger delete">
-	<i class="icon-trash icon-white"></i>
+	<i class="icon-remove icon-white"></i>
 </a>
 </td>
 

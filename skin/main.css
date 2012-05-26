@@ -60,13 +60,24 @@ h1 {
 	border: solid 1px #bdbdbd;
 }
 
+.list-item {
+	min-width:120px;
+}
 .list-item a.icon-star,
 .list-item a.icon-star-empty {
 	margin-top:1px;
 }
 
 #todo-list-container .delete {
-	float:right;
+	float: right;
+	display: none;
+}
+
+#todo-list-container td {
+	height:28px;
+}
+#todo-list-container td:hover .delete {
+	display: block;
 }
 
 #todo-list-container span.list-item {
@@ -94,4 +105,8 @@ h1 {
 #todo-list-container .checked a.icon-star,
 #todo-list-container .checked a.icon-star-empty {
 	display: none;
+}
+
+.clear-items {
+	float: right;
 }
