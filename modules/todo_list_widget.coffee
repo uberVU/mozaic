@@ -18,7 +18,7 @@ define ['cs!widget'], (Widget) ->
                     '/todos': @channel_mapping['/todos']
 
             container = @view.$el.find("#todo-list-container")
-            Utils.injectWidget(container, 'todo_widget', params_for_todo_widget)
+            Utils.injectWidget(container, 'todo_widget', params_for_todo_widget,null,null,'tr')
 
         reset: (params) ->
             ###
