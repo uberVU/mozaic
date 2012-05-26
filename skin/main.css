@@ -24,19 +24,29 @@ h1 {
 	width:100%;
 }
 
-#new-task {
+#add-task {
 	margin:0 auto;
 	width:95%;
 }
 
-#task-container {
-	max-width:600px;
+#tasks-container {
+	max-width:550px;
+	min-width:300px;
 }
+
 #add-text {
 	height: 30px;
-	width: 80%;
 	margin-top: 10px;
 	margin-right: 4px;
+	float:left;
+	width:70%;
+	min-width:200px;
+}
+
+#add-text-box {
+	float:right;
+	top: 10px;
+	position: relative;
 }
 
 
@@ -61,7 +71,7 @@ h1 {
 }
 
 .list-item {
-	min-width:120px;
+	min-width:250px;
 }
 .list-item a.icon-star,
 .list-item a.icon-star-empty {
@@ -75,6 +85,7 @@ h1 {
 
 #todo-list-container td {
 	height:28px;
+	min-width:300px;
 }
 #todo-list-container td:hover .delete {
 	display: block;
