@@ -1,2 +1,11 @@
-<div class="uberwidget" data-widget="todo_add_widget" data-params="{{todo_add_params}}"></div>
-<div class="uberwidget" data-widget="todo_list_widget" data-params="{{todo_list_params}}"></div>
+<div class="row-fluid">
+  <div class="span3"></div>
+  <div id="tasks-container" class="span6">
+  	<div class="uberwidget add_task" data-widget="todo_add_widget" data-params="{{todo_add_params}}"></div>
+  	<div class="uberwidget" data-widget="todo_list_widget" data-params="{{todo_list_params}}"></div>
+  </div>
+  <div class="span3"></div>
+</div>
+
+
+

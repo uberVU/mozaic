@@ -15,13 +15,17 @@
     <script src="core/libs/backbone/backbone.queryparams.js"></script>
     <script src="core/libs/backbone/backbone-forms.js"></script>
     <script src="core/libs/handlebars-1.0.beta.6.js"></script>
-    <script src="core/libs/underscore.string.js"></script>     
+    <script src="core/libs/underscore.string.js"></script>
     <script type="text/javascript" src="core/core_modules.js"></script>
     <script type="text/javascript" src="conf/general.js"></script>
     <script type="text/javascript" src="conf/datasource.js"></script>
     <script type="text/javascript" src="conf/modules.js"></script>
     <script type="text/javascript" src="conf/urls.js"></script>
     <script data-main="rconf_main" src="require.js"></script>
+    <link rel="stylesheet" href="skin/bootstrap/css/bootstrap-responsive.css"></link>
+    <link rel="stylesheet" href="skin/bootstrap/css/bootstrap.css"></link>
+    <link rel="stylesheet" href="skin/main.css"></link>
+
     <script type="text/javascript">
         require(["cs!loader", "cs!utils", "cs!logger"], function(loader) {
             logger.level(App.general.LOG_LEVEL);
@@ -35,9 +39,26 @@
     </script>
 </head>
 
+
 <body>
-    <div class="ubervu-logo"></div>
-    <center><h1>TodoVU</h1></center>
-    <div id="page-content"></div>
+    <div id="container">
+        <div id="header" class="logo clearfix">
+            <h1>todoVU</h1>
+        </div>
+        <div id="content">
+            <div class="row-fluid">
+                <div id="page-content" class="span12">
+                    <!-- Content goes here -->
+                </div><!-- page-content -->
+            </div>
+       </div>
+   </div>
+
+   <div id="footer">
+        <span>This is a demo app for Mozaic, an open-source Java-Script framework for rapid application <br/>
+                development. The layout is powered by Bootstrap</span>
+   </div>
+
 </body>
+
 </html>
