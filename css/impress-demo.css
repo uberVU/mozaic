@@ -725,3 +725,13 @@ display: block;  /* may not need this, but I've found I do */
 .spacing {
   padding: 20px;
 }
+
+/* Add a box. */
+.box
+{
+height: 150px; /*Specify Height*/
+width:  20px; /*Specify Width*/
+border: 1px solid black; /*Add 1px solid border, use any color you want*/
+background-color: green; /*Add a background color to the box*/
+text-align:center; /*Align the text to the center*/
+}
