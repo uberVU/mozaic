@@ -43,19 +43,55 @@ h1 {
 #content { padding-bottom: 3em; }
 
 #footer {
-
 	background-color: #f6f6f6;
 	border-top:solid 2px #e9e9e9;
- clear: both;
- position: relative;
- z-index: 10;
- height: 4.5em;
- margin-top: -4.5em;
- padding-top: 2em;
- text-align:center;
+	clear: both;
+	position: relative;
+	z-index: 10;
+	height: 4em;
+	padding-top: 1.5em;
+	text-align:center;
+	color: #555;
+	font-size: 0.85em;
 }
 
 .list {
 	background-color: #fff;
 	border: solid 1px #bdbdbd;
+}
+
+.list-item a.icon-star,
+.list-item a.icon-star-empty {
+	margin-top:1px;
+}
+
+#todo-list-container .delete {
+	float:right;
+}
+
+#todo-list-container span.list-item {
+	margin-top: 5px;
+	float: left;
+}
+
+#todo-list-container span.task-text {
+	margin-left: 3px;
+}
+
+#todo-list-container .checked {
+	color: #999;
+}
+
+#todo-list-container .checked span.task-text{
+	text-decoration: line-through;
+}
+
+#todo-list-container input[type="checkbox"]{
+	margin-top:1px;
+}
+
+
+#todo-list-container .checked a.icon-star,
+#todo-list-container .checked a.icon-star-empty {
+	display: none;
 }
