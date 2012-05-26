@@ -713,7 +713,7 @@ display: block;  /* may not need this, but I've found I do */
 }
 
 /* Add shifting space for a sublist. */
-.sublist {
+.padding {
   padding-left: 40px;
 }
 
