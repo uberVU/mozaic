@@ -22,11 +22,10 @@ define ['cs!widget'], (Widget) ->
                 and sync the data to the server (in our case, this
                 is not necessary).
             ###
-
             # Get the value from the HTML form
             input = @view.$el.find('input[name="task"]')
             task_name = input.attr('value')
-        
+            
             # Publish the message to the datasource
             # (this method is in widget.coffee, the base class)
             @addChannel('/todos', {name: task_name})

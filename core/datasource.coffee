@@ -337,16 +337,31 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             else if resource_type == 'api'
                 @_modifyApiDataChannel(channel, dict, update_mode)
 
-        addToDataChannel: (channel, dict) =>
+        addToDataChannel: (channel, dict, widget_data) =>
             ###
                 This gets called whenever a new widget publishes to '/add' channel
 
             ###
             logger.info "Adding new data to #{channel} in DataSource"
-            # Get the collection associated with this channel
+            # Determine the method to be called on the widget
             collection = channels_utils.getChannelKey(channel)
+            widget_method = @_getWidgetMethod(channel, widget_data.widget)
 
             model = new @data[collection].model(dict)
+
+            if not @_getConfig(channel).url
+                #model.id = @data[collection].last().id + 1
+                ###
+                    last().id does not work when items are sorted,
+                    we need to search for max id and increment it,
+                    we use length for now.
+                ###
+                model.id = @data[collection].length + 1
+                @data[collection].add(model)
+                return
+
+            # Bind all events of the model to the widget's method (get_tags, etc)
+            model.on('all', widget_method, widget_data.widget)
             # Copy the url of the collection to the model, until the model 
             # is appended to the collection. Check BaseModel.url()
             model.urlRoot = @data[collection].url

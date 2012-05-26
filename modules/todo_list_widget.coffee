@@ -12,13 +12,14 @@ define ['cs!widget'], (Widget) ->
                 The widget needs to know the /todos channel in order
                 to listen to changes for an individual TODO item.
             ###
-            params_for_todo_widget =
+            todo_params =
                 'id': todo.id
                 'channels':
                     '/todos': @channel_mapping['/todos']
 
             container = @view.$el.find("#todo-list-container")
-            Utils.injectWidget(container, 'todo_widget', params_for_todo_widget,null,null,'tr')
+
+            Utils.injectWidget(container, 'todo_widget', todo_params, null, null, 'tr')
 
         reset: (params) ->
             ###
@@ -35,14 +36,6 @@ define ['cs!widget'], (Widget) ->
             # Inject the TODO widgets
             @append(todo) for todo in models
 
-        add: (params) ->
-            ###
-                This method is called to add a new model to the graphical
-                representation of the todos, whenever the collection
-                notifies the widget that a new element has been added.
-            ###
-            @append(params.model)
-
         change: (params) ->
             # Sort collection before resetting layout
             params.model.collection.sort()
@@ -57,7 +50,7 @@ define ['cs!widget'], (Widget) ->
             ###
             switch params.type
                 when 'reset' then @reset(params)
-                when 'add' then @add(params)
+                when 'add' then params.model.collection.sort()
                 when 'change' then @change(params)
                 when 'remove' then @reset(params)
 

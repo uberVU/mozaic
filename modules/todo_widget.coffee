@@ -31,15 +31,18 @@ define ['cs!widget'], (Widget) ->
         toggle: (e) =>
             checked = $(e.currentTarget).is(':checked')
 
-            @modifyChannel('/todos/{{id}}', { checked: checked })
+            @modifyChannel('/todos/{{id}}', { checked: checked, timestamp: @now() })
 
         star: (e) =>
-            @modifyChannel('/todos/{{id}}', { starred: true })
+            @modifyChannel('/todos/{{id}}', { starred: true, timestamp: @now() })
             false
 
         unstar: (e) =>
-            @modifyChannel('/todos/{{id}}', { starred: false })
+            @modifyChannel('/todos/{{id}}', { starred: false, timestamp: @now() })
             false
+
+        now: () ->
+            return new Date().getTime()
 
         remove: (e) =>
             # FIXME
