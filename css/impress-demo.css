@@ -723,7 +723,7 @@ display: block;  /* may not need this, but I've found I do */
 
 /* Add padding between list items. */
 .spacing {
-  padding: 20px;
+  padding: 15px;
 }
 
 /* Add a box. */
