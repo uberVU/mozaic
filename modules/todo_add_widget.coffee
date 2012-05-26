@@ -26,10 +26,10 @@ define ['cs!widget'], (Widget) ->
             # Get the value from the HTML form
             input = @view.$el.find('input[name="task"]')
             task_name = input.attr('value')
-
+        
             # Publish the message to the datasource
             # (this method is in widget.coffee, the base class)
-            @addChannel('/todos', {task: task_name})
+            @addChannel('/todos', {name: task_name})
 
             # Reset the HTML form
             input.attr('value', '')

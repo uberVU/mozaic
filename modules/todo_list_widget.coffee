@@ -3,6 +3,9 @@ define ['cs!widget'], (Widget) ->
         subscribed_channels: ['/todos']
         template_name: 'templates/todo_list_widget.hjs'
 
+        events:
+            'click a.clear-items': 'clear_items'
+
         append: (todo) ->
             ###
                 This method injects a TODO widget into the DOM.
@@ -23,10 +26,14 @@ define ['cs!widget'], (Widget) ->
                 the todos from scratch (because the collection itself has
                 been reset from scratch).
             ###
+            # Fetch models
+            models = params.collection.models
+            # Store ids
+            @ids = (model.get 'id' for model in models when model.get 'checked')
             # Re-render the clean HTML
             @renderLayout()
             # Inject the TODO widgets
-            @append(todo) for todo in params.collection.models
+            @append(todo) for todo in models
 
         add: (params) ->
             ###
@@ -35,6 +42,10 @@ define ['cs!widget'], (Widget) ->
                 notifies the widget that a new element has been added.
             ###
             @append(params.model)
+
+        change: (params) ->
+            # Sort collection before resetting layout
+            params.model.collection.sort()
 
         get_todos: (params) =>
             ###
@@ -47,5 +58,12 @@ define ['cs!widget'], (Widget) ->
             switch params.type
                 when 'reset' then @reset(params)
                 when 'add' then @add(params)
+                when 'change' then @change(params)
+                when 'remove' then @reset(params)
+
+        clear_items: (e) =>
+            for id in @ids
+                @removeChannel '/todos', { id: id }
+            false
 
     return TodoListWidget

@@ -1,1 +1,14 @@
-<span>{{task}}</span>
+<span class="list-item" data-id="{{id}}">
+	{{#if checked}}
+		<input type="checkbox" name="checked" value="1" checked>
+	{{else}}
+		<input type="checkbox" name="checked" value="1">
+	{{/if}}
+	{{#if starred}}
+		<a href="#unstar" class="unstar">unstar</a>
+	{{else}}
+		<a href="#star" class="star">star</a>
+	{{/if}}
+	{{name}}
+	<a href="#delete" class="delete">delete</a></span>
+</span>

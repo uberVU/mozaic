@@ -34,6 +34,9 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
 
             # Requests for adding new data to a given channel
             @pipe.subscribe('/add', @addToDataChannel)
+            
+            # Requests for deleting data from a given channel
+            @pipe.subscribe('/delete', @deleteFromDataChannel)
 
         _getConfig: (channel) =>
             ###
@@ -263,6 +266,12 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             # Clone the individual model and set it's urlRoot property 
             # because the clone won't be part of the collection. This way 
             # we have a proper model url
+            
+            # Set directly if no database is connected
+            if not @data['/' + collection].url
+                individual_model.set(dict)
+                return
+
             cloned_model = individual_model.clone()
             cloned_model.urlRoot = @data['/' + collection].url
             # Update clone without triggering any change events (won't matter 
@@ -316,6 +325,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 Modifies the data found at channel by calling
                 data.set(k, v) for each pair (k, v) of dict.
             ###
+            logger.info "Modifying data from #{channel} in DataSource"
             resource_type = @_getType(channel)
             # HACK: determine the update mode for this item.
             # Possible values: 'append', 'reset', 'exclude'
@@ -327,25 +337,16 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             else if resource_type == 'api'
                 @_modifyApiDataChannel(channel, dict, update_mode)
 
-        addToDataChannel: (channel, dict, widget_data) =>
+        addToDataChannel: (channel, dict) =>
             ###
                 This gets called whenever a new widget publishes to '/add' channel
 
             ###
             logger.info "Adding new data to #{channel} in DataSource"
-            # Determine the method to be called on the widget
+            # Get the collection associated with this channel
             collection = channels_utils.getChannelKey(channel)
-            widget_method = @_getWidgetMethod(channel, widget_data.widget)
 
             model = new @data[collection].model(dict)
-
-            if not @_getConfig(channel).url
-                model.id = @data[collection].last().id + 1
-                @data[collection].add(model)
-                return
-
-            # Bind all events of the model to the widget's method (get_tags, etc)
-            model.on('all', widget_method, widget_data.widget)
             # Copy the url of the collection to the model, until the model 
             # is appended to the collection. Check BaseModel.url()
             model.urlRoot = @data[collection].url
@@ -363,6 +364,51 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 success: (model, response) => 
                     @data[collection].add(model)
             })
+            
+        _deleteFromRelationalDataChannel: (channel, dict) ->
+            ###
+                Delete a model from a Backbone collection. Calls 
+                destroy on the model if the change has to be synced with 
+                the server, otherwise removes the element from the 
+                collection
+            ###
+            # Split channel into it's components. Ignoring events
+            [collection_name, item, events] = channels_utils.splitChannel(channel)
+
+            # Deleting the whole collection is not supported for Backbone collections
+            if item != "all"
+                logger.error("Deleting from an invidivual model is not supported for
+                              relational collections")
+                return
+                
+            collection = @data[channels_utils.getChannelKey(channel)]
+            
+            # Throw error if model id is not specified
+            if not dict.id
+                logger.error("Missing id")
+
+                return
+
+            # Getting the individual model to destroy
+            individual_model = collection.get(dict.id)
+            
+            # Remove from collection
+            collection.remove(individual_model)
+            
+        deleteFromDataChannel: (channel, dict) =>
+            ###
+                Delete an item from a channel. You can only delete 
+                from relational channels
+            ###
+            logger.info "Deleting data from #{channel} in DataSource"
+
+            channel_type = @_getType(channel)
+            if channel_type == 'relational'
+                @_deleteFromRelationalDataChannel(channel, dict)
+            else if channel_type == 'api'
+                logger.error("Deleting from api channels is not supported")
+            
+            
 
         newWidget: (widget_data) =>
             ###

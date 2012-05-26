@@ -1,2 +1,3 @@
 <div id="todo-list-container">
 </div>
+<a href="#clear" class="clear-items">clear checked items</a>

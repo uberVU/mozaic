@@ -375,12 +375,23 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
             # Translate the channel using the channel mapping received
             # from the controller.
             translated_channel = channels_utils.translateChannel(channel, @channel_mapping)
-            message = {
-                widget: @
-            }
 
             pipe = loader.get_module('pubsub')
-            pipe.publish('/add', translated_channel, dict, message)
+            pipe.publish('/add', translated_channel, dict)
+
+        removeChannel: (channel, dict) ->
+            ###
+                Removes a model from the collection represented by the channel name
+            ###
+
+            # Translate the channel using the channel mapping received
+            # from the controller.
+            translated_channel = channels_utils.translateChannel(channel, @channel_mapping)
+
+            replaced_channel = @replaceTokensWithParams(translated_channel)
+
+            pipe = loader.get_module('pubsub')
+            pipe.publish('/delete', replaced_channel, dict)
 
         aggregateChannels: (callback, channels) ->
             ###
