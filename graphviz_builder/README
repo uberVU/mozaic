@@ -1,0 +1,6 @@
+
+Graphviz modules builder:
+	python build_graph.py /base_dir relative_path_to_file1 .. relative_path_to_filen
+
+	ex: python build_graph.py ~/UberVU/mozaic core/core_modules.js conf/module.js > graph.txt
+		cat graph.txt | dot -T png > graph.png
