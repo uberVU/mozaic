@@ -1,2 +1,7 @@
 <h2>News</h2>
-<a href="/">Back</a>
+<ul>
+{{#each news}}
+<li>{{newsText}}</li>
+{{/each}}
+</ul>
+<a href="">Back</a>
