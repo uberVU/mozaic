@@ -1,9 +1,12 @@
 var App = App || {};
 
 App.main_modules = _.extend(App.main_modules, {
+		// Custom Application Controller
+		'core_application_controller': 'core/application_controller',
+
 		// Backbone Model + Collection
 		'model/todo': 'modules/todo_model',
-    'model/news': 'modules/news_model',
+		'model/news': 'modules/news_model',
 		'collection/todos': 'modules/todo_collection',
 		'collection/news': 'modules/news_collection',
 
@@ -14,6 +17,6 @@ App.main_modules = _.extend(App.main_modules, {
 		'widget/news_list_widget': 'modules/news_list_widget',
 
 		// Controllers
-		'controller/TodoPage': 'modules/todo_page_controller',
-    'controller/NewsPage': 'modules/news_page_controller'
+		'widget/TodoPage': 'modules/todo_page_controller',
+		'widget/NewsPage': 'modules/news_page_controller'
 });
