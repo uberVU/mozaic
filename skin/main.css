@@ -46,6 +46,7 @@ h1 {
 #add-text-box {
 	float:right;
 	top: 10px;
+	width: 25%;
 	position: relative;
 }
 

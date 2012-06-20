@@ -36,6 +36,9 @@ define ['cs!widget'], (Widget) ->
             @renderLayout()
             # Inject the TODO widgets
             @append(todo) for todo in models
+            # Smoothen div height change
+            #@view.$el.css('height', 'auto')
+            #@view.$el.css('height', @view.$el.height())
 
         change: (params) ->
             # Sort collection before resetting layout
