@@ -134,6 +134,54 @@
       return this;
     },
 
+    // Helper function for triggering the callbacks in a linked list of callbacks.
+    // It uses the setTimeout(0) technique because Mozaic uses Backbone Events
+    // intensively, and usually there are a lot of subscribers for a given source
+    // of data. Using setTimeout(0) will give the browser the occasion to keep
+    // up the rendering with what's going on :)
+    _triggerCallbacksForOneEvent: function (node, tail, args, callback) {
+        if (node.next == tail) {
+            callback();
+            return;
+        }
+
+        node = node.next;
+        node.callback.apply(node.context || this, args);
+        var self = this;
+        setTimeout(function() {self._triggerCallbacksForOneEvent(node, tail, args, callback);}, 0);
+    },
+
+    // Rewrite of the main trigger logic using functional programming.
+    //
+    // We are calling all callbacks from calls[event], and then
+    // all callbacks from calls['all'] for each type of event.
+    _trigger: function(events, calls, args) {
+        event = events.shift();
+        if (!event)
+           return this;
+
+        var self = this;
+        if (calls[event]) {
+            return this._triggerCallbacksForOneEvent(calls[event], calls[event].tail, args, function() {
+                if (calls.all) {
+                    return self._triggerCallbacksForOneEvent(calls.all, calls.all.tail, [event].concat(args), function() {
+                        return self._trigger(events, calls, args);
+                    });
+                } else {
+                    return self._trigger(events, calls, args);
+                }
+            });
+        } else {
+            if (calls.all) {
+                return this._triggerCallbacksForOneEvent(calls.all, calls.all.tail, [event].concat(args), function() {
+                    return self._trigger(events, calls, args);
+                });
+            } else {
+                return self._trigger(events, calls, args);
+            }
+        }
+    },
+
     // Trigger one more many events, firing all bound callbacks. Callbacks are
     // passed the same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
@@ -142,23 +190,9 @@
       if (!(calls = this._callbacks)) return this;
       all = calls.all;
       events = events.split(eventSplitter);
+
       rest = slice.call(arguments, 1);
-      while (event = events.shift()) {
-        if (node = calls[event]) {
-          tail = node.tail;
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, rest);
-          }
-        }
-        if (node = all) {
-          tail = node.tail;
-          args = [event].concat(rest);
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, args);
-          }
-        }
-      }
-      return this;
+      return this._trigger(events, calls, rest);
     }
 
   };

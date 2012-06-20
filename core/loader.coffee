@@ -5,6 +5,7 @@ define [], () ->
     loader =
         modules: {}
         widgets: {}
+        born_dead: {}
 
         normalize_path: (path) ->
             if path?
@@ -19,10 +20,12 @@ define [], () ->
             logger.info "Loading module #{path}"
 
             require [original_path], (Module) ->
-                loader.modules[path] = {module: Module}
+                if not (path of loader.modules)
+                    loader.modules[path] = {module: Module}
                 if instantiate
                     if not (loader.modules[path]['instance'])
-                        instance = new Module(params...)
+                        instance = Utils.createModuleInstance(Module, params...)
+                        Utils.wrapInstance(instance)
                         instance.initialize()
                         loader.modules[path]['instance'] = instance
                     else
@@ -57,7 +60,8 @@ define [], () ->
                     # If we should instantiate this module and there isn't
                     # already an instance, create it
                     if instantiate and not (loader.modules[path]['instance'])
-                        instance = new Module()
+                        instance = Utils.createModuleInstance(Module)
+                        Utils.wrapInstance(instance)
                         instance.initialize()
                         loader.modules[path]['instance'] = instance
                     loader.modules[path]['running'] = true
@@ -122,12 +126,30 @@ define [], () ->
             if template_name
                 template_path = 'text!' + template_name
                 require([template_path], (tpl) ->
-                    loader.widgets[id] = new Module(params, tpl)
+                    # Don't instantiate widgets which should have already been
+                    # garbage collected.
+                    if loader.born_dead[id]
+                        cloned_params = _.clone(params)
+                        delete cloned_params['el']
+                        logger.warn("Widget with id #{id} was born dead (params = #{JSON.stringify(cloned_params)}). You're doing something wrong.")
+                        delete loader.born_dead[id]
+                        return
+                    loader.widgets[id] = Utils.createModuleInstance(Module, params, tpl)
+                    Utils.wrapInstance(loader.widgets[id])
                 )
             else
+                # Don't instantiate widgets which should have already been
+                # garbage collected.
+                if loader.born_dead[id]
+                    cloned_params = _.clone(params)
+                    delete cloned_params['el']
+                    logger.warn("Widget with id #{id} was born dead (params = #{JSON.stringify(cloned_params)}). You're doing something wrong.")
+                    delete loader.born_dead[id]
+                    return
                 # We don't need to fire initialize() here because the
                 # base method Widget.constructor() does.
-                loader.widgets[id] = new Module(params)
+                loader.widgets[id] = Utils.createModuleInstance(Module, params)
+                Utils.wrapInstance(loader.widgets[id])
 
         load_widget: (name, id, params) ->
             ###
@@ -149,6 +171,28 @@ define [], () ->
                 Unload a widget given its id
             ###
             logger.info "Unloading widget #{id}"
+
+        mark_as_detached: (widget_id) ->
+            ###
+                Marks a widget as being detached from the DOM. This is an
+                intermediary state while the widget is waiting to be garbage
+                collected and it should not receive any data events while
+                in this state.
+            ###
+            if loader.widgets[widget_id]
+                loader.widgets[widget_id].startBeingDetached()
+            else
+                loader.born_dead[widget_id] = true
+
+        destroy_widget: (widget_id) ->
+            if loader.widgets[widget_id]
+                loader.widgets[widget_id].destroy()
+                delete loader.widgets[widget_id]
+            else
+                loader.born_dead[widget_id] = true
+
+        get_widgets: ->
+            loader.widgets
 
     window.loader = loader
     return loader

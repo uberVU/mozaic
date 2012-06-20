@@ -11,8 +11,8 @@ define [], () ->
                 * collection_name is mandatory, and is the name of
                     the followed entities (e.g., mentions)
                 * id is the ID of the entity followed, or "all" (optional)
-                    - /mentions/guid/234 will declare interest in mention with id 234
-                    - /mentions/guid/all will declare interest in all mentions
+                    - /mentions_guid/234 will declare interest in mention with id 234
+                    - /mentions_guid/all will declare interest in all mentions
                     If "id" is missing, it is assumed to be "all"
                 * events is the type of events to be monitored
                     - "all" for all events
@@ -31,7 +31,13 @@ define [], () ->
 
                 This is the exact opposite of splitChannel().
             ###
-            "/#{collection}/#{id}/#{events}"
+            if not collection?
+                throw('A channel key requires at least a collection fragment')
+            keys = [collection]
+            if id?
+                keys.push(id)
+                keys.push(events) if events?
+            return '/' + keys.join("/")
 
         translateChannel: (channel, mapping) ->
             [collection, id, events] = channels_utils.splitChannel(channel)

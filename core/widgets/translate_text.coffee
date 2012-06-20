@@ -54,6 +54,8 @@ define ['cs!widget'], (Widget) ->
                 Whenever the translated text arrives back from the server,
                 display it.
             ###
+            if params.type != 'change'
+                return
             @renderLayout({text: params.model.get('responseData/translatedText')})
 
     return TranslateTextWidget

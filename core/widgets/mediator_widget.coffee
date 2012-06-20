@@ -15,40 +15,57 @@
 ###
 define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
     class MediatorWidget extends Widget
-        skip_fake_events: true
-        
         params_defaults:
             'message': '/refresh'
             'input_channel': 'data-params'
+            'input_channels': 'data-params'
+            'output_channel': 'data-params'
             'output_channels': 'data-params'
-        
+            'skip_first': 'data-params'
+
         initialize: =>
-            # Create the subscribed_channels key automatically
-            @subscribed_channels = [@input_channel]
-            
-            # Generate the function for listening to events on the
-            # input channel automatically
-            [collection, item, events] = channels_utils.splitChannel(@input_channel)
-            method_name = 'get_' + collection
-            
-            @[method_name] = (params) =>
-                pipe = loader.get_module('pubsub')
-                
-                for channel in @output_channels
-                    translated_output_channel = @channel_mapping[channel]
-                    translated_params = @translateParams(params, channel)
-                    msg = {}
-                    msg[translated_output_channel] = translated_params
-                    pipe.publish(@message, msg)
-            
+            if @input_channel?
+                @input_channels = [@input_channel]
+            if @output_channel?
+                @output_channels = [@output_channel]
+            @first = true
+
+            # Subscribe to the input channels
+            @subscribed_channels = @input_channels
+            @aggregated_channels = {get_input_channels: @subscribed_channels}
+
+        get_input_channels: (params...) =>
+            ###
+                skip_first skips the first aggregated event for this
+                set of channels. It is useful in order to avoid spurious events
+                like the case of filters being initialized either before
+                or after this widget in the Datasource.
+
+                TODO(andrei): find a better solution
+            ###
+            if @first
+                @first = false
+                if @skip_first
+                    return
+
+            result = {}
+            for channel_params in params
+                _.extend(result, @translateParams(channel_params))
+            pipe = loader.get_module('pubsub')
+            for channel in @output_channels
+                translated_output_channel = @channel_mapping[channel]
+                msg = {}
+                msg[translated_output_channel] = result
+                pipe.publish(@message, msg)
+
         translateParams: (params) ->
             ###
                 Translates parameters from the input_channel format
                 to the format accepted by the output channel.
-                
+
                 Override this in your mediator class to pass whatever parameters
                 you like to the output channel.
             ###
             params.model.toJSON()
-            
+
     return MediatorWidget

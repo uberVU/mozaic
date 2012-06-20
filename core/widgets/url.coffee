@@ -7,22 +7,20 @@ define ['cs!widget'], (Widget) ->
 
         template_name: 'templates/url.hjs'
         params_defaults:
-            'ignored_params': 'data-params'
+            base_url: 'data-params',
+            subscribed_channels: -> _.keys(@channel_mapping)
+            aggregated_channels: -> {get_new_params: @subscribed_channels}
+            text: 'data-params',
+            ignored_params: 'data-params'
+            extra_params: 'data-params'
+            extra_classes: 'data-params'
 
         events:
             "click a.url-widget-link": "navigateToDestination"
 
-        params_defaults: {
-            base_url: 'data-params',
-            subscribed_channels: -> _.keys(@channel_mapping)
-            aggregated_channels: -> {get_new_params: @subscribed_channels},
-            text: 'data-params',
-        }
-
         navigateToDestination: (event) =>
-            router = loader.get_module('cs!router')
             hash = event.currentTarget.hash[1..]
-            router.navigate(hash, {trigger: true})
+            Utils.goto(hash, true)
             return false
 
         get_new_params: (params...) =>
@@ -30,23 +28,31 @@ define ['cs!widget'], (Widget) ->
                 Whenever new parameters arrive build a new URL and render it.
                 The URL rendering algorithm is the same as in datasource.
             ###
-            all_params = {}
+            final_params = {}
+            original_params = {}
             for param_set in params
-                _.extend(all_params, param_set.model.toJSON())
+                _.extend(original_params, param_set.model.toJSON())
 
             # Make sure to ignore some parameters when rendering URLs.
             # Use-case: ignore heterogeneous sort-by for twitter stream
             # main sections.
             if @ignored_params
-                final_params = {}
-                for k, v of all_params
+                for k, v of original_params
                     if not (k in @ignored_params)
                         final_params[k] = v
-                all_params = final_params
+            else
+                final_params = original_params
 
-            url = Utils.render_url(@base_url, all_params)
+            # You can give additional params that might not fit in the base_url
+            # Use-case: moving between the my_tasks all_tasks sections on tasks
+            if @extra_params
+                for k, v of @extra_params
+                    final_params[k] = v
+
+            url = Utils.render_url(@base_url, final_params)
             url = Utils.current_url() + '#' + url
-            x = {url: url, text: @text}
+            x = {url: url, text: @text, extra_classes: @extra_classes}
+
             @renderLayout(x)
 
     return UrlWidget
