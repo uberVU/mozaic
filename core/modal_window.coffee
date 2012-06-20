@@ -35,6 +35,7 @@ define ['cs!module', 'cs!loader'], (Module) ->
             ###
             @modal.on('hide', @unloadWidget)
             @pipe.subscribe('/modal', @insertWidget)
+            @pipe.subscribe('/closemodal', @close)
             
         empty: ->
             @body.empty()
@@ -59,6 +60,9 @@ define ['cs!module', 'cs!loader'], (Module) ->
                 @title.html(message.title)
                 @body.html(message.html)
                 @show()
+                
+        close: () =>
+            @show('hide') # :)
                 
         unloadWidget: () =>
             ###

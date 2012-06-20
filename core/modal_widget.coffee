@@ -1,4 +1,4 @@
-define ['cs!widget', 'bootstrap'], (Widget) ->
+define ['cs!widget'], (Widget) ->
     class ModalWidget extends Widget
         constructor: (params) ->
             super(params)

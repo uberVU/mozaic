@@ -20,18 +20,12 @@ define [], () ->
                 else
                     @default_value[k] = v
 
-        setData: (data) =>
+        getData: (return_default_data = true) =>
             ###
-                Set the value of data
+                Get the value of data. If return_default_data is false we ignore
+                the default values. An use-case is the date-filter.
             ###
-            @data = data
-            @trigger('change', @)
-
-        getData: =>
-            ###
-                Get the value of data
-            ###
-            result = _.clone(@default_value)
+            result = if return_default_data then _.clone(@default_value) else {}
             _.extend(result, @data)
 
         toJSON: =>
@@ -57,20 +51,27 @@ define [], () ->
                     return null
             elem
 
-        set: (k, v = null) =>
+        set: (k, v = null, options = {}) =>
             # Check it's called with the dict syntax
             if $.isPlainObject(k)
                 dict = k
             # .. or with the single-key-and-value syntax
             else
-                dict = {k: v}
+                dict = {}
+                dict[k] = v
+            @_internal_set(dict, options)
+
+        _internal_set: (dict, options) =>
+            if options.reset
+                @data = {}
 
             # Alter the internal data
             for k1, v1 of dict
                 @data[k1] = v1
 
             # Trigger the change event - only once
-            @trigger('change', @)
+            if options.silent != true
+                @trigger('change', @)
 
         unset: (k, options={}) =>
             ###
@@ -106,7 +107,7 @@ define [], () ->
             else
                 params = {}
 
-            success_callback = (data) =>
+            success_callback = (data, response_status) =>
                 if not options.add?
                     @data = {}
                 # Make sure that data is always a dict, even when
@@ -114,7 +115,13 @@ define [], () ->
                 if not $.isPlainObject(data)
                     data = {result: data}
                 @set(data)
-
+                # Trigger a sync event (similar to Backbone's sync event)
+                @trigger('sync', @, data)
+                # Also call the success callback.
+                options.success(@, response_status) if options.success
+            # Trigger an invalidate event before performing the
+            # actual request
+            @trigger('invalidate', @, @)
             # Make the actual AJAX request
             $.ajax(
                 url: @url,

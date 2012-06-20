@@ -6,7 +6,7 @@ define ['cs!module'], (Module) ->
                 which is configured in App.urls.
             ###
             module = "cs!controller/" + controller_config.controller
-            layout = "text!" + controller_config.layout
+            page_layout = "text!" + App.general.PAGE_LAYOUT
 
             # Get the last parameter from "params" and filter it according to
             # the allowed_get_params controller configuration.
@@ -20,21 +20,11 @@ define ['cs!module'], (Module) ->
                         filtered_params[k] = v
             params.push(filtered_params)
 
-            # First load the dependencies of the given controller, as configured in the app
-            dependencies = App.default_loading_modules.concat(controller_config.depends ?= [])
             # Load controller layout
-            require( [layout], (raw_template) ->
-                ###
-                    Load the widgets for the given template
-                ###
-                logger.info('Loading layout ' + @path)
-
-                loader.load_modules(dependencies, =>
-                    # Then, load the controller module itself
-                    loader.load_module module, (controller) =>
-                        controller.action(params...)
-                    , true, controller_config
-                )
+            require([page_layout], (page_template) =>
+                loader.load_module('cs!application_controller', (app_controller) =>
+                    app_controller.new_controller(controller_config, params)
+                , true, App.general.PAGE_LAYOUT)
             )
 
         constructor: (urls) ->
