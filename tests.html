@@ -19,7 +19,7 @@
         
         <script type="text/javascript">
             mocha.setup('bdd');
-            require(['cs!rawdata_tests'], function(tests) {
+            require(['cs!pubsub_tests','cs!rawdata_tests'], function(tests) {
                 mocha.run();
             });
         </script>
