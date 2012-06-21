@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>  
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Mozaic Tests</title>
         <link rel="stylesheet" href="tests/mocha.css" />
         <script src="core/libs/jquery/jquery-1.7.2.js"></script>
@@ -18,10 +19,10 @@
         
         <script type="text/javascript">
             mocha.setup('bdd');
-            require(['cs!pubsub_tests'], function(tests) {                                
-                mocha.run();    
+            require(['cs!rawdata_tests'], function(tests) {
+                mocha.run();
             });
-        </script>        
+        </script>
         
     </head>
 
