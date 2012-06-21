@@ -54,13 +54,13 @@ define ['cs!core/raw_data', 'cs!logger', 'chai'], (RawData, logger, chai) ->
 				Just an example - return JsonObject
 				###
 				r.url = "http://wouso-next.rosedu.org/api/bazaar/?user=alex"
-				f = (raw_data) -> console.log raw_data
+				f = (raw_data) -> logger.info raw_data
 
 				r.on("change", (raw_data) ->
-					console.log r.getData()
+					logger.info r.getData()
 					x = r.get("spells")
 					for i in x
-						console.log i
+						logger.info i
 						i.image.should.equal ""
 					done()
 				)
