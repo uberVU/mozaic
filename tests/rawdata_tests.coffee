@@ -1,4 +1,4 @@
-define ['cs!core/raw_data', 'chai'], (RawData, chai) ->
+define ['cs!core/raw_data', 'cs!logger', 'chai'], (RawData, logger, chai) ->
 	should = chai.should()
 
 	describe 'RawData', ->
@@ -30,6 +30,38 @@ define ['cs!core/raw_data', 'chai'], (RawData, chai) ->
 				eq = _.isEqual r.getData(false), {}
 
 				eq.should.equal true
-				
-		describe 'get', ->
-				
+		describe 'set', ->
+
+			it 'should set data then get data', ->
+				r = new RawData
+
+				r.set "/1", {status: "1"}
+				r.set "/2", {status: "2"}
+				r.set "/3", {status: "3"}
+
+				r.get "/1", (message) ->
+					message.status.should.equal "1"
+				r.get "/2", (message) ->
+					message.status.should.equal "2"
+				r.get "/3", (message) ->
+					message.status.should.equal "3"
+
+		describe 'fetch', ->
+
+			it 'should fetch data for a given URL', (done) ->
+				r =  new RawData
+				###
+				Just an example - return JsonObject
+				###
+				r.url = "http://wouso-next.rosedu.org/api/bazaar/?user=alex"
+				f = (raw_data) -> logger.info raw_data
+
+				r.on("change", (raw_data) ->
+					logger.info r.getData()
+					x = r.get("spells")
+					for i in x
+						logger.info i
+						i.image.should.equal ""
+					done()
+				)
+				r.fetch()
