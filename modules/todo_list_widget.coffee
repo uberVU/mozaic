@@ -24,8 +24,8 @@ define ['cs!widget'], (Widget) ->
                 been reset from scratch).
             ###
             # Re-render the clean HTML
+
             @renderLayout()
-            # Inject the TODO widgets
             @append(todo) for todo in params.collection.models
 
         add: (params) ->

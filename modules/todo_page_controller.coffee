@@ -29,7 +29,7 @@ define ['cs!controller'], (Controller) ->
                     'channels':
                         '/todos': todos
 
-            # Render the layout (todo_page.hjs)
+            # Render the layout (todo_page.hjs, this is defined in conf/urls)
             @renderLayout(params)
 
     return TodoListController

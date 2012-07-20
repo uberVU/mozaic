@@ -10,18 +10,5 @@ var Fixtures = {
                 task: 'feed that damn dog'
             }
         ]
-    },
-    news: {
-        responseText: [
-            {
-                id: 1,
-                newsText: 'great'
-            },
-            {
-                id: 2,
-                newsText: 'best feed that damn dog'
-            }
-        ]
     }
-
-}
+};
