@@ -20,7 +20,7 @@ require([
         "cs!router", // Class to load & instantiate
         function(router) { // Run this when class was loaded and instantiated
             Backbone.sync = function (method, model, options) {
-                console.log (arguments);
+                if (options.success) return options.success(model);
             };
             Backbone.history.start ();
         },
