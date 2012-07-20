@@ -19,7 +19,9 @@ require([
     loader.load_module(
         "cs!router", // Class to load & instantiate
         function(router) { // Run this when class was loaded and instantiated
+            var fakeId = Math.floor(Math.random() * 100); // make a fake id
             Backbone.sync = function (method, model, options) {
+                model.set('id', fakeId++);
                 if (options.success) return options.success(model);
             };
             Backbone.history.start ();
