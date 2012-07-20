@@ -19,8 +19,10 @@ require([
     loader.load_module(
         "cs!router", // Class to load & instantiate
         function(router) { // Run this when class was loaded and instantiated
-            Backbone.sync = function () {}; // noop 
-            Backbone.history.start();
+            Backbone.sync = function (method, model, options) {
+                console.log (arguments);
+            };
+            Backbone.history.start ();
         },
         true, // Instantiate the router
         App.urls
