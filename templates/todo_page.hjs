@@ -1,4 +1,2 @@
 <div class="uberwidget" data-widget="todo_add_widget" data-params="{{todo_add_params}}"></div>
 <div class="uberwidget" data-widget="todo_list_widget" data-params="{{todo_list_params}}"></div>
-
-<a href='#news'>News</a>
