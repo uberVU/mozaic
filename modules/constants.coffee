@@ -5,4 +5,3 @@ define [], () ->
 
     window.Constants = Constants
     return Constants
-
