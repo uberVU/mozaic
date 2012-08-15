@@ -35,10 +35,10 @@ define ['cs!widget/base_form'], (BaseForm) ->
                 # afterwards to let the user update the folder fields
                 # TODO: We might want to move this out to the datasource
                 @parseServerErrors(params.response)
-            # 
             if params.type == 'destroy'
                 # The destroy of the model is successful. We should close 
                 # this widget
+                @afterCommit()
                 @destroyForm()
                     
         get_aggregated_channel_events: (params) =>

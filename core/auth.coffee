@@ -1,15 +1,15 @@
-define ["cs!constants"], (Constants) ->
+define ['cs!interceptor', 'cs!constants', 'cs!utils'], (Interceptor, Constants, Utils) ->
     window.Mozaic = window.Mozaic or {}
-    ajaxRequests = []
+    window.ajaxRequests = []
 
     class Auth
         constructor: ->
-            $.ajaxSetup
-                beforeSend: (jqXHR) ->
-                    if window.Mozaic.stopping_ajax_requests
-                        jqXHR.abort()
-                    else
-                        ajaxRequests.push(jqXHR)
+            Interceptor.addAjaxSendRequestCallback((e, xhr, settings) =>
+                if window.Mozaic.stopping_ajax_requests
+                    xhr.abort()
+                else
+                    window.ajaxRequests.push(xhr)
+            )                
 
         login: (username, password, callback) =>
             ###
@@ -86,32 +86,20 @@ define ["cs!constants"], (Constants) ->
             # TODO: check if core data structures can become corrupted from
             # not calling these callbacks
 
-            # Override Backbone.sync, the primary method with which we are
-            # consuming our RESTful API. If a request fails with 401 unauthorized
-            # status code, we make all pending AJAX requests fail gracefully
+            # Get attempted page before login, if any. Maybe the user
+            # was trying to access a page but was not logged in, so
+            # save it, to redirect him after a successful login.
+            url = Utils.current_url(false).split('#')[1]
+            @params = if url then {url: url} else {}
+
+            # Add Interceptor callback for ajaxComplete. If a request fails with 
+            # 401 unauthorized we make all pending AJAX requests fail gracefully
             # and redirect the user to the login page.
-            Backbone._sync = Backbone.sync
-            Backbone.sync = (method, model, options) ->
-                # Check if there is a complete callback defined already,
-                # and call it later in order to avoid breaking user-defined stuff.
-                old_complete = options.complete or null
-
-                # Our new complete callback will call the old one if it exists
-                # and check the status code to detect whether redirect to login
-                # is needed.
-                options.complete = (xhr, status) =>
-                    if xhr.status == 401
-                        @redirectToLogin()
-                    else if old_complete
-                        old_complete(xhr, status)
-                Backbone._sync(method, model, options)
-
-            # Hook into AJAX requests done with jQuery.
-            # These are mostly RawData requests.
-            $(document).ajaxError((e, xhr) =>
+            Interceptor.addAjaxCompleteRequestCallback((e, xhr, settings) =>
                 if xhr.status == 401
-                    @redirectToLogin()
+                    @redirectToLogin(@params)
             )
+            
 
         refreshCurrentUser: (user_callback = null) =>
             ###
@@ -130,9 +118,12 @@ define ["cs!constants"], (Constants) ->
             ###
             setInterval(@refreshCurrentUser, App.general.CURRENT_USER_TIMEOUT)
 
-        redirectToLogin: =>
+        redirectToLogin: (params = {}) =>
             ###
-                Redirects the user to the login page.
+                Redirects the user to the login page. If params
+                contains a url it means the user was trying to access
+                this but was not loged in. So, after login, redirect
+                him to the page stored in tue URL as ..?returnto=url.
 
                 Note: setting window.location.href does *not* provoke 
                 an immediate redirect, so in order to simulate that
@@ -144,7 +135,25 @@ define ["cs!constants"], (Constants) ->
             ###
             window.Mozaic.stopping_ajax_requests = true
             @abortExpiredAjaxRequests()
-            window.location.href = App.general.LOGIN_PAGE
+            url = App.general.LOGIN_PAGE
+
+            # Encode the URL part added to returnto, and decode it
+            # after the login was successful.
+            url += '?returnto=' + encodeURIComponent(params.url) if params.url
+            window.location.href = url
             throw Constants.UNAUTHORIZED_EXCEPTION
 
-    return Auth
+        getRedirectPageAfterLogin: ->
+            ###
+                Redirect to the page the user was trying to access but was
+                prompted with a login page.
+
+                If the url is of type login.html?returnto='search/18181/stream'
+                redirect the user after a successful login to search/18181/stream
+            ###
+            url = Utils.current_url()
+            returnto = $.url(url).param('returnto')
+            # Decode the previous encoded URL.
+            returnto = decodeURIComponent(returnto) if returnto
+            url_new = '/' + (if returnto then '#'+returnto else '')
+            return url_new

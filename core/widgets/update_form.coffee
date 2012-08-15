@@ -47,14 +47,22 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!uber_backbone_form'], (B
                 @destroyForm()
                     
         get_aggregated_channel_events: (params...) =>
-            super(params...)
-            @createForm()
-            @render()
+            return unless super(params...)
+            # Create form only if you have a view where
+            # to attach it to. If @view has been distroyed, don't.
+            if @view
+                @createForm()
+                @render()
             
         action: =>
             super()
             # Validate the form client side
             errors = @form.commit()
+            # After commiting the form values to the form model
+            # (now the form's model will have the form's values 
+            # set as attributes) execute an afterFormCommit callback to 
+            # allow us to add any additional attributes on the model
+            @afterFormCommit(@form.model)
             if not errors?
                 # Update the model with the form's model attributes 
                 # but don't trigger any events
@@ -95,5 +103,7 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!uber_backbone_form'], (B
             ###
             @form.render()
             $(@view.el).find(".form").append(@form.el)
+            
+        afterFormCommit: (model) =>
 
     return UpdateForm

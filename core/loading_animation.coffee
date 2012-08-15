@@ -3,7 +3,7 @@ define ['cs!module'], (Module) ->
 
         MAX_ITERATIONS_WITHOUT_NASTY: 5
         LOADING_FINISHED_CHECK_INTERVAL: 100 #ms
-        ALLOWED_TO_BE_NASTY: ['top_locations', 'current_location', 'new_mentions', 'item_count']
+        ALLOWED_TO_BE_NASTY: ['top_locations_filter', 'current_location', 'new_items', 'item_count', 'stream_info', 'custom_sources_info', 'custom_source_item', 'custom_sources_list']
         INTERVAL_FOR_99_PERCENT: 5 # seconds
         ACCELERATED_FINISH: 1.5 # seconds at most to finish after we had a lucky streak
         REPORT_NASTY_WIDGETS_INTERVAL: 15 # seconds
@@ -65,6 +65,7 @@ define ['cs!module'], (Module) ->
             ###
 
             @updateProgressBar()
+            nasty_widgets_time = (current_time - @start_time > 1000 * @REPORT_NASTY_WIDGETS_INTERVAL)
 
             # Check if there are still nasty widgets, and if there are
             # rest the counter of consecutive iterations without nasty widgets.
@@ -75,9 +76,15 @@ define ['cs!module'], (Module) ->
             if nasty.length > 0
                 @iterations_without_nasty = 0
                 current_time = new Date().getTime()
-                if current_time - @start_time > 1000 * @REPORT_NASTY_WIDGETS_INTERVAL
+                if nasty_widgets_time
                     @reportNastyWidgets()
                 return
+
+            # Don't allow any more nasty widgets on production.'
+            # Just log them with critical, but try to deliver a partial
+            # user experience as opposed to a completely broken one. (#739)
+            if nasty_widgets_time and App.general.environment == 'production'
+                @finishLoadingAnimation()
 
             # If we reached this point, it means that there haven't been
             # nasty widgets for iterations_without_nasty + 1 consecutive
@@ -94,8 +101,14 @@ define ['cs!module'], (Module) ->
             # If we have had a "good streak" without nasty widgets,
             # then hide the loading animation.
             if @momentLoadingFinished and @getProgress() >= 99
-                $('#loading-animation').hide()
-                clearInterval(@intervalHandle)
+                @finishLoadingAnimation()
+                
+        finishLoadingAnimation: =>
+            ###
+                Hide the loading animation and stop polling for nasty widgets.
+            ###
+            $('#loading-animation').hide()
+            clearInterval(@intervalHandle)
 
         getNastyWidgets: =>
             ###
@@ -103,7 +116,7 @@ define ['cs!module'], (Module) ->
 
                 These are widgets which have announced themselves as
                 being initialized, but have not performed renderLayout().
-                Notable exceptions to this rule are specified in 
+                Notable exceptions to this rule are specified in
                 ALLOWED_TO_BE_NASTY.
             ###
             candidates = _.difference(@new_widgets, @rendered_widgets)
@@ -122,9 +135,14 @@ define ['cs!module'], (Module) ->
             ###
             @iterations = if @iterations then @iterations + 1 else 1
             nasty = @getNastyWidgets()
-            if @iterations % 20 == 0
+            
+            # Make sure we display the nasty widgets the first time we
+            # try to report them. This is because on production we will
+            # NOT keep an infinite loading to prevent a completely broken
+            # user experience.
+            if @iterations % 20 == 1
                 names = (id + "(" + @id_to_name[id] + ")" for id in nasty)
-                console.log('Nasty widgets: ' + names)
+                log.error('Nasty widgets: ' + names)
 
         getProgress: =>
             ###

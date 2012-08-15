@@ -213,24 +213,43 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
                 else if event_type == 'remove'
                     return {type: 'remove', model: params[0], collection: params[1]}
                 else if event_type == 'reset'
-                    return {type: 'reset', collection: params[0]}
+                    if params[0].collection_type == 'api'
+                        return {type: 'reset', model: params[0]}
+                    else
+                        return {type: 'reset', collection: params[0]}
                 else if event_type == 'destroy'
                     return {type: 'destroy', model: params[0], collection: params[1]}
                 else if event_type == 'sync'
-                    return {type: 'sync', collection: params[0]}
+                    if params[0].collection_type == 'api'
+                        return {type: 'sync', model: params[0]}
+                    else
+                        return {type: 'sync', collection: params[0]}
                 else if event_type == 'error'
                     return {type: 'error', model: params[0], collection: params[1], response: params[2]}
                 else if event_type == 'change'
-                    model = params[0]
-                    translated_event_params = {type: 'change', model: model}
-                    # Pass the collection of the model as an argument if it exists
-                    if model.collection?
-                        translated_event_params['collection'] = model.collection
+                    # For API channels, the first parameter is the collection
+                    if params[0].collection_type == 'api'
+                        translated_event_params = {type: 'change', model: params[0]}
+                    # Otherwise, for relational channels, we have
+                    # a model and an optional collection
+                    else
+                        translated_event_params = {type: 'change', model: params[0]}
+                        model = params[0]
+                        if model.collection?
+                            translated_event_params['collection'] = model.collection
                     return translated_event_params
+                else if event_type == 'no_data'
+                    # For Relationnal channels when the server response has length 0
+                    translated_event_params = {type: 'no_data', collection: params[0]}
                 else if event_type[0..6] == 'change:'
-                    return {type: 'change_attribute', attribute: event_type[7..], model: params[0]}
+                    return {type: 'change_attribute', attribute: event_type[7..], model: params[0], collection: params[0]?.collection}
                 else if event_type == 'invalidate'
-                    return {type: 'invalidate', model: params[0], collection: params[1]}
+                    # For API channels, the first parameter is the collection
+                    if params[0].collection_type == 'api'
+                        return {type: 'invalidate', model: params[0]}
+                    # For relational channels, the parameters are model & collection
+                    else
+                        return {type: 'invalidate', model: params[0], collection: params[1]}
             else if item_type == 'item'
                 if event_type == 'all'
                     return {type: 'change', model: params[0]}
@@ -242,7 +261,7 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
                         translated_event_params['collection'] = model.collection
                     return translated_event_params
                 else if event_type[0..6] == 'change:'
-                    return {type: 'change_attribute', attribute: event_type[7..], model: params[0]}
+                    return {type: 'change_attribute', attribute: event_type[7..], model: params[0], collection: model: params[0]?.collection}
                 else if event_type == 'error'
                     return {type: 'error', model: params[0], response: params[1]}
                 else if event_type == 'invalidate'
@@ -529,7 +548,7 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
                 @aggregator = {}
 
             # Initialize the aggregator
-            key = channels.reduce((x,y) -> x + '+' + y)
+            key = _.reduce(channels, (x,y) -> x + '+' + y)
             @aggregator[key] = {}
 
             # Generate channel callbacks or wrap the existing ones
@@ -602,11 +621,13 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
                 cloned_params = _.clone(@params)
                 delete cloned_params['el']
                 logger.warn("Widget with id #{@params['widget_id']} has lived too little (less than half a second). You're doing something wrong. (params = #{JSON.stringify(cloned_params)})")
-            #undelegate events
-            @saved_view.off()
-            #remove element
-            @saved_view.remove()
-            @saved_view.unbind()
+
+            if @saved_view
+                #undelegate events
+                @saved_view.off()
+                #remove element
+                @saved_view.remove()
+                @saved_view.unbind()
 
             pipe = loader.get_module('pubsub')
             pipe.publish('/destroy_widget', {
@@ -615,6 +636,15 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
                 widget: @})
 
         renderLayout: (layout_params = {}, stringify = true) =>
+            ###
+                Execute preRender specific widget method before the
+                widget is rendered.
+            ###
+            unless @view?
+                logger.warn "You are calling render on a detached widget named #{@params.name}"
+                return
+            @preRender()
+
             @layout = new Layout(@template_name, layout_params)
             @layout.renderHTML(@view.$el, stringify)
             if @never_rendered
@@ -635,11 +665,17 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
                 for name, selector of @elements
                     @[name] = @view.$el.find(selector)
 
+            ###
+                Execute postRender widget method after the widget
+                was rendered.
+            ###
+            @postRender()
+
         toggleBlankState: (display) ->
             ###
                 Hide or show the blank state of a widget. The blank state
-                div can have a class name different from the default one 
-                (blank-state) if provided in the @blankStateClass instance 
+                div can have a class name different from the default one
+                (blank-state) if provided in the @blankStateClass instance
                 variable
             ###
             className = if @blankStateClass? then @blankStateClass else '.blank-state'
@@ -727,3 +763,23 @@ define ['cs!channels_utils', 'cs!module', 'cs!layout'], (channels_utils, Module,
             @view = null
             @saved_el = @el
             @el = null
+
+        preRender: ->
+            ###
+                Run widget's defined pre processors if there are some before
+                the widget is rendered.
+            ###
+            if @pre_render?
+                for process, options of @pre_render
+                    ContextProcessors.process(process, @el, options) if @el?
+
+        postRender: ->
+            ###
+                Run widget's defined post processors if there are some after
+                the widget is rendered.
+            ###
+            if @post_render?
+                for process, options of @post_render
+                    setTimeout =>
+                            ContextProcessors.process(process, @el, options) if @el?
+                        , 0

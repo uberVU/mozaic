@@ -2,6 +2,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
     class DataSource
 
         checkIntervalForUnusedCollections: 10000
+        default_max_refresh_factor: 10
 
         constructor: ->
             @config = App.DataSourceConfig
@@ -132,12 +133,15 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             conf = @_getConfig(channel)
             conf.default_value or {}
 
-        _fetchChannelDataFromServer: (channel, reason = 'refresh') =>
+        _fetchChannelDataFromServer: (channel, reason='refresh', callback=null) =>
             ###
                 Fetch the data for the channel given the params.
 
                 channel: the given channel. The HTTP parameters for fetching
-                        the channel data are taken from @meta_data[channel].params
+                         the channel data are taken from @meta_data[channel].params
+                reason: 'refresh' (default), 'streampoll' or 'scroll'
+                callback: a (channel_guid, success) function that will
+                          be called after the fetch is complete
                 Returns: nothing
             ###
             # Sanity check - the only valid reasons for fetching data are
@@ -148,12 +152,19 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
 
             conf = @_getConfig(channel)
             channel_key = channels_utils.getChannelKey(channel)
+            meta = @meta_data[channel_key]
+            # Streampoll doesn't increment waiting fetch count.
+            # Otherwise, when changing tabs periodic requests for new
+            # mentions will NEVER stop, which is just plain wrong.
+            if reason != 'streampoll'
+                waiting_fetches = if meta.waiting_fetches then meta.waiting_fetches else 0
+                meta.waiting_fetches = waiting_fetches + 1
 
             # Build the current parameters. For normal requests,
             # they are the current default values overlapped with
             # the current values (found in @meta_data[channel_key]).
             default_value = @_getDefaultParams(channel)
-            params = _.extend({}, default_value, @meta_data[channel_key].params)
+            params = _.extend({}, default_value, meta.params)
 
             # If we're fetching on behalf of a scroll / streampoll request,
             # make sure that we give the scroll/streampoll_params function
@@ -174,39 +185,52 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             # just load it from fixtures.
             if not ('url' of conf)
                 @_loadFixtures(channel_key, params)
+                @_checkForNewlyArrivedAndAwaitedModels(channel_key)
                 # Fixture channels are fetched synchronously, no need to
                 # call _fillWaitingChannels
-                return @meta_data[channel_key].last_fetch = Utils.now()
-
+                meta.last_fetch = Utils.now()
+                callback(channel_key, true) if callback
+                return meta.last_fetch
+            
             # Channel has an associated URL. Fetch data from that URL.
-
-            # Render the URL to which we're GET-ing or POST-ing.
-            #
-            # For POST requests, the URL should contain no extra GET params,
-            # and those params should rather be sent through POST data.
-            # This is because we might have large data to POST,
-            # and as we all know, the GET URI has a pretty low length limit.
-
             fetch_params =
                 async: @_async_fetches
-                add: true
+                # Don't add models on refresh (reset entire collection instead).
+                add: reason != 'refresh'
+                # For POST requests, the URL should contain no extra GET params,
+                # and those params should rather be sent through POST data.
+                # This is because we might have large data to POST,
+                # and as we all know, the GET URI has a pretty low length limit.
                 type: if conf.fetch_through_POST then 'POST' else 'GET'
                 data: if conf.fetch_through_POST then params else {}
 
-            # Only set last_fetch and perform
-            # _checkForNewlyArrivedAndAwaitedModels on refresh events
-            # (skip for all others).
+            # Story behind this decision to insert a fetched callback before triggering reset:
+            # When you are binding a widget to a collection (datasource._bindWidgetToRelationalChannel)
+            # you are doing 2 things:
+            # 1. widget is subscribed to all collection events ('reset' included):
+            #    - if collection is updated then the widget is notified to refresh contents
+            # 2. if the collection is already filled: @meta_data[collection].last_fetch?
+            #    then the widget is notified to refresh contents
+            # With a fetched event before reset you are setting meta.last_fetch eliminating a race condition
+            # where 'reset' event will cause a bindWidgetToRelationalChannel
+            # the step 2 above will find last_fetch null thus leaving the widget empty
+            fetch_params.fetched = =>
+                meta.firstTimeFetch = !meta.last_fetch?
+                meta.last_fetch = Utils.now()
+            # Define success & error functions as wrappers around callback.
             fetch_params.success = (collection, response) =>
                 @_checkForNewlyArrivedAndAwaitedModels(channel_key)
+
                 # Only fill waiting channels the first time this
                 # channel receives data.
-                if not @meta_data[channel_key].last_fetch?
+                if meta.firstTimeFetch
                     @_fillWaitingChannels(channel_key)
-                @meta_data[channel_key].last_fetch = Utils.now()
+                if reason != 'streampoll'
+                    meta.waiting_fetches = meta.waiting_fetches - 1
 
-            # Don't add models on refresh (reset entire collection).
-            if reason == 'refresh'
-                fetch_params.add = false
+                callback(channel_key, true) if callback
+            fetch_params.error = (collection, response) =>
+                callback(channel_key, false) if callback
 
             # What channel should receive the data we're about to fetch -
             # the original channel, or that channel's buffer?
@@ -219,6 +243,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             else
                 receiving_channel = @data[channel_key]
 
+            # Render the URL to which we're GET-ing or POST-ing.
             receiving_channel.url = Utils.render_url(conf.url, params, [], conf.fetch_through_POST)
             receiving_channel.fetch(fetch_params)
 
@@ -247,6 +272,13 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 # Reset buffer without triggering any events.
                 channel.buffer.reset([])
 
+            # Restart the refreshing cycle. When refresh = 'backoff' and the
+            # buffer is full, the backoff will be maxed out. Restarting will
+            # also reset the buffer to its minimum value, and renew
+            # the refreshing cycle.
+            @_stopRefreshing(channel_guid)
+            @_startRefreshing(channel_guid)
+
         _getRefreshInterval: (channel) =>
             ###
                 Returns the periodic refresh interval for a given channel.
@@ -256,10 +288,21 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                          configured, 0 otherwise
             ###
             conf = @_getConfig(channel)
-            if 'refresh' of conf and conf.refresh == 'periodic' and 'refresh_interval' of conf
+            if conf.refresh and 'refresh_interval' of conf
                 return conf.refresh_interval
             else
                 return 0
+
+        _getMaxRefreshInterval: (channel) =>
+            ###
+                Returns the maximum refresh interval for a given channel -
+                defaults to default_max_refresh_factor x refresh intreval.
+            ###
+            conf = @_getConfig(channel)
+            if conf.max_refresh_interval
+                return conf.max_refresh_interval
+            else
+                return @default_max_refresh_factor * @_getRefreshInterval(channel)
 
         _getRefreshType: (channel) =>
             ###
@@ -279,51 +322,92 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             else
                 return 0
 
-        _setupPeriodicRefresh: (channel) =>
+        _startRefreshing: (channel) =>
             ###
-                Sets up periodic refresh for a given channel.
+                Start the refreshing policy for the given channel:
+                periodic or backoff.
             ###
             channel_key = channels_utils.getChannelKey(channel)
 
-            # Make sure this channel needs a periodic refresh.
+            # Make sure this channel needs to be refreshed.
             refresh_interval = @_getRefreshInterval(channel_key)
             if not refresh_interval
                 return
 
-            # Make sure we don't do setInterval() more than once per channel.
-            if @meta_data[channel_key].started_refresh
+            # Make sure we don't do setTimeout() more than once per channel.
+            if @meta_data[channel_key].refreshing
                 return
 
-            # Mark the fact that we're refreshing
-            @meta_data[channel_key].started_refresh = true
+            # Mark the fact that we're refreshing.
+            @meta_data[channel_key].refreshing = true
+
+            # Initialize backoff.
+            if @_getConfig(channel_key).refresh == 'backoff'
+                @meta_data[channel_key].backoff = 1
+
+            @_scheduleNextRefresh(channel_key, true)
+
+        _stopRefreshing: (channel_key) =>
+            ###
+                Cancel the current refresh request, and stop future ones
+                for the given channel.
+            ###
+            # Stop future refresh requests.
+            @meta_data[channel_key].refreshing = false
+            # Stop the current refresh request (if any).
+            if @meta_data[channel_key].timeout_variable
+                clearTimeout(@meta_data[channel_key].timeout_variable)
+
+        _scheduleNextRefresh: (channel_key, success) =>
+            ###
+                Schedule the next refresh for a given channel and a reason.
+                The next refresh will call this function again via callback,
+                to schedule the next refresh after that, and so on.
+            ###
+            # Are we still refreshing this channel?
+            if not @meta_data[channel_key].refreshing
+                return
+
+            # Basic refresh_after.
+            refresh_after = @_getRefreshInterval(channel_key)
+
+            # Do not apply the backoff algorithm to fetching failures.
+            if @_getConfig(channel_key).refresh == 'backoff' and success
+                # Current item count = data + buffer
+                current_item_count = @data[channel_key].length
+                if 'buffer' of @data[channel_key]
+                    current_item_count += @data[channel_key].buffer.length
+
+                # If there are no new items, increment backoff, otherwise reset it.
+                if current_item_count == @meta_data[channel_key].last_item_count
+                    # Initialize the exponential backoff to 1, then double it.
+                    if not @meta_data[channel_key].backoff
+                        @meta_data[channel_key].backoff = 1
+                    @meta_data[channel_key].backoff *= 2
+                    refresh_after *= @meta_data[channel_key].backoff
+                    # Ensure refresh_after < max_refresh_interval.
+                    refresh_after = Math.min(refresh_after, @_getMaxRefreshInterval(channel_key))
+                    logger.info "Refreshing #{channel_key} after #{refresh_after}ms"
+                else
+                    # Some new items, reset backoff.
+                    @meta_data[channel_key].backoff = 1
+                    logger.info "Reset backoff for #{channel_key}"
+
+                # TODO(mihnea): if a scroll down event is triggered, the number
+                # of items in the channel will increase, regardless of the
+                # refreshing logic. This will be perceived as "new data" and
+                # we might refresh sooner than needed because of it.
+                # Possible fix: recompute last_item_count after each
+                # reason='scroll' refresh.
+                # Update last_item_count.
+                @meta_data[channel_key].last_item_count = current_item_count
 
             # Configure periodic refresh with reason="refresh" or "streampoll"
             # (or "scroll", but that makes very little sense).
-            refresh_type = @_getRefreshType(channel)
-            handle = setInterval((=> @_fetchChannelDataFromServer(channel, refresh_type)), refresh_interval)
-            @meta_data[channel_key].periodic_refresh_handle = handle
-
-        _stopPeriodicRefresh: (channel) =>
-            ###
-                Stops periodic refresh it was enabled for a given channel.
-            ###
-
-            # If this channel doesn't have periodic refresh, give up.
-            if not @_getRefreshInterval(channel)
-                return
-
-            # If this channel has periodic refresh, but it hasn't started yet,
-            # also nothing to do about it.
-            if not @meta_data[channel].started_refresh
-                return
-
-            # If something went wrong and we don't have a handle pointing
-            # to the result of the channel's setInterval(), give up.
-            if not @meta_data[channel].periodic_refresh_handle
-                return
-
-            # Finally stop refreshing this channel
-            clearInterval(@meta_data[channel].periodic_refresh_handle)
+            refresh_type = @_getRefreshType(channel_key)
+            handle = setTimeout((=> @_fetchChannelDataFromServer(channel_key, refresh_type, @_scheduleNextRefresh)),
+                                refresh_after)
+            @meta_data[channel_key].timeout_variable = handle
 
         _initRelationalChannel: (name, type, params) =>
             ###
@@ -363,7 +447,6 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 @_finishChannelInitialization(name)
 
         _initApiChannel: (name, type, params) =>
-
             ###
                 Initialize an API channel.
 
@@ -487,7 +570,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                     logger.info "Channel #{channel_guid} is waiting for data"
 
             # Setup periodic refresh if needed.
-            @_setupPeriodicRefresh(channel_guid)
+            @_startRefreshing(channel_guid)
 
             # Announce widget starter a new channel is available
             @pipe.publish('/initialized_channel', {name: channel_guid})
@@ -565,12 +648,6 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             cloned_model = individual_model.clone()
             cloned_model.urlRoot = collection.url
             cloned_model.collection = collection
-            # Update clone without triggering any change events (won't matter
-            # though because the clone is not part of a collection)
-
-            # Q(Mihnea): What is this doing here? I think we should at least
-            # move it inside the "if sync" branch.
-            cloned_model = @_updateRelationModel(cloned_model, dict, update_mode)
 
             # Perform a save on the model and propagate any error events
             # received from the server on the model's channel. If the
@@ -579,6 +656,9 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             # after the save is ok). Otherwise trigger the errors on the individual
             # model
             if sync
+                # Update clone without triggering any change events (won't matter
+                # though because the clone is not part of a collection)
+                cloned_model = @_updateRelationModel(cloned_model, dict, update_mode)
                 # Trigger a custom invalidate event before the
                 # model is saved to the server. Backbone.Model emits
                 # a sync event if the save was successful
@@ -594,7 +674,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 # If we don't need to sync with the server we can just update
                 # the model reference in the collection and now trigger
                 # the change events
-                @_updateRelationModel(individual_model, dict, update_mode, silent = false)
+                @_updateRelationModel(individual_model, dict, update_mode, false)
 
         _updateRelationModel: (model, dict, update_mode, silent = true) ->
             ###
@@ -603,12 +683,33 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             ###
             silence = { silent: silent }
             if update_mode == 'append'
-                model.set(dict, silence)
+                for k, v of dict
+                    # If the attribute of the model is an array
+                    # then push the non array value. If the value is an
+                    # array set the attribute as a list
+                    if _.isArray(model.get(k))
+                        current_attribute_value = model.get(k)
+                        # If the value to be set is actually a list,
+                        # set it directly, otherwise push it
+                        if _.isArray(v)
+                            current_attribute_value = v
+                        else
+                            current_attribute_value.push(v)
+                        model.set(k, current_attribute_value)
+                        # Trigger manually the change event for an
+                        # Array value as Backbone.set won't trigger it
+                        # TODO: patch Backbone do detect changes in
+                        # Array like attributes
+                        model.trigger('change', model)
+                    else
+                        model.set(k, v, silence)
             else if update_mode == 'reset'
                 model.clear(silent)
                 model.set(dict, silence)
             else if update_mode == 'exclude'
                 for k of dict
+                    if $.isPlainObject(k)
+                        logger.error("Trying to unset a dictionary instead of a key")
                     model.unset(k, silence)
             return model
 
@@ -623,8 +724,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             else if update_mode == 'reset'
                 model.set(dict, null, {reset: true})
             else if update_mode == 'exclude'
-                for k of dict
-                    model.unset(k)
+                model.unset(dict)
 
         modifyDataChannel: (channel, dict) =>
             ###
@@ -653,21 +753,21 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                                   relational collections")
                     return
                 channel_type = @meta_data[channel_guid].type
-                # Modify each channel that contains the given item. If we want to sync 
-                # the given item with the server we should do this only once (no need 
-                # for more than one request to be send out to the server) for a single 
+                # Modify each channel that contains the given item. If we want to sync
+                # the given item with the server we should do this only once (no need
+                # for more than one request to be send out to the server) for a single
                 # channel
                 item_synced = false
                 for other_channel_guid, other_channel_data of @meta_data
                     if other_channel_data.type == channel_type
-                        # If the item wasn't synced with the server and we have to sync it, 
+                        # If the item wasn't synced with the server and we have to sync it,
                         # do it only once
                         if sync and not item_synced
                             @_findAndModifyRelationalChannelModel(other_channel_guid, item, dict, update_mode, sync)
                             item_synced = true
                         else
                             @_findAndModifyRelationalChannelModel(other_channel_guid, item, dict, update_mode, false)
-                        
+
             else if resource_type == 'api'
                 # For raw data channels, we don't support individual model modifications.
                 if item != "all"
@@ -820,7 +920,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
 
                 @meta_data[channel]['reference_count'] -= 1
                 if @meta_data[channel]['reference_count'] == 0
-                    @meta_data[channel]['time_of_reference_expiry'] = Date.now()
+                    @meta_data[channel]['time_of_reference_expiry'] = (new Date).getTime()
 
         checkForUnusedCollections: =>
             ###
@@ -851,14 +951,18 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 if meta['time_of_reference_expiry'] == null
                     continue
 
+                # Channels with pending fetches should not be garbage collected
+                if 'waiting_fetches' of meta and meta.waiting_fetches > 0
+                    continue
+
                 # Check if the current collection has had
                 # 0 reference count for quite a while.
-                expired_for = Date.now() - meta['time_of_reference_expiry']
+                expired_for = (new Date).getTime() - meta['time_of_reference_expiry']
                 if expired_for > @checkIntervalForUnusedCollections
                     # Declare that channel has expired loudly and openly.
                     logger.warn("#{collection} collection expired in DataSource.")
                     # Stop periodic refresh if it was enabled
-                    @_stopPeriodicRefresh(collection)
+                    @_stopRefreshing(collection)
                     # Throw away channel meta-data
                     delete @meta_data[collection]
                     # Delete cyclic reference from channel to its buffer
@@ -877,8 +981,16 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                 into the given channel. If there are, bind the respective
                 widgets to the individual models and drop the widget references.
             ###
+
+            # Check if channel still exists
+            if not (channel of @meta_data)
+                logger.warn("Channel #{channel} has probably been garbage collected too early")
+                return
+
+            # Check if channel has pending items to wait for
             if not ('delayed_single_items' of @meta_data[channel])
                 return
+
             remaining_delayed_items = []
             for delayed_item in @meta_data[channel].delayed_single_items
                 single_item = @data[channel].get(delayed_item.id)
@@ -916,7 +1028,10 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
             if item == "all"
                 @data[collection].on(events, widget_method, widget_data.widget)
                 # If data is already there, just pretend it arrived just now.
-                if @meta_data[collection].last_fetch
+                # but only if a fetch from server is not in progress
+                # otherwise a unwanted list refresh will be triggered
+                if @meta_data[collection].last_fetch? and
+                (not @meta_data[collection].waiting_fetches? or @meta_data[collection].waiting_fetches is 0)
                     widget_method('reset', @data[collection])
             # Individual collection models
             else
@@ -1031,7 +1146,7 @@ define ['cs!channels_utils', 'cs!fixtures'], (channels_utils, Fixtures) ->
                         if @_getBufferSize(channel) > 0
                             @data[channel].buffer.reset([])
                         @_fetchChannelDataFromServer(channel)
-                        @_setupPeriodicRefresh(channel)
+                        @_startRefreshing(channel)
 
         _channelHasFixture: (name) ->
             ###

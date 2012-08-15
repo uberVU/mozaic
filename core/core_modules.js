@@ -2,9 +2,13 @@ var App = App || {};
 
 App.main_modules = {
 	// Core modules
+	'cs': 'cs',
+	'coffee-script': 'coffee-script',
 	'constants': 'modules/constants',
+	'interceptor': 'core/interceptor',
 	'loader': 'core/loader',
-	'logger': 'core/logger',
+	'logger': 'core/logging/server_logger',
+	'logger_store': 'core/logging/logger_store',
 	'module': 'core/module',
 	'auth': 'core/auth',
 	'base_model': 'core/base_model',
@@ -20,14 +24,17 @@ App.main_modules = {
 	'router': 'core/router',
 	'controller': 'core/controller',
 	'utils': 'core/utils',
+	'utils/urls': 'core/utils/urls',
+	'utils/time': 'core/utils/time',
 	'fixtures': 'core/fixtures-loader',
 	'loading_animation': 'core/loading_animation',
 	'modal_window': 'core/modal_window',
 	'application_controller': 'core/application_controller',
-	
+	'context_processors': 'core/context_processors',
+
 	// Core collections
 	'collection/raw_data': 'core/raw_data',
-	
+
 	// Core widgets
 	'widget/base_form': 'core/widgets/base_form',
 	'widget/delete_form': 'core/widgets/delete_form',
@@ -40,7 +47,8 @@ App.main_modules = {
 	'widget/notifications': 'modules/base/widgets/notifications',
 	'widget/form': 'core/widgets/form',
 	'widget/wizard': 'core/widgets/wizard',
-	'widget/autocomplete': 'modules/base/widgets/autocomplete'
+	'widget/autocomplete': 'modules/base/widgets/autocomplete',
+	'widget/list': 'core/widgets/list'
 };
 
 if (typeof module != 'undefined') {

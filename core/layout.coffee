@@ -15,12 +15,11 @@ define [], () ->
             ###
                 Load the widgets for the given template
             ###
+
             logger.info('Loading layout ' + @path)
 
             # Load the template via require.js text plugin
-            require ["text!" + @path], (raw_template) =>
-                # Get the raw template, and render it with the given params
-                compiled_template = Handlebars.compile(raw_template)
+            loader.load_template @path, (compiled_template) =>
                 if stringify
                     template = compiled_template(@stringified_params)
                 else

@@ -1,4 +1,4 @@
-define ['cs!widget'], (Widget) -> 
+define ['cs!widget'], (Widget) ->
     class ScrollableWidget extends Widget
         scroll_enabled: true
 
@@ -29,6 +29,10 @@ define ['cs!widget'], (Widget) ->
             translated = (@channel_mapping[channel] for channel in @scrollable_channels)
             pipe = loader.get_module('pubsub')
             pipe.publish('/scroll', translated)
+            # Temporarily disable scroll until new data arrives
+            # Useful when scrolling event can be trigger multiple times before
+            # data fetch
+            @disableScroll()
 
         disableScroll: =>
             ###

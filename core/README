@@ -9,11 +9,17 @@ channel config options. These options are explained below:
     url: where to fetch data from (via Backbone.Collection.fetch)
     collection: the Backbone collection to use for this channel
 
-    refresh: 'periodic' or undefined
-        Set to 'periodic' to cause this channel refresh itself every X ms.
+    refresh: 'periodic', 'backoff' or undefined
+        Sets the refreshing policy:
+         * periodic -> refresh channel every refresh_interval ms
+         * backoff -> like periodic, but also applies an exponential backoff
+           when no new items are discovered via refreshing (x2, x4, x8, etc)
     refresh_interval:
         Refresh frequency, in miliseconds (used only when refresh='periodic').
-    refresh_type: 'refresh' (default) or 'streampoll' or 'scroll'
+    max_refresh_interval:
+        Maximum refresh interval, in miliseconds (used only when
+        refresh='backoff'). Defaults to 10 x refresh_interval.
+    refresh_type: 'refresh' (default), 'streampoll' or 'scroll'
         What should happen when the channel is refreshed (used only when
         refresh='periodic'):
          * refresh (default) -> the entire channel is refreshed

@@ -1,4 +1,5 @@
 define ['cs!module', 'cs!pubsub'], (Module) ->
+    checkDOMInterval = 200
     class WidgetStarter extends Module
         ###
             Monitors the DOM for the appearance of new widgets.
@@ -37,42 +38,86 @@ define ['cs!module', 'cs!pubsub'], (Module) ->
         initialize: =>
 
             setInterval(@garbageCollectWidgets, @checkIntervalForWidgetGarbageCollection)
-            document.addEventListener("DOMNodeInserted", (e) =>
-                    $el = $(e.target)
-                    # If the injected element is a widget, initialize it
-                    list = []
-                    if $el.hasClass('uberwidget')
-                        list.push($el)
-                    # Find all its children widgets and turn the pseudo-list
-                    # returned by the jQuery API into a real list
-                    inserted_elements = $el.find(".uberwidget")
-                    for element in inserted_elements
-                        list.push(element)
 
-                    # Initialize all the widgets by calling setTimeout(0)
-                    return @initializeNewWidgets(list)
-            )
-            document.addEventListener("DOMNodeRemoved", (e) =>
-                    $el = $(e.target)
-                    # If the removed element is a widget, garbage collect it.
-                    # Be careful, some widgets are removed from the DOM
-                    # before they have the chance to be initialized. Thus,
-                    # they don't have a GUID yet, and nothing must be done.
-                    if $el.hasClass('uberwidget')
-                        @markForGarbageCollection($el)
-                    # Find all its children widgets and initialize them
-                    $el.find(".uberwidget").each( (idx, el) =>
-                        @markForGarbageCollection(el)
-                    )
-                false
-            )
+            MutationObserver = window.MutationObserver or window.WebKitMutationObserver or window.MozMutationObserver
+
+            if MutationObserver
+                observer = new MutationObserver (mutations) =>
+                    for mutation in mutations
+                        @checkInsertedNode $(node) for node in mutation.addedNodes
+                        @checkRemovedNode  $(node) for node in mutation.removedNodes
+                    false
+
+                observer.observe(document, { childList: true, subtree: true })
+            else if document.addEventListener?
+
+                document.addEventListener "DOMNodeInserted", (e) =>
+                        $el = $(e.target)
+                        @checkInsertedNode($el)
+
+                document.addEventListener "DOMNodeRemoved", (e) =>
+                        $el = $(e.target)
+                        @checkRemovedNode($el)
+            else # e.g IE7, IE8 -> use setInterval technique for checking the DOM at certain intervals
+                # Right now, it doesn't know when DOM elements are removed to garbage collect them
+                # Also, it doesn't use a setInterval, but rather a recursive Timeout after the inner
+                # execution has finished. Since the functions from checkDOM will be called very
+                # frequently, for performance issues the fat arrow is not used anymore
+                initializeWidget = @initializeWidget
+                checkDOM = ->
+                    $('.uberwidget').each (idx, el) ->
+                        $el = $(el)
+                        if $el.hasClass('uberinitialized')
+                            return
+
+                        setTimeout ->
+                                initializeWidget $el
+                            , 0
+
+                    setTimeout ->
+                            checkDOM()
+                        , checkDOMInterval
+
+                checkDOM()
+
+        checkInsertedNode: ($el) ->
+            ###
+                Checks to see the which type of element is the newly
+                iserted node. If it is an injected widget, then initialize
+                it
+            ###
+
+            list = []
+            if $el.hasClass('uberwidget')
+                list.push($el)
+            # Find all its children widgets and turn the pseudo-list
+            # returned by the jQuery API into a real list
+            $inserted_elements = $el.find(".uberwidget")
+            list.push(element) for element in $inserted_elements
+
+            # Initialize all the widgets by calling setTimeout(0)
+            return @initializeNewWidgets(list)
+
+        checkRemovedNode: ($el) ->
+            markForGarbageCollection = @markForGarbageCollection
+            # If the removed element is a widget, garbage collect it.
+            # Be careful, some widgets are removed from the DOM
+            # before they have the chance to be initialized. Thus,
+            # they don't have a GUID yet, and nothing must be done.
+            if $el.hasClass('uberwidget')
+                markForGarbageCollection($el)
+            # Find all its children widgets and garbage collect them
+            $el.find('.uberwidget').each (idx, el) ->
+                markForGarbageCollection(el)
+
+            false
 
         markForGarbageCollection: (el) =>
             ###
                 Marks a DOM element containing a widget (can be either
                 initialized or uninitialized) as ready for garbage collection.
 
-                This has two consequences: first, the widget is puit into a
+                This has two consequences: first, the widget is put into a
                 garbage collection queue which will eventually garbage collect
                 all their internal references and also unbind them from events.
                 But this is an expensive operation and we need an easy way out
@@ -90,17 +135,23 @@ define ['cs!module', 'cs!pubsub'], (Module) ->
 
         initializeNewWidgets: (list) =>
             ###
-                Recursive function for initializing the new widgets.
+                Function for initializing the new widgets.
 
                 The difference between this and a plain old for is that
                 tries hard to let the rendering threads take what's theirs
                 by calling setTimeout(0) for each step of the iteration.
+
+                Initialilly, this function was recursive. Because of the
+                maximum call stack error when reimplementing the system for
+                IE7, it has been refactored to be non-recursive and use a
+                setTimeout(0) instead
             ###
-            if (list.length == 0)
-                return false
-            widget = list.shift()
-            @initializeWidget($(widget))
-            setTimeout((=> @initializeNewWidgets(list)), 0)
+
+            while widget = list.shift()
+                do (widget) =>
+                    setTimeout =>
+                            @initializeWidget $(widget)
+                        , 0
 
         startWidget: (params) =>
             ###

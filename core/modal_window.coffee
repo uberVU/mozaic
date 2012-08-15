@@ -34,6 +34,7 @@ define ['cs!module', 'cs!loader'], (Module) ->
                 Set callbacks for DOM events we are interested in
             ###
             @modal.on('hide', @unloadWidget)
+            @modal.on('shown', @setDefaultFocus)
             @pipe.subscribe('/modal', @insertWidget)
             @pipe.subscribe('/closemodal', @close)
             
@@ -43,6 +44,8 @@ define ['cs!module', 'cs!loader'], (Module) ->
         show: (display = 'show') ->
             @modal.modal(display)
             
+        setDefaultFocus: =>
+            @modal.find(':tabbable:first').focus()
         validMessage: (message) ->
             ###
                 Every message received on the /modal channel should 

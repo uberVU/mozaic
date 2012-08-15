@@ -1,124 +1,11 @@
-define [], () ->
+define ['cs!utils/urls', 'cs!utils/time'], (Urls, Time) ->
     Utils =
-        now: () ->
-            return Math.round(new Date().getTime() / 1000)
+        title: {}
 
         guid: (name) ->
             return _.uniqueId(name + '-')
 
-        has_get_params: (url) ->
-            ###
-                Returns true if and only if url has GET params.
-
-                For example:
-                    stream/123/?k1=v1 has GET params
-                    stream/123?/k1=v1 doesn't
-            ###
-            last_slice = url.substring(url.lastIndexOf('/') + 1)
-            return last_slice.indexOf('?') != -1
-
-        current_url: (without_fragment = true) ->
-            ###
-                Gets the current URL without fragment (by default).
-            ###
-            if not without_fragment
-                return document.URL
-
-            first_hash = document.URL.indexOf('#')
-            if first_hash != -1
-                return document.URL.substring(0, first_hash)
-            else
-                return document.URL
-
-        render_url: (url, params, exclude = [], skip_get_append = false) ->
-            ###
-                Renders an URL given a template and a set of params.
-
-                url: url template
-                params: params used for GET params and to fill url placeholders
-                exclude: ignore some parameters
-
-                Most parameters from params will be appended as GET parameters
-                (it will check if there are already other parameters), and
-                some of them will be used to fill in for placeholders.
-                If a parameter has been used for a placeholder, it won't be
-                appended as a GET parameter anymore (its information has
-                already been included in the URL).
-
-                Example:
-                render_url('streams/{{id}}/facebook?k1=v1',
-                           {gender: 'male', id: 123, sentiment: 'positive'},
-                           ['sentiment'])
-                will return
-                'streams/123/?k1=v1&gender=male'
-            ###
-            final_url = url
-
-            # Do placeholder replacement and determine the remaining GET params
-            get_params = {}
-            for k, v of params
-                token = '{{' + k + '}}'
-                if url.indexOf(token) != -1
-                    final_url = final_url.replace(token, v)
-                else
-                    get_params[k] = v
-
-            # Exclude parameters
-            for excluded_param in exclude
-                if excluded_param of get_params
-                    delete get_params[excluded_param]
-
-            # If there are no params to add, return the URL now
-            if _.keys(get_params).length == 0 or skip_get_append
-                return final_url
-
-            # Add get params if it doesn't contain them already
-            if Utils.has_get_params(final_url)
-                final_url = final_url + '&'
-            else
-                final_url = final_url + '?'
-
-            # Append the final GET parameters
-            first = true
-            for k, v of get_params
-                if not first
-                    final_url = final_url + '&'
-                else
-                    first = false
-                final_url = final_url + k + '=' + v
-            final_url
-
-        model_url: (collection_url, id) ->
-            ###
-                Returns the URL for a given model, given the
-                URL of its collection and the id of the model.
-            ###
-            # Anything coming after ? (including ?). Ex: ?keyword_id= 25
-            get_params_slice = ''
-            # Strip the hashbang first
-            first_hash = collection_url.indexOf('#')
-            if first_hash != -1
-                collection_url = collection_url.substring(0, first_hash)
-
-            # Strip the GET params
-            last_slash = collection_url.lastIndexOf('/')
-            if last_slash != -1
-                # GET params ?keyword_id = 1
-                get_params_slice = collection_url.substring(last_slash + 1)
-                # Find out the position of the ? in the collection_url
-                get_start = get_params_slice.indexOf('?')
-                if get_start != -1
-                    get_pos = last_slash + get_start + 1
-                    collection_url = collection_url.substring(0, get_pos)
-
-            # Add a trailing slash if there isn't one already
-            if collection_url[collection_url.length - 1] != '/'
-                collection_url = collection_url + '/'
-
-            # Append the model id and be done with it
-            collection_url + id + '/' + get_params_slice
-
-        injectWidget: (el, widget_name, params, extra_classes = null, clean = null, el_type = null, modal = false, prepend = false) ->
+        injectWidget: (el, widget_name, params, extra_classes = null, clean = null, el_type = null, modal = false, prepend = false, before = false, after = false) ->
             ###
                 Inject a given widget under the DOM element el, given its name
                 and initial params. You can pass an additional modal argument
@@ -132,10 +19,15 @@ define [], () ->
                 clean: specifies if the new widget should replace whatever is in el or be appended to it
                 el_type: type of element to be rendered (e.g. div, ul, li)
                 prepend: use prepend instead of append
+                before: insert BEFORE element (as a sibling of the element)
+                after: insert AFTER element (as a sibling of the element)
             ###
             stringified_params = JSON.stringify(params)
             classes = if extra_classes then "uberwidget #{extra_classes}" else "uberwidget"
             type = if el_type then "#{el_type}" else "div"
+
+            # Escape stringified_params to avoid html rendering errors
+            stringified_params = _.escape(stringified_params)
 
             html = "<#{type}
                         class='#{classes}'
@@ -147,7 +39,11 @@ define [], () ->
                 if clean? and clean
                     el.html(html)
                 else
-                    if prepend
+                    if before
+                        el.before(html)
+                    else if after
+                        el.after(html)
+                    else if prepend
                         el.prepend(html)
                     else
                         el.append(html)
@@ -224,6 +120,20 @@ define [], () ->
             for k in ['continent', 'country', 'region', 'city']
                 if dict[k]
                     delete dict[k]
+
+        getMostSpecificLocation: (location) ->
+            ###
+                Return the most specific location.
+            ###
+            if $.isPlainObject(location)
+                value = location
+            else
+                value = JSON.parse(location)
+            return value.city if value.city
+            return value.region if value.region
+            return value.country if value.country
+            return value.continent if value.continent
+            return ""
 
         attachCallback: (object, method_names, callback) ->
             ###
@@ -304,21 +214,6 @@ define [], () ->
             # Publish through /notifications channel
             pipe.publish('/notifications', { type: type, message: message })
 
-        timeago: (elem, interval) ->
-            ###
-                Can receive any element which has a timestamp in
-                `data-timestamp` attribute and updates the element
-                text every `interval` seconds
-                Used for mentions list
-            ###
-            return setInterval( ->
-                    $(elem).each (idx, el) ->
-                        $el = $(el)
-                        published = $el.data('timestamp') * 1000
-                        $(el).text(moment.timeago(published))
-                interval*1000
-            )
-
         closeModal: ->
             ###
                 Close any opened modal window by publishing an empty message
@@ -371,19 +266,190 @@ define [], () ->
                         throw error
                     logger.error("Exception trying to instantiate " + Module.name + " with params " + arguments + ":" + error)
             return result
-            
+
+        renderScrollbar: ($el, to) =>
+            ###
+                Initialize or update tiny scrollbar for the given
+                element
+            ###
+            if $el.length == 0 or !$el.data('tsb')
+                $el.tinyscrollbar()
+            else
+                if to? and $.isNumeric(to)
+                    $el.tinyscrollbar_update(to)
+                else
+                    $el.tinyscrollbar_update('relative')
+
         mixin: (mixins..., classReference) ->
             ###
-                Mixin a class methods into another. Doesn't work with 
-                our wrapInstanceHelper. 
-                
-                TODO: It can work if we inspect a 
-                mixing property of a module in wrapInstanceHelper ... 
+                Mixin a class methods into another. Doesn't work with
+                our wrapInstanceHelper.
+
+                TODO: It can work if we inspect a
+                mixing property of a module in wrapInstanceHelper ...
             ###
             for mixin in mixins
                 for key, value of mixin::
                     classReference.key = value
             classReference
+
+        setTitle: (title_params) ->
+            ###
+                Dinamically modify page title name when navigating through site
+                by creating a dict with current page state, keyword_name or/and count
+            ###
+
+            # The method can be called with a null parameter when navigating to a
+            # new controller, so reset the `count` and `page` parameters, but not `keyword`
+            # because the page can have the same action menu and the stream_info widget which
+            # sets the keyword_name will not be rendered again.
+            if not title_params?
+                delete @title.count
+                delete @title.page
+            else
+                # Allow only some parameters to be modified
+                allowed_title_parameters = ['keyword', 'count', 'page']
+                title_params = _.pick(title_params, allowed_title_parameters...)
+
+                # Extend current title_params with the new title_params
+                _.extend @title, title_params
+
+            # A standard page title has the following form:
+            #       ({{count}}) {{keyword}} or
+            #       {{page}}
+            #   Count is set when streampoll gets data (if it is 0 is now shown)
+            #   Keyword is the keyword name when we are on a stream / tw / fb / signal page
+            #   and is set by the stream_info widget
+            #   Page is the page name for Tasks, Tags, Reports ..
+
+            title = window.user.whitelabel
+            title = 'uberVU' if title is 'ubervu'
+
+            if @title.page
+                title = @title.page
+                delete @title.keyword
+            else if @title.keyword
+                count = if @title.count? then "(#{@title.count})" else ''
+                title = [count, "#{@title.keyword}"].join(' ')
+
+            window.document.title = title
+
+        getSocialProfilePlatformsFromIds: (ids = [], parent = '.posting-account-list') ->
+            ###
+                Get social platform names from profile IDs
+            ###
+            platforms = []
+
+            # Iterate through all parent selector's children
+            $(parent).find('> li').each ->
+
+                # Ignore if ID of current item not selected
+                if ids.indexOf($(@).data('value')) == -1
+                    return
+
+                # Get platform of current item
+                platform = $(@).data('platform')
+
+                # Add platform to list if not already present
+                if platforms.indexOf(platform) == -1
+                    platforms.push platform
+
+            # Return platform names
+            platforms
+
+        getSocialPostContentLimit: (profiles = []) ->
+            ###
+                Calculate char limit for selected profiles
+            ###
+            limits = Constants.SOCIAL_PLATFORM_LIMITS
+            limit = false
+
+            for profile in profiles
+
+                # Ignore profile if limit is not defined
+                if not limits[profile]
+                    continue
+
+                # Set limit value directly, if not previosly defined
+                if not limit
+                    limit = limits[profile]
+
+                # Compare with previous value and settle on min value
+                limit = Math.min limit, limits[profile]
+
+            # Return found limit
+            limit
+
+        titleize: (name, opts = {}) =>
+            words = name.split ' '
+            keepLowerCase = opts.keepLowerCase || ['and', 'the', 'of']
+            titleWords = _.map words, (w) ->
+               if _.indexOf(keepLowerCase, w.toLowerCase()) != -1
+                   return w.toLowerCase()
+               else
+                   return _.str.titleize w
+            
+            return titleWords.join ' '
+
+        getSocialPostContentCharsLeft: (content, limit) =>
+            ###
+                Calculate remaining chars available for
+                specific platform limits
+            ###
+            # Return null count if no limit is passed
+            if typeof(limit) != 'number'
+                return null
+
+            # Trim right side
+            content = content.replace /\s+$/, ''
+
+            # Get original length
+            length = content.length
+            
+            # Identify and remove extra link length, if
+            # limit set to Twitter limit (140)
+            ###
+                We're matching a smaller than or equal Twitter
+                limit because we might receive a smaller limit
+                when a link is set. This shouldn't be a problem
+                as long as there isn't any social platform with
+                a smaller limit than Twitter. (not likely)
+            ###
+            if limit <= Constants.SOCIAL_PLATFORM_LIMITS.twitter
+                # Process found links
+                if matches = content.match(/https?:\/\/[a-z0-9-\.\/]+([a-z0-9\/])/g)
+                    for match in matches
+                        length -= match.length - Utils.getTwitterLinkLength(match)
+
+            # Return chars left
+            limit - length
+
+        getTwitterLinkLength: (link) ->
+            ###
+                Calculate the length of twitter links after
+                being processed by the t.co shortener
+
+                Read more at https://dev.twitter.com/docs/tco-link-wrapper/faq
+                
+                Warning: It is supposed to increase in mid-August 2012
+                Maybe in the future we make a help/configuration call
+                first, to make sure we have the right length, for now
+                we use Constants.TWITTER_LINK_LENGTH
+            ###
+            length = Constants.TWITTER_LINK_LENGTH
+
+            # Increase length by one for https protocol
+            if link.match(/^https/)
+                length += 1
+
+            # Return the smallest of the twitter length limit
+            # or the actual length of the link
+            Math.min(link.length, length) 
+
+    # Extend Utils with other utils functions (see utils/ dir) in order
+    # to keep the same Utils.method() interface.
+    _.extend(Utils, Urls)
+    _.extend(Utils, Time)
 
     window.Utils = Utils
     return Utils

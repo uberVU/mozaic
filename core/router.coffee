@@ -6,7 +6,7 @@ define ['cs!module'], (Module) ->
                 which is configured in App.urls.
             ###
             module = "cs!controller/" + controller_config.controller
-            page_layout = "text!" + App.general.PAGE_LAYOUT
+            page_layout = App.general.PAGE_LAYOUT
 
             # Get the last parameter from "params" and filter it according to
             # the allowed_get_params controller configuration.
@@ -21,7 +21,7 @@ define ['cs!module'], (Module) ->
             params.push(filtered_params)
 
             # Load controller layout
-            require([page_layout], (page_template) =>
+            loader.load_template( page_layout, (page_template) =>
                 loader.load_module('cs!application_controller', (app_controller) =>
                     app_controller.new_controller(controller_config, params)
                 , true, App.general.PAGE_LAYOUT)
@@ -41,7 +41,19 @@ define ['cs!module'], (Module) ->
                 @routes[path] = "delegateToController"
                 regexp = @_routeToRegExp(path)
                 @regexp_to_route[regexp] = path
+                data.url = path
             super({routes: @routes})
+
+        namedParam    = /:\w+/g
+        splatParam    = /\*\w+/g
+        escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g
+
+        _routeToRegExp : (route) ->
+            route = route.replace(escapeRegExp, "\\$&")
+                         .replace(namedParam, "([^\/?]*)")
+                         .replace(splatParam, "([^\?]*)")
+            route += '[/]?([\?]{1}.*)?'
+            return new RegExp('^' + route + '$')
 
         _extractParameters: (route, fragment) ->
             ###

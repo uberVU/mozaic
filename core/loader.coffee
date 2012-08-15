@@ -2,6 +2,10 @@
     Loader component which is concerned with modules / widgets updating.
 ###
 define [], () ->
+
+    if not Handlebars.templates
+        Handlebars.templates = {}
+
     loader =
         modules: {}
         widgets: {}
@@ -124,8 +128,7 @@ define [], () ->
             #       widget code and its template.
             template_name = params.template_name or Module.prototype.template_name
             if template_name
-                template_path = 'text!' + template_name
-                require([template_path], (tpl) ->
+                loader.load_template(template_name, (tpl) ->
                     # Don't instantiate widgets which should have already been
                     # garbage collected.
                     if loader.born_dead[id]
@@ -193,6 +196,33 @@ define [], () ->
 
         get_widgets: ->
             loader.widgets
+
+        load_template: (template_name, callback) ->
+            if template_name?
+                template_path = 'text!' + template_name
+            else
+                # No need to return the callback if the temple_name is invalid
+                return
+
+            if App.general.USE_PRECOMPILED_TEMPLATES
+                tpl_suffix = template_name.slice(-3)
+                if tpl_suffix == 'hjs'
+                    template_path = template_name.slice(0, -3) + 'js'
+                else
+                    logger.error("Trying to load an invalid template with name #{template_name}")
+                    return
+
+            require [template_path], (tpl) ->
+                # If the template is served in production and is precompiled,
+                # send the precompiled version
+                if App.general.USE_PRECOMPILED_TEMPLATES
+                    callback(Handlebars.templates[template_name])
+                else
+                # Cache the compiled version and send it to the callback
+                    if not Handlebars.templates[template_name]
+                        Handlebars.templates[template_name] = Handlebars.compile(tpl)
+
+                    callback(Handlebars.templates[template_name])
 
     window.loader = loader
     return loader

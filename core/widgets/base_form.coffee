@@ -19,7 +19,7 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
             'required_channels': 'data-params'
             # Whether we should destroy the form 
             # after the commit has been performed
-            'destroy_after_commit': 'data-params'
+            'destroy_after_commit': true
         
         events:
             "click .commit": "commit"
@@ -133,7 +133,7 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
             # loose any user input if we handle this case. 
             for event, i in params
                 if not (event.type in ['reset', 'change'])
-                    return
+                    return false
             aggregated_results = {}
             for event, i in params
                 # There are two types of relational channels we can subscribe 
