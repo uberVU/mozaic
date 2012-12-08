@@ -2,6 +2,10 @@
     Loader component which is concerned with modules / widgets updating.
 ###
 define [], () ->
+
+    if not Handlebars.templates
+        Handlebars.templates = {}
+
     loader =
         modules: {}
         widgets: {}
@@ -25,7 +29,6 @@ define [], () ->
                 if instantiate
                     if not (loader.modules[path]['instance'])
                         instance = Utils.createModuleInstance(Module, params...)
-                        Utils.wrapInstance(instance)
                         instance.initialize()
                         loader.modules[path]['instance'] = instance
                     else
@@ -61,7 +64,6 @@ define [], () ->
                     # already an instance, create it
                     if instantiate and not (loader.modules[path]['instance'])
                         instance = Utils.createModuleInstance(Module)
-                        Utils.wrapInstance(instance)
                         instance.initialize()
                         loader.modules[path]['instance'] = instance
                     loader.modules[path]['running'] = true
@@ -111,7 +113,7 @@ define [], () ->
             path = "cs!widget/" + name
             path = loader.normalize_path(path)
 
-            if not path of loader.modules
+            if not (path of loader.modules)
                 logger.error "Trying to instantiate a widget that hasn't been loaded: #{name}"
                 return
 
@@ -124,8 +126,7 @@ define [], () ->
             #       widget code and its template.
             template_name = params.template_name or Module.prototype.template_name
             if template_name
-                template_path = 'text!' + template_name
-                require([template_path], (tpl) ->
+                loader.load_template(template_name, (tpl) ->
                     # Don't instantiate widgets which should have already been
                     # garbage collected.
                     if loader.born_dead[id]
@@ -135,7 +136,6 @@ define [], () ->
                         delete loader.born_dead[id]
                         return
                     loader.widgets[id] = Utils.createModuleInstance(Module, params, tpl)
-                    Utils.wrapInstance(loader.widgets[id])
                 )
             else
                 # Don't instantiate widgets which should have already been
@@ -149,7 +149,6 @@ define [], () ->
                 # We don't need to fire initialize() here because the
                 # base method Widget.constructor() does.
                 loader.widgets[id] = Utils.createModuleInstance(Module, params)
-                Utils.wrapInstance(loader.widgets[id])
 
         load_widget: (name, id, params) ->
             ###
@@ -193,6 +192,33 @@ define [], () ->
 
         get_widgets: ->
             loader.widgets
+
+        load_template: (template_name, callback) ->
+            if template_name?
+                template_path = 'text!' + template_name
+            else
+                # No need to return the callback if the temple_name is invalid
+                return
+
+            if App.general.USE_PRECOMPILED_TEMPLATES
+                tpl_suffix = template_name.slice(-3)
+                if tpl_suffix == 'hjs'
+                    template_path = template_name.slice(0, -3) + 'js'
+                else
+                    logger.error("Trying to load an invalid template with name #{template_name}")
+                    return
+
+            require [template_path], (tpl) ->
+                # If the template is served in production and is precompiled,
+                # send the precompiled version
+                if App.general.USE_PRECOMPILED_TEMPLATES
+                    callback(Handlebars.templates[template_name])
+                else
+                # Cache the compiled version and send it to the callback
+                    if not Handlebars.templates[template_name]
+                        Handlebars.templates[template_name] = Handlebars.compile(tpl)
+
+                    callback(Handlebars.templates[template_name])
 
     window.loader = loader
     return loader

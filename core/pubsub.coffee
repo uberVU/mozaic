@@ -1,12 +1,15 @@
-# PubSub module
-# inspired by Backbone Events + new functionality
-
-# A module that can be mixed in to *any object* in order to provide it with
-# custom events. You may bind with `on` or remove with `off` callback functions
-# to an event; trigger`-ing an event fires all callbacks in succession.
-
 define [], () ->
     class PubSub
+        ###
+            Communication backbone between the Mozaic components.
+
+            Basically, the main Mozaic components such as datasource,
+            widgets and controllers are completely decoupled and communicate
+            through a pub-sub model.
+
+            This contains a breakage of a component to a part of the system.
+        ###
+
         # Regular expression used to split event strings
         eventSplitter = /\s+/
         slice = Array.prototype.slice
@@ -21,9 +24,13 @@ define [], () ->
         destroy: ->
             logger.info "Destroying PubSub"
 
-        # Bind one or more space separated events, `events`, to a `callback`
-        # function. Passing `"all"` will bind the callback to all events fired.
         subscribe: (events, callback, context) ->
+            ###
+                Bind one or more space separated events, `events`, to a
+                `callback` function. Passing `"all"` will bind the callback
+                to all events fired.
+            ###
+
             # Subscribing to an event without providing a callback makes no sense
             return if not callback
 
@@ -34,11 +41,15 @@ define [], () ->
                 list = @_callbacks[event]
                 list.push({context: context, callback: callback})
 
-        # Publish one or many events, firing all bound callbacks. Callbacks are
-        # passed the same arguments as 'publish' is, apart from the event name
-        # (unless you're listening on 'all', which will cause your callback to
-        # receive the true name of the event as the first argument).
         publish: (events, data, register=false) ->
+            ###
+                Publish one or many events, firing all bound callbacks.
+                Callbacks are passed the same arguments as 'publish' is, apart
+                from the event name (unless you're listening on 'all', which
+                will cause your callback to receive the true name of the event
+                as the first argument).
+            ###
+
             rest = slice.call(arguments, 1)
             events = events.split(eventSplitter)
 
@@ -52,10 +63,13 @@ define [], () ->
                 for node in calls['all']
                     node.callback.apply(node.context or @, rest)
 
-        # Remove one or many callbacks. If 'context' is null, removes all callbacks
-        # with that function. If 'callback' is null, removes all callbacks for the
-        # event. If 'events' is null, removes all bound callbacks for all events.
         unsubscribe: (events, callback, context) ->
+            ###
+                Remove one or many callbacks.
+
+                If 'context' is null, removes all callbacks with that function.
+                If 'events' is null, removes all bound callbacks for all events.
+            ###
             logger.info "--unsubscribing from #{events}"
 
             # No events, or removing *all* events.

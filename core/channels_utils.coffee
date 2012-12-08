@@ -73,4 +73,20 @@ define [], () ->
 
             return method_name
 
+        contains_channel: (channel_list, channel) ->
+            ###
+                Check if a channel is present in the given channel_list. E.g
+
+                channels_utils.contains_channel(
+                   ["/social_posts/{{id}}", "/social_profiles", "/users/{{account_id}}"]
+                   '/users'
+                )
+                -> true
+            ###
+            channel_name = channels_utils.splitChannel(channel)[0]
+            for ch in channel_list
+                ch_name = channels_utils.splitChannel(ch)[0]
+                return true if channel_name == ch_name
+            false
+
     return channels_utils

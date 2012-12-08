@@ -1,11 +1,24 @@
-define ['cs!widget'], (Widget) -> 
+define ['cs!widget'], (Widget) ->
     class ScrollableWidget extends Widget
+        ###
+            Widget which supports scrolling a given data channel.
+
+            It is meant to display a list that supports scroll-down
+            on a list of items with fetch from the server
+        ###
         scroll_enabled: true
 
         constructor: (params) ->
             super(params)
             if @scrollable_channels
                 @wireScrollEvent()
+
+        changeState: (state, params...) ->
+            super(state, params...)
+            if state isnt 'empty'
+                @enableScroll() if not @disable_scroll
+            else if @scroll_enabled
+                @disableScroll()
 
         wireScrollEvent: ->
             ###
@@ -19,20 +32,30 @@ define ['cs!widget'], (Widget) ->
             dif = $(window).scrollTop() - $(document).height() + $(window).height()
             if Math.abs(dif) < 5
                 @scrollDown()
+            return false
 
         scrollDown: =>
-            # Don't do anything if scroll is not enabled
+            ###
+                There is no need to disable scroll in this method because
+                now it is wrapped by _.debounce.
+            ###
             if not @scroll_enabled
                 return
 
-            $(".loading").show()
-            translated = (@channel_mapping[channel] for channel in @scrollable_channels)
-            pipe = loader.get_module('pubsub')
-            pipe.publish('/scroll', translated)
+            # Don't let this user scroll too often. Useful for
+            # browsers like FF/Linux which are very sensible when it comes
+            # to triggering the scroll event.
+            if @last_scroll? and new Date().getTime() - @last_scroll <= 1000
+                return
+
+            @last_scroll = new Date().getTime()
+            for channel in @scrollable_channels
+                @scrollChannel(channel)
 
         disableScroll: =>
             ###
-                Temporarily disable scroll for this widget.
+                Temporarily disable scroll for this widget so that we don't
+                perform scroll too often.
             ###
             @scroll_enabled = false
 

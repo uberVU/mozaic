@@ -1,12 +1,20 @@
-define ['cs!module'], (Module) ->
+define ['cs!mozaic_module'], (Module) ->
     class Router extends Backbone.Router
         delegateToController: (controller_config, params...) =>
             ###
                 Delegates the action of the controller to a specialized class
                 which is configured in App.urls.
             ###
+
+            # In case users don't have read access to a particular section of
+            # the website, give a 404. This is to cover the cases when a user
+            # has a link to some section which they shouldn't see
+            perm = controller_config.permissions
+            if perm? and not Utils.has_permission(perm, 'write')
+                controller_config = @urls['*not_found']
+
             module = "cs!controller/" + controller_config.controller
-            page_layout = "text!" + App.general.PAGE_LAYOUT
+            page_layout = App.general.PAGE_LAYOUT
 
             # Get the last parameter from "params" and filter it according to
             # the allowed_get_params controller configuration.
@@ -21,9 +29,11 @@ define ['cs!module'], (Module) ->
             params.push(filtered_params)
 
             # Load controller layout
-            require([page_layout], (page_template) =>
+            loader.load_template( page_layout, (page_template) =>
                 loader.load_module('cs!application_controller', (app_controller) =>
                     app_controller.new_controller(controller_config, params)
+                    # Set the current controller in App.currentController
+                    App.currentController = controller_config.controller
                 , true, App.general.PAGE_LAYOUT)
             )
 
@@ -33,6 +43,7 @@ define ['cs!module'], (Module) ->
                 parses it and creates a routes array that will get passed
                 to the Backbone Router constructor.
             ###
+            super()
             @urls = urls
             @routes = {}
             @regexp_to_route = {}
@@ -41,7 +52,19 @@ define ['cs!module'], (Module) ->
                 @routes[path] = "delegateToController"
                 regexp = @_routeToRegExp(path)
                 @regexp_to_route[regexp] = path
+                data.url = path
             super({routes: @routes})
+
+        namedParam    = /:\w+/g
+        splatParam    = /\*\w+/g
+        escapeRegExp  = /[-[\]{}()+?.,\\^$|#\s]/g
+
+        _routeToRegExp : (route) ->
+            route = route.replace(escapeRegExp, "\\$&")
+                         .replace(namedParam, "([^\/?]*)")
+                         .replace(splatParam, "([^\?]*)")
+            route += '[/]?([\?]{1}.*)?'
+            return new RegExp('^' + route + '$')
 
         _extractParameters: (route, fragment) ->
             ###

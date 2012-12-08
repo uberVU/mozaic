@@ -1,5 +1,7 @@
 define [], () ->
     class RawData
+        collection_type: 'api'
+
         constructor: ->
             _.extend(@, Backbone.Events)
             @data = {}
@@ -31,25 +33,18 @@ define [], () ->
         toJSON: =>
             _.clone(@data)
 
-        get: (k) =>
+        get: (key) =>
             ###
-                Get a value of a sub-set of the data.
-
-                k: a "path" with items separated by "/"
                 Returns: the data at the given path or null
 
                 For example, if we want to get the available languages from an
                 analytics call, we can do data.get('available/languages'). This
                 is somewhat similar to XPath.
             ###
-            tokens = k.split('/')
-            elem = @getData()
-            for token in tokens
-                if token of elem
-                    elem = elem[token]
-                else
-                    return null
-            elem
+            return Utils.getNestedAttr(@getData(), key)
+
+        has: (key) =>
+            return key in _.keys(@getData())
 
         set: (k, v = null, options = {}) =>
             # Check it's called with the dict syntax
@@ -62,23 +57,38 @@ define [], () ->
             @_internal_set(dict, options)
 
         _internal_set: (dict, options) =>
-            if options.reset
+            if options.reset or options.new_data
                 @data = {}
 
             # Alter the internal data
-            for k1, v1 of dict
-                @data[k1] = v1
+            for k, v of dict
+                @data[k] = v
+
+            # Before triggering reset/change events
+            # we need to handle datasource logic when fetching channel data
+            # like setting last_fetch timestamp
+            # Fetched event hook was also defined in backbone collection
+            options.fetched() if options.fetched?
 
             # Trigger the change event - only once
             if options.silent != true
-                @trigger('change', @)
 
-        unset: (k, options={}) =>
+                # If this was a complete reset of the RawData,
+                # trigger the reset event
+                if options.reset
+                    @trigger('reset', @)
+                # Otherwise, trigger the change event.
+                else
+                    @trigger('change', @)
+
+        unset: (dict, options={}) =>
             ###
                 unset an attribute
             ###
-            if k of @data
-                delete @data[k]
+            for k, v of dict
+                if k of @data
+                    delete @data[k]
+
             if (options.silent != true)
                 @trigger('change', @)
             @
@@ -114,21 +124,30 @@ define [], () ->
                 # we're getting a raw text response
                 if not $.isPlainObject(data)
                     data = {result: data}
-                @set(data)
+
+                @set(data, null, {new_data: true, fetched: options.fetched})
                 # Trigger a sync event (similar to Backbone's sync event)
-                @trigger('sync', @, data)
+                @trigger('sync', @)
                 # Also call the success callback.
                 options.success(@, response_status) if options.success
+                # Trigger a no_data event when the response is empty
+                if _.isEmpty(data)
+                    @trigger('no_data', @)
             # Trigger an invalidate event before performing the
             # actual request
-            @trigger('invalidate', @, @)
+            @trigger('invalidate', @)
             # Make the actual AJAX request
-            $.ajax(
-                url: @url,
+            call_params =
+                url: @url
                 dataType: 'json'
                 data: params
                 success: success_callback
                 type: options.type || 'GET'
-            )
+
+            # If we are passed contentType, pass it through
+            if options.contentType
+                call_params.contentType = options.contentType
+
+            $.ajax(call_params)
 
     return RawData
