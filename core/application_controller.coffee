@@ -1,9 +1,8 @@
-# Layout-based controller
-
 define ['cs!layout', 'cs!mozaic_module'], (Layout, Module) ->
     injectControllerInterval = null
 
     class ApplicationController extends Module
+        # Layout-based controller
 
         constructor: (page_template) ->
             super()

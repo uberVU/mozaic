@@ -121,7 +121,7 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
 
         injectWidget: (el, widget_name, params, extra_classes = null, clean = null, el_type = null, modal = false, prepend = false, before = false, after = false) ->
             ###
-                !!! DEPRECATED !!!
+                @deprecated
 
                 Utils.inject should be used in favor of this one,
                 but it cannot yet be removed in order to provide backwards
