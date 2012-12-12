@@ -108,10 +108,14 @@ define [], () ->
                 for key, field of @form.fields
                     continue if key is @key
                     editor = field.editor
-                    # There no use in setting an editor's value to the one it
-                    # already has
-                    if @form.model.get(key) isnt editor.getValue()
-                        editor.setValue(@form.model.get(key))
+                    modelValue = @form.model.get(key)
+                    # Since the Underscore check is strict we need to make sure
+                    # null and undefined values are loosely compared, so the
+                    # modalValue need to be null if missing. This avoids a lot
+                    # of pointless assignments and hook triggerings
+                    modelValue = null unless modelValue?
+                    unless _.isEqual(modelValue, editor.getValue())
+                        editor.setValue(modelValue)
 
             # Check for form hooks that listen to model changes and trigger
             # them if defined
