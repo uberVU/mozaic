@@ -23,5 +23,5 @@
 })();
 
 require(['cs'], function() {
-    require([App.general.ENTRY_POINT]);
+	require([App.general.ENTRY_POINT]);
 });

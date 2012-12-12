@@ -96,3 +96,24 @@ define [], () ->
         setValue: (value) ->
             @value = value
             @widget?.setValue(@value)
+
+            # Keep form model up to date with editor values
+            if @schema.sync_form_model and value isnt @form.model.get(@key)
+                @form.model.set(@key, @getValue(), silent: true)
+                # After we update the editor's corresponding model value, go
+                # through all the other from editors (but this one), and update
+                # their value with the one in the model. This is useful because
+                # changing a model attribute might change other ones as well,
+                # thus having more logic inside the models.
+                for key, field of @form.fields
+                    continue if key is @key
+                    editor = field.editor
+                    # There no use in setting an editor's value to the one it
+                    # already has
+                    if @form.model.get(key) isnt editor.getValue()
+                        editor.setValue(@form.model.get(key))
+
+            # Check for form hooks that listen to model changes and trigger
+            # them if defined
+            if _.isFunction(@form.formWidget?.modelChanged)
+                @form.formWidget.modelChanged(@key, value)

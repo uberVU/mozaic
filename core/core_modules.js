@@ -29,32 +29,32 @@ App.main_modules = {
     'utils/dom': 'core/utils/dom',
     'utils/images': 'core/utils/images',
     'utils/misc': 'core/utils/misc',
-    'fixtures': 'core/fixtures-loader',
     'loading_animation': 'core/loading_animation',
     'modal_window': 'core/modal_window',
     'application_controller': 'core/application_controller',
     'context_processors': 'core/context_processors',
     'flags_collection': 'core/flags_collection',
+    'mocks': 'core/mocks',
+    'api_mock': 'core/api_mock',
 
     // Core collections
     'collection/raw_data': 'core/raw_data',
 
     // Core widgets
+    'widget/autocomplete': 'core/base_widgets/autocomplete',
     'widget/base_form': 'core/base_widgets/base_form',
     'widget/delete_form': 'core/base_widgets/delete_form',
-    'widget/update_form': 'core/base_widgets/update_form',
-    'widget/widget_editor': 'core/base_widgets/widget_editor',
     'widget/item_count': 'core/base_widgets/item_count',
-    'widget/user_item_count': 'core/base_widgets/user_item_count',
-    'widget/order_by': 'core/base_widgets/order_by',
-    'widget/url': 'core/base_widgets/url',
-    'widget/mediator_widget': 'core/base_widgets/mediator_widget',
-    'widget/translate_text': 'core/base_widgets/translate_text',
-    'widget/wizard': 'core/base_widgets/wizard',
     'widget/list': 'core/base_widgets/list',
+    'widget/mediator_widget': 'core/base_widgets/mediator_widget',
+    'widget/nested_attributes_form': 'core/base_widgets/nested_attributes_form',
     'widget/notifications': 'core/base_widgets/notifications',
     'widget/notification_bar': 'core/base_widgets/notification_bar',
-    'widget/autocomplete': 'core/base_widgets/autocomplete',
+    'widget/order_by': 'core/base_widgets/order_by',
+    'widget/update_form': 'core/base_widgets/update_form',
+    'widget/url': 'core/base_widgets/url',
+    'widget/user_item_count': 'core/base_widgets/user_item_count',
+    'widget/widget_editor': 'core/base_widgets/widget_editor'
 };
 
 // This is actually how we check if this is being ran

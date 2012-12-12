@@ -65,4 +65,11 @@ define [], () ->
                 return true
             )
 
+        multi_get: (args...) =>
+            ###
+                Calls get() with each parameter given as argument and
+                aggregates the results.
+            ###
+            return (@get(arg) for arg in args)
+
     return BaseCollection

@@ -125,6 +125,11 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!mozaic_backbone_form'], 
             # template fields (instead of letting BBF do it's magic)
             @form = new MozaicBackboneForm ({ model: clone, schema: clone.getSchema(@getFormSchemaName()), holder: @view.el })
 
+            # Make this form available inside editors and anywhere else where
+            # the Backbone form would pass its reference, by attaching a
+            # reference to this form widget on the Backbone form itself
+            @form.formWidget = this
+
         renderForm: =>
             ###
                 Renders a Backbone Form bound to this widget's model
@@ -143,5 +148,10 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!mozaic_backbone_form'], 
             # ex: use to mark as selected an <option> in a <selected> form field
 
         afterFormCommit: (model) =>
+
+        destroy: =>
+            super()
+            # Remove cross-reference between Backbone form and form widget
+            delete @form.formWidget if @form
 
     return UpdateForm

@@ -11,7 +11,13 @@ define [], () ->
                 Returns today as Date object representing beginning of day
             ###
             now = new Date()
-            return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+            return Utils.day(now)
+
+        day: (date) ->
+            ###
+                Returns Date object representing beginning of day
+            ###
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
         timeago: (elem, interval, callback) ->
             ###

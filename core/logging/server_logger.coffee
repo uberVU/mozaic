@@ -17,7 +17,7 @@ define ['cs!interceptor', 'cs!logger_store'], (Interceptor, LoggerStore) ->
 
         # Making bogus AJAX requests to this endpoint in order to force
         # flushing of client-side logs on periods of low activity.
-        FLUSH_ENDPOINT : App.general.FRONTEND_URL + '/api/dump_logs'
+        FLUSH_ENDPOINT : App.general.FRONTAPI_URL + '/api/dump_logs'
 
         # If your application doesn't perform any HTTP requests in this interval,
         # a manual log flushing routine will be triggered.
@@ -83,12 +83,12 @@ define ['cs!interceptor', 'cs!logger_store'], (Interceptor, LoggerStore) ->
             logger._log "warn", WARN, arguments
 
         error: (error) ->
-            ### 
+            ###
                 Log a message with error level.
                 @param {String|Error} message - Optional error or message string
             ###
             # Disambiguate arguments.
-            # If first argument is string, wrap it inside an error. 
+            # If first argument is string, wrap it inside an error.
             # However using a string is not encouraged.
             # Always use Errors because they capture stacktraces which are extremely usefull when debugging.
             if _.isString error then error = new Error error
