@@ -76,7 +76,9 @@ define ['cs!channels_utils'], (channels_utils) ->
                     @data[name].setDefaultValue(conf.default_value)
                 # If the populate_on_init flag is set for this channel, then
                 # the parameters sent when creating the channel serve as initial values.
-                if conf.populate_on_init
+                if conf.populate_on_init or (params.populate_on_init? and params.populate_on_init)
+                    if params.populate_on_init?
+                        delete params['populate_on_init']
                     @data[name].set(params)
                 @_finishChannelInitialization(name)
 
