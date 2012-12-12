@@ -410,7 +410,7 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
             ###
             type = options.type or 'div'
             id = options.id
-            classes = 'uberwidget'
+            classes = 'mozaic-widget'
             classes = "#{classes} #{options.classes}" if options.classes
             data = options.data or {}
             data.widget = options.name
