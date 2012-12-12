@@ -33,6 +33,37 @@ define [], () ->
 
             return false
 
+        set: (key, value, options) ->
+            ###
+                The global Backbone Model setter is extended in order to
+                provide an internal system for custom individual setter
+                listeners. Contrary to listening to the change event, these
+                handlers are called even when an attribute is silently set.
+            ###
+            super(arguments...)
+
+            # Backbone Model supports both single and mass-assignments, the
+            # call can be key-value based, for one attribute only, or receive
+            # an object, whose keys and values are set individually
+            attrs = {}
+            if _.isString(key)
+                attrs[key] = value
+            else if _.isObject(key)
+                attrs = key
+
+            unless _.isEmpty(attrs)
+                for k, v of attrs
+                    method = "set_#{k}"
+                    if _.isFunction(this[method])
+                        # Send all attributes and options to each listener
+                        # along with the value because they might make a
+                        # difference to some
+                        this[method](v, attrs, options)
+
+            # The current object needs to be returned after set according to
+            # the Backbone Model interface
+            return this
+
         url: ->
             ###
                 Returns the url of the model or the url of the collection

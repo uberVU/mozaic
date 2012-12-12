@@ -6,8 +6,5 @@ define [], () ->
         # Custom error message thrown when a 401 Unauthorized message is received from the server.
         UNAUTHORIZED_EXCEPTION: '__UNAUTHORIZED__'
 
-        # Special class to set on a widget container to make the controller inject it when it enters the viewport.
-        DELAY_WIDGET: 'uberdelay'
-
     window.Constants = Constants
     return Constants
