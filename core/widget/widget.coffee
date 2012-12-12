@@ -19,7 +19,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
                full content), while when we navigate from page to page it's
                acceptable to see smaller loading animations.
         ###
-        rendered_signal_sent: true
+        rendered_signal_sent: false
 
         ###
             Initial state of the widget. It is toggled by default when
