@@ -71,13 +71,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             # This is because announceNewWidget might cause the widgets' render
             # method to be called if data is already available in the datasource
             # for the given keys.
-            # Setting a view at start will only be done if a dom element
-            # is sent along with the contructor params
-            if params.el
-                @setView(new Backbone.View(el: params.el))
-                # Propagate "urgent for GC" flag to view class
-                if @URGENT_FOR_GC
-                    @view.$el.addClass('urgent_for_gc')
+            @_initializeBackboneView()
 
             # Precompile in Handlebars widget's template must come before announceNewWidget
             if @template
@@ -104,18 +98,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             # The initial state can be received as an argument through
             # _params_defaults_. If this is the case, overwrite the
             # @initial_state instance variable with that one.
-            if @params.initial_state?
-                @initial_state = @params.initial_state
-            # Only trigger initial state if one is specified
-            if @initial_state?
-                # Setup state management workflow only if the @loading_channels is a
-                # populated Array, otherwise the state management defaults to disabled.
-                if _.isArray(@loading_channels) and not _.isEmpty(@loading_channels)
-                    # Create aggregated event handlers based on the loading channels,
-                    # that change the state of the widget based on their type and order
-                    @setupLoadingChannels()
-                # Trigger initial data state
-                @changeState(@initial_state)
+            @_triggerInitialState()
 
             # Make sure that the widgets' event handlers receive nice dicts
             # with lots of info about the event that took place on the collection.
@@ -152,6 +135,37 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             if not @template_name
                 pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
                 @rendered_signal_sent = true
+
+        _initializeBackboneView: ->
+            ###
+                Initialize the widget associated Backbone.View.
+            ###
+            # Setting a view at start will only be done if a dom element
+            # is sent along with the contructor params
+            #
+            # This is always done by the widget starter.
+            if @params.el
+                @setView(new Backbone.View(el: @params.el))
+                # Propagate "urgent for GC" flag to view class
+                if @URGENT_FOR_GC
+                    @view.$el.addClass('urgent_for_gc')
+
+        _triggerInitialState: ->
+            ###
+                Triggers the initial state of the widget, if there is one.
+            ###
+            if @params.initial_state?
+                @initial_state = @params.initial_state
+            # Only trigger initial state if one is specified
+            if @initial_state?
+                # Setup state management workflow only if the @loading_channels is a
+                # populated Array, otherwise the state management defaults to disabled.
+                if _.isArray(@loading_channels) and not _.isEmpty(@loading_channels)
+                    # Create aggregated event handlers based on the loading channels,
+                    # that change the state of the widget based on their type and order
+                    @setupLoadingChannels()
+                # Trigger initial data state
+                @changeState(@initial_state)
 
         initialize: ->
 
