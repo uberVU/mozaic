@@ -3,7 +3,10 @@ uberVU, the leader of online social media monitoring, makes its own Coffee :)
 This is our very own, home-brewed SPA framework. More details:
 https://github.com/uberVU/mozaic/raw/master/mozaic.pdf
 
-# Release notes for v 0.2:
+# Release notes for v0.3:
+* released our latest Mozaic core internal version. Starting with this version, we will be eating our own dogfood and using Mozaic core from this repo. More details to follow.
+
+# Release notes for v0.2:
 * improved widget starter which now uses DOM Mutation events in order to detect when new widgets are added / removed
 * forms support (read the comments!)
 * datasource now supports "streampoll", a type of smart poll for a data channel which represents a stream; use-cases are twitter-like feeds where new items appear all the time
