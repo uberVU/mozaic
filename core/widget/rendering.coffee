@@ -30,7 +30,7 @@ define ['cs!layout'], (Layout) ->
             # Translate and delegate dom events to view
             view.delegateEvents(@_getTranslatedDomEvents(@events))
 
-        renderLayout: (layout_params = {}, stringify = true) ->
+        renderLayout: (layout_params = {}, stringify = true, silence = false) ->
             ###
                 Execute preRender specific widget method before the
                 widget is rendered.
@@ -49,10 +49,10 @@ define ['cs!layout'], (Layout) ->
             # it will crash.
             @_parseDomElements()
 
-            if @never_rendered
-                @never_rendered = false
+            if (not @rendered_signal_sent) and (not silence)
                 pipe = loader.get_module('pubsub')
                 pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
+                @rendered_signal_sent = true
 
             ###
                 Execute postRender widget method after the widget

@@ -1,6 +1,25 @@
 define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widget/backbone_events', 'cs!core/widget/channels', 'cs!core/widget/params', 'cs!core/widget/rendering', 'cs!core/widget/states'], (Module, WidgetAggregatedChannelsMixin, WidgetBackboneEventsMixin, WidgetChannelsMixin, WidgetParamsMixin, WidgetRenderingMixin, WidgetStatesMixin) ->
     class Widget extends Module
-        never_rendered: true
+
+        ###
+            /new_widget_rendered can be sent only once per widget instance.
+            It is sent in one of two cases:
+
+            1) if the widget has no template_name, it most probably means
+               that it's a proxy widget, so it will send this signal on
+               initialize. loading_animation will then keep waiting after
+               its children. If it has no children, it must be an utility
+               widget, so either way it doesn't make sens to wait for it
+               to render.
+
+            2) if the widget has a template_name, it will send a signal
+               on the first un-silenced renderLayout. Most (99%) of renderLayout
+               calls are un-silenced, but sometimes we want to make sure when
+               the page finishes loading, we see a certain content (aka the
+               full content), while when we navigate from page to page it's
+               acceptable to see smaller loading animations.
+        ###
+        rendered_signal_sent: true
 
         ###
             Initial state of the widget. It is toggled by default when
@@ -52,13 +71,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             # This is because announceNewWidget might cause the widgets' render
             # method to be called if data is already available in the datasource
             # for the given keys.
-            # Setting a view at start will only be done if a dom element
-            # is sent along with the contructor params
-            if params.el
-                @setView(new Backbone.View(el: params.el))
-                # Propagate "urgent for GC" flag to view class
-                if @URGENT_FOR_GC
-                    @view.$el.addClass('urgent_for_gc')
+            @_initializeBackboneView()
 
             # Precompile in Handlebars widget's template must come before announceNewWidget
             if @template
@@ -85,18 +98,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             # The initial state can be received as an argument through
             # _params_defaults_. If this is the case, overwrite the
             # @initial_state instance variable with that one.
-            if @params.initial_state?
-                @initial_state = @params.initial_state
-            # Only trigger initial state if one is specified
-            if @initial_state?
-                # Setup state management workflow only if the @loading_channels is a
-                # populated Array, otherwise the state management defaults to disabled.
-                if _.isArray(@loading_channels) and not _.isEmpty(@loading_channels)
-                    # Create aggregated event handlers based on the loading channels,
-                    # that change the state of the widget based on their type and order
-                    @setupLoadingChannels()
-                # Trigger initial data state
-                @changeState(@initial_state)
+            @_triggerInitialState()
 
             # Make sure that the widgets' event handlers receive nice dicts
             # with lots of info about the event that took place on the collection.
@@ -132,6 +134,38 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             # So it's a sane choice to announce immediately that it has rendered.
             if not @template_name
                 pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
+                @rendered_signal_sent = true
+
+        _initializeBackboneView: ->
+            ###
+                Initialize the widget associated Backbone.View.
+            ###
+            # Setting a view at start will only be done if a dom element
+            # is sent along with the contructor params
+            #
+            # This is always done by the widget starter.
+            if @params.el
+                @setView(new Backbone.View(el: @params.el))
+                # Propagate "urgent for GC" flag to view class
+                if @URGENT_FOR_GC
+                    @view.$el.addClass('urgent_for_gc')
+
+        _triggerInitialState: ->
+            ###
+                Triggers the initial state of the widget, if there is one.
+            ###
+            if @params.initial_state?
+                @initial_state = @params.initial_state
+            # Only trigger initial state if one is specified
+            if @initial_state?
+                # Setup state management workflow only if the @loading_channels is a
+                # populated Array, otherwise the state management defaults to disabled.
+                if _.isArray(@loading_channels) and not _.isEmpty(@loading_channels)
+                    # Create aggregated event handlers based on the loading channels,
+                    # that change the state of the widget based on their type and order
+                    @setupLoadingChannels()
+                # Trigger initial data state
+                @changeState(@initial_state)
 
         initialize: ->
 

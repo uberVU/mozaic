@@ -86,10 +86,8 @@ function includeStaticFilesInBundles_Development() {
     for (var i = 0; i < App.static_ie7_libs.length; i++) {
         includeJsFileIE(getStaticUrl() + App.static_ie7_libs[i], 7);
     }
-
     if (App.general.USE_MOCKS) {
         includeJsFile(getStaticUrl() + 'tests/libs/jquery.mockjax.js');
-        includeJsFile(getStaticUrl() + 'mocks.js');
     }
 }
 
@@ -160,8 +158,8 @@ function overrideGeneralConfigWithUserConfig() {
  * Replace nested config variables. Example:
  *
  *     App.general = {
- *         FRONTEND_URL: 'http://127.0.0.1:8000',
- *         LOGIN_PAGE: '{{FRONTEND_URL}}/front/login',
+ *         FRONTAPI_URL: 'http://127.0.0.1:8000',
+ *         LOGIN_PAGE: '{{FRONTAPI_URL}}/front/login',
  *         ...
  */
 function replaceReferencesFromConfigVariables() {
@@ -170,7 +168,7 @@ function replaceReferencesFromConfigVariables() {
         if (typeof(App.general[prop]) != 'string') {
             continue;
         }
-        App.general[prop] = App.general[prop].replace(/{{(.+?)}}/, function(match, name) {
+        App.general[prop] = App.general[prop].replace(/{{(.+?)}}/g, function(match, name) {
             if (typeof(App.general[name]) != 'undefined') {
                 return App.general[name];
             } else {
