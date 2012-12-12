@@ -91,13 +91,16 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!mozaic_backbone_form'], 
             if not errors?
                 # Update the model with the form's model attributes
                 # but don't trigger any events
-                @model.set(@form.model.attributes, { silent: true })
+                @model.set(@getFormModelAttributes(), { silent: true })
                 # Try to create/update the model on the server
                 @syncModel('update')
             else
                 # Let the user correct the validation errors by
                 # enabling the form
                 @enableForm()
+
+        getFormModelAttributes: ->
+            return @form.model.attributes
 
         getFormSchemaName: ->
             ###
