@@ -31,7 +31,8 @@ define ['cs!channels_utils'], (channels_utils) ->
                     eternal: eternal
                     collection_class: collection_class
                     model_class: @data[name].model
-                if conf.populate_on_init and params._initial_data_
+                populate_on_init = (conf.populate_on_init or (params.populate_on_init? and params.populate_on_init))
+                if populate_on_init and params._initial_data_
                     # Avoid creating empty models
                     if not _.isEmpty(params._initial_data_)
                         @data[name].add(params._initial_data_)
