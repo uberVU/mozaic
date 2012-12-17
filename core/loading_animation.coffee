@@ -122,6 +122,7 @@ define ['cs!mozaic_module'], (Module) ->
             ###
             $('#loading-animation').hide()
             clearInterval(@intervalHandle)
+            @pipe.publish('/loading_animation_finished')
 
         getNastyWidgets: =>
             ###
