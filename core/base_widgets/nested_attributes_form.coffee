@@ -13,13 +13,11 @@ define ['cs!widget/update_form'], (UpdateForm) ->
             model.clear(silent: true)
             model.set(flatAttributes, silent: true)
 
-        afterFormCommit: (model) =>
-            super(model)
+        getFormModelAttributes: ->
             # Nest previously flattened attributes into their original form
-            # before sending them back to the server
-            nestedAttributes = @nestAttributes(model.toJSON())
-            model.clear(silent: true)
-            model.set(nestedAttributes, silent: true)
+            # before sending them back to the server (but without affecting
+            # the actual model instance)
+            return @nestAttributes(super())
 
         flattenAttributes: (data, attributes, keyPrefix = '') =>
             ###
