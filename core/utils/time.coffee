@@ -82,4 +82,10 @@ define [], () ->
         getMinutes: ->
             {value: nr, label: @padNumber(nr)} for nr in [0...60]
 
+        getTimestampFromDate: (date) ->
+            return Math.round(new Date(date).getTime() / 1000)
+
+        getDateFromTimestamp: (timestamp, format = 'MM/DD/YYYY') ->
+            return moment(timestamp * 1000).format(format)
+
     return time
