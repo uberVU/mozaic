@@ -198,7 +198,7 @@ define [
                         @_fetchChannelDataFromServer(channel_guid)
                 else
                     # Fetch the initial data for the channel
-                    if (not @_getConfig(channel_guid).populate_on_init) and start_immediately
+                    if not @meta_data[channel_guid].populate_on_init and start_immediately
                         @_fetchChannelDataFromServer(channel_guid)
                     else
                         # If this channel was populated on init, mark it
