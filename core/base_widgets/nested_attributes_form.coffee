@@ -42,7 +42,11 @@ define ['cs!widget/update_form'], (UpdateForm) ->
                 @see #nestAttributes
             ###
             for k, v of attributes
-                if _.isObject(v)
+                # We only need to flatten plain objects, because models might
+                # have entire collections attached to them, and we don't want
+                # to flatten those, especially because they have circular
+                # dependencies and would create infinite loops
+                if $.isPlainObject(v)
                     # Append key to key prefix and carry on to a new recursive
                     # call for this specific (nested) subset of attributes
                     @flattenAttributes(data, v, "#{keyPrefix}#{k}__")
