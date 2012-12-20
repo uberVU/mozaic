@@ -51,7 +51,7 @@ define ['cs!layout'], (Layout) ->
 
             if (not @rendered_signal_sent) and (not silence)
                 pipe = loader.get_module('pubsub')
-                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
+                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'], this)
                 @rendered_signal_sent = true
 
             ###
