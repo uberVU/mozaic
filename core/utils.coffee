@@ -189,6 +189,47 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
                 if obj.hasOwnProperty(prop) and obj[prop] == val
                     return prop
 
+        pathIsExpandable: (path, separator = '/') ->
+            ###
+                Returns true if a given XPath-like expression is expandable.
+                This means that the path will match all the children of the
+                given path.
+            ###
+            return _.str.endsWith(path, '*')
+
+        expandPath: (path, obj, separator = '/') ->
+            ###
+                Expands a given XPath-like expression into 0 or more expressions
+                that match both the path containing wildcards and the
+                underlying object.
+            ###
+
+            # Non-expandable paths are expanded into themselves
+            if not Utils.pathIsExpandable(path)
+                return [path]
+
+            # Otherwise, append to the parent path all children
+            parent_path = _.str.rtrim(path, ['/*', '*'])
+
+            # If path is * then return paths to obj keys
+            if parent_path is ''
+                subset = obj
+            else
+                subset = Utils.getNestedAttr(obj, parent_path)
+
+            # If you try to expand a leaf then the path to
+            # leaf is returned as response
+            return [parent_path] unless _.isObject(subset)
+
+            # Build all the paths
+            paths = _.map _.keys(subset), (key) ->
+                path =_.str.join '/' , parent_path, key
+                # Remove the leading slashes that can occur when you get
+                # all paths from root
+                _.str.ltrim(path, '/')
+
+            return paths
+
         getNestedAttr: (obj, path, separator = '/') ->
             ###
                 Get a value of a sub-set of the data.
