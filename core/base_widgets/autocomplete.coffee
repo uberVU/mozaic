@@ -178,10 +178,10 @@ define ['cs!widget'], (Widget) ->
             # Need to convert to String because boolean and numeric
             # values are evaluated to their respective types, in which
             # case split() breaks.
-            keywords = (String($(item).data('keywords')) or '').split()
+            keywords = (String($(item).data('keywords') or '')).split()
 
             # Add value and text to keyword array
-            keywords.push String($(item).data('value')) or ''
+            keywords.push String($(item).data('value') or '')
             keywords.push $(item).text()
 
             # Search for matches in all keywords
