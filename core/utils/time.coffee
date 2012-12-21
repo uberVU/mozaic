@@ -88,4 +88,7 @@ define [], () ->
         getDateFromTimestamp: (timestamp, format = 'MM/DD/YYYY') ->
             return moment(timestamp * 1000).format(format)
 
+        getDateFormat: (date, format = 'MM/DD/YYYY') ->
+            return moment(date).format(format)
+
     return time
