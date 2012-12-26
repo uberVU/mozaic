@@ -10,7 +10,7 @@ https://github.com/uberVU/mozaic/raw/master/mozaic.pdf
 * improved widget starter which now uses DOM Mutation events in order to detect when new widgets are added / removed
 * forms support (read the comments!)
 * datasource now supports "streampoll", a type of smart poll for a data channel which represents a stream; use-cases are twitter-like feeds where new items appear all the time
-* support for automatic inclusion of files in index.html (actually this is a precursor to bundling, but our script just didn't make it in this releasE)
+* support for automatic inclusion of files in index.html (actually this is a precursor to bundling, but our script just didn't make it in this release)
 * loading animation by default
 * support for adding new items to collections and deleting items from collections in Datasource
 * almost complete isolation of widget crashes (automatic wrapping of all instance methods and new Module() calls)
