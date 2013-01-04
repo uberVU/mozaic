@@ -40,8 +40,6 @@ define [], () ->
                 listeners. Contrary to listening to the change event, these
                 handlers are called even when an attribute is silently set.
             ###
-            super(arguments...)
-
             # Backbone Model supports both single and mass-assignments, the
             # call can be key-value based, for one attribute only, or receive
             # an object, whose keys and values are set individually
@@ -59,6 +57,10 @@ define [], () ->
                         # along with the value because they might make a
                         # difference to some
                         this[method](v, attrs, options)
+
+            # Do the actual assignment after the custom listeners, in order
+            # to be able to compare new values with old ones
+            super(arguments...)
 
             # The current object needs to be returned after set according to
             # the Backbone Model interface
