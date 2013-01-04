@@ -19,6 +19,10 @@ define ['cs!widget'], (Widget) ->
 
         params_required: ['single_item', 'multiple_items', 'path']
 
+        post_render:
+            tooltip:
+                placement: 'right'
+
         initialize: =>
             # If the value to be displayed is received in data-params,
             # render the layout with this value and the other options
@@ -67,6 +71,8 @@ define ['cs!widget'], (Widget) ->
 
             # Determine if item_count is greater than max_value
             item_count = @max_value if @max_value? and item_count > @max_value
+            estimated_item_count = Utils.human_count item_count
+            show_tooltip = +item_count isnt +estimated_item_count
 
             @renderLayout
                 state: 'available'
@@ -78,6 +84,7 @@ define ['cs!widget'], (Widget) ->
                 text_first: @text_first
                 suffix: if @suffix? then @suffix
                 prefix: if @prefix? then @prefix
+                show_real_value: show_tooltip
 
         isChannelDataEmpty: (event) ->
             ###
