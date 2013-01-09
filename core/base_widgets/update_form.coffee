@@ -5,6 +5,11 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!mozaic_backbone_form'], 
         template_name: 'templates/update_form.hjs'
         render_stringified: true
 
+        # Submit button label for new/edit states, they can be overriden in
+        # subclasses and optionally used in the template at will
+        create_label: 'Create'
+        update_label: 'Update'
+
         get_subscribed_channel_events: (params) =>
             ###
                 Handle any incoming notification on the model's channel.
@@ -142,6 +147,12 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!mozaic_backbone_form'], 
             @form.render()
             @afterRender(@form.model)
             $(@view.el).find(".form").append(@form.el)
+
+        renderLayout: (params) ->
+            # {{button_label}} needs to be used as the submit button's value
+            # in the template for the labels to come into effect
+            params.button_label = if @model.id then @update_label else @create_label
+            super(arguments...)
 
         beforeRender: =>
             # allows modification of underlying model before rendering
