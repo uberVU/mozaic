@@ -38,8 +38,9 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
         # this list and define your own comparator in your type
         # of list.
         _comparators_map:
-            str:  'strComparator'
-            int:  'intComparator'
+            str: 'strComparator'
+            int: 'intComparator'
+            float: 'floatComparator'
             date: 'dateComparator'
 
         registerComparator: (key, comparator) ->
@@ -165,6 +166,11 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
         intComparator: (a, b) ->
             a = parseInt(a, 10)
             b = parseInt(b, 10)
+            a - b
+
+        floatComparator: (a, b) ->
+            a = parseFloat(a, 10)
+            b = parseFloat(b, 10)
             a - b
 
         strComparator: (a, b) ->
