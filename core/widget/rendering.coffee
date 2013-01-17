@@ -30,7 +30,7 @@ define ['cs!layout'], (Layout) ->
             # Translate and delegate dom events to view
             view.delegateEvents(@_getTranslatedDomEvents(@events))
 
-        renderLayout: (layout_params = {}, stringify = true, silence = false) ->
+        renderLayout: (layout_params = {}, stringify = true) ->
             ###
                 Execute preRender specific widget method before the
                 widget is rendered.
@@ -49,8 +49,11 @@ define ['cs!layout'], (Layout) ->
             # it will crash.
             @_parseDomElements()
 
-            if (not @rendered_signal_sent) and (not silence)
+            # We can manually trigger the /widget_rendered signal
+            # using @widgetRenderedOnDemand method where needed
+            unless (@rendered_signal_sent or @widgetRenderedOnDemand)
                 @triggerWidgetRendered()
+
             ###
                 Execute postRender widget method after the widget
                 was rendered.
