@@ -50,10 +50,7 @@ define ['cs!layout'], (Layout) ->
             @_parseDomElements()
 
             if (not @rendered_signal_sent) and (not silence)
-                pipe = loader.get_module('pubsub')
-                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'], this)
-                @rendered_signal_sent = true
-
+                @triggerWidgetRendered()
             ###
                 Execute postRender widget method after the widget
                 was rendered.
@@ -64,3 +61,9 @@ define ['cs!layout'], (Layout) ->
             # To check out the results, in the console, do: loader.get_module('profiler').getFullReport();
             if App.general.ENABLE_PROFILING
                 @profiler.stop @params.name
+
+        triggerWidgetRendered: ->
+                pipe = loader.get_module('pubsub')
+                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'], this)
+                @rendered_signal_sent = true
+
