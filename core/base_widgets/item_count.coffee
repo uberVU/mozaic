@@ -89,6 +89,7 @@ define ['cs!widget'], (Widget) ->
 
             # Determine if item_count is greater than max_value
             item_count = @max_value if @max_value? and item_count > @max_value
+            estimated_item_count = Utils.human_count item_count
 
             # Determine if we will display the actual value or the estimated + tooltip with the real one.
             show_real_value = not @show_rounded or (+item_count is +estimated_item_count)
