@@ -11,14 +11,21 @@ define ['cs!widget'], (Widget) ->
             collection: 'data-params'
             icon: 'data-params'
             id: 'data-params'
-            color: 'data-params' # used to give a color to the text
-            text_first: 'data-params' # in some cases the text needs to go before the number
-            suffix: 'data-params' # show somethingafter the number, like % sign
-            prefix: 'data-params' # put something before the number, like a + sign
-            max_value: 'data-params' # if the number is greater than max_value, display max_value
-            # Flag which controls if the widget should display rounded value + tooltip
-            # or the actual value. Default true, ie. show rounded value + tooltip
-            show_rounded: 'data-params'
+            # Used to give a color to the text
+            color: 'data-params'
+            # In some cases the text needs to go before the number
+            text_first: 'data-params'
+            # Show somethingafter the number, like % sign
+            suffix: 'data-params'
+            # Put something before the number, like a + sign
+            prefix: 'data-params'
+            # If the number is greater than max_value, display max_value
+            max_value: 'data-params'
+            # Round a number to a specific number of decimals, which means
+            # - round_value: 0 rounds to integer form
+            # - round_value: 2 rounds to a 2-decial float
+            # - round_value null/undefined leaves the number intact
+            round_value: 'data-params'
 
         params_required: ['single_item', 'multiple_items', 'path']
 
@@ -68,6 +75,11 @@ define ['cs!widget'], (Widget) ->
                 # direct values as well (when sending `value` as throuh data-params)
                 @multiple_items = @multiple_items ? (if @single_item? and @single_item isnt '' then  @single_item + 's' else '' )
                 item_count = @extractCountFromParams(params)
+
+                if @round_value?
+                    # Round value to specified decimals
+                    range = Math.pow(10, @round_value)
+                    item_count = Math.round(item_count * range) / range
 
                 @render(item_count)
 
