@@ -16,6 +16,9 @@ define ['cs!widget'], (Widget) ->
             suffix: 'data-params' # show somethingafter the number, like % sign
             prefix: 'data-params' # put something before the number, like a + sign
             max_value: 'data-params' # if the number is greater than max_value, display max_value
+            # Flag which controls if the widget should display rounded value + tooltip
+            # or the actual value. Default true, ie. show rounded value + tooltip
+            show_rounded: 'data-params'
 
         params_required: ['single_item', 'multiple_items', 'path']
 
@@ -36,6 +39,9 @@ define ['cs!widget'], (Widget) ->
                 # Subscribe the widget to /count channel
                 @subscribed_channels = ['/count']
                 @loading_channels = ['/count']
+
+            # Default value for show_rounded is true
+            @show_rounded = true unless @show_rounded?
 
         changeState: (state, params...) ->
             super(state, params...)
@@ -71,8 +77,9 @@ define ['cs!widget'], (Widget) ->
 
             # Determine if item_count is greater than max_value
             item_count = @max_value if @max_value? and item_count > @max_value
-            estimated_item_count = Utils.human_count item_count
-            show_tooltip = +item_count isnt +estimated_item_count
+
+            # Determine if we will display the actual value or the estimated + tooltip with the real one.
+            show_real_value = not @show_rounded or (+item_count is +estimated_item_count)
 
             @renderLayout
                 state: 'available'
@@ -84,7 +91,7 @@ define ['cs!widget'], (Widget) ->
                 text_first: @text_first
                 suffix: if @suffix? then @suffix
                 prefix: if @prefix? then @prefix
-                show_real_value: show_tooltip
+                show_real_value: show_real_value
 
         isChannelDataEmpty: (event) ->
             ###
