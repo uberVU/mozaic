@@ -1,7 +1,7 @@
 define ['cs!mozaic_module'], (Module) ->
     class LoadingAnimation extends Module
 
-        MAX_ITERATIONS_WITHOUT_NASTY: 5
+        MAX_SUCCESS_RENDER_ROUNDS: 10
         LOADING_FINISHED_CHECK_INTERVAL: 100 #ms
         # List widget is allowed here as the ones with empty data will not be rendered
         ALLOWED_TO_BE_NASTY: [
@@ -9,13 +9,13 @@ define ['cs!mozaic_module'], (Module) ->
             'item_count', 'stream_info', 'custom_sources_info',
             'custom_source_item', 'custom_sources_list', 'list',
             'signals_count', 'mentions', 'signals']
-        INTERVAL_FOR_99_PERCENT: 5 # seconds
+        INTERVAL_FOR_99_PERCENT: 10 # seconds
         ACCELERATED_FINISH: 1.5 # seconds at most to finish after we had a lucky streak
-        REPORT_NASTY_WIDGETS_INTERVAL: 15 # seconds
+        REPORT_NASTY_WIDGETS_INTERVAL: 25 # seconds
 
         new_widgets: []
         rendered_widgets: []
-        iterations_without_nasty: 0
+        success_render_rounds: 0
         id_to_name: {}
         start_time: 0
 
@@ -78,6 +78,7 @@ define ['cs!mozaic_module'], (Module) ->
             ###
 
             @updateProgressBar()
+            current_time = new Date().getTime()
             nasty_widgets_time = (current_time - @start_time > 1000 * @REPORT_NASTY_WIDGETS_INTERVAL)
 
             # Check if there are still nasty widgets, and if there are
@@ -87,7 +88,7 @@ define ['cs!mozaic_module'], (Module) ->
             # report the "nasty" widgets for debugging purposes.
             nasty = @getNastyWidgets()
             if nasty.length > 0
-                @iterations_without_nasty = 0
+                @success_render_rounds = 0
                 current_time = new Date().getTime()
                 if nasty_widgets_time
                     @reportNastyWidgets()
@@ -100,15 +101,15 @@ define ['cs!mozaic_module'], (Module) ->
                 @finishLoadingAnimation()
 
             # If we reached this point, it means that there haven't been
-            # nasty widgets for iterations_without_nasty + 1 consecutive
+            # nasty widgets for success_render_rounds + 1 consecutive
             # iterations.
-            @iterations_without_nasty = @iterations_without_nasty + 1
+            @success_render_rounds = @success_render_rounds + 1
 
             # Store the first moment in time when we have had a good "streak"
             # of widgets. Since this moment on, we consider that loading has
             # finished and our job is just to get the progress bar quickly
             # to the end.
-            if @iterations_without_nasty >= @MAX_ITERATIONS_WITHOUT_NASTY and not @momentLoadingFinished
+            if @success_render_rounds >= @MAX_SUCCESS_RENDER_ROUNDS and not @momentLoadingFinished
                 @momentLoadingFinished = new Date().getTime()
 
             # If we have had a "good streak" without nasty widgets,
@@ -137,7 +138,7 @@ define ['cs!mozaic_module'], (Module) ->
             nasty_widgets = []
             for id in candidates
                 name = @id_to_name[id]
-                if not (name in @ALLOWED_TO_BE_NASTY)
+                unless name in @ALLOWED_TO_BE_NASTY
                     nasty_widgets.push(id)
             nasty_widgets
 
