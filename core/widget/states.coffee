@@ -88,10 +88,14 @@ define [], () ->
                         newState = state
                         break
 
-            # Allow triggering of a state change even if new states are the same
-            # as the previous one when the resulting state is "available",
-            # because new data has to be received regardless of the state
-            if not _.isEqual(previousStates, currentStates) or newState is 'available'
+            # Trigger a changeState() if there is a transition from an
+            # old state to a new state
+            if not _.isEqual(previousStates, currentStates)
+                @changeState.apply(this, _.flatten([newState, params]))
+            # Also trigger a changeState() when the new state is 'available',
+            # regardless of the old state. This behavior can be disabled
+            # through the STRICT_CHANGE_STATE flag
+            else if not @STRICT_CHANGE_STATE and newState is 'available'
                 @changeState.apply(this, _.flatten([newState, params]))
 
         allStatesEmpty: (states) ->

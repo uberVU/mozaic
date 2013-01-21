@@ -38,6 +38,11 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
         # Singleton instance of class Profiler. Available for all Widgets.
         profiler: loader.get_module('profiler')
 
+        # Set this to true to only trigger changeState() whenever there is
+        # a transition from an old state to a different new state (a transition
+        # is also triggered if the old state and new state are both 'available')
+        STRICT_CHANGE_STATE: false
+
         constructor: (params, template = null) ->
             # Call super module's self-wrapping constructor
             super()
