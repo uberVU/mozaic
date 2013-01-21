@@ -10,6 +10,10 @@ define ['cs!widget'], (Widget) ->
             filter_key: 'data-params'
             default_value: 'data-params'
 
+        DIRECTIONS:
+            'asc': 'ASC'
+            'desc': 'DESC'
+
         params_required: ['options']
 
         events:
@@ -22,9 +26,16 @@ define ['cs!widget'], (Widget) ->
             ###
             selected_order_by = $(event.currentTarget).data('value')
             [sort, order] = _.string.words(selected_order_by, ' ')
+
+            # Prepare also the sort_by filter
+            # used by tastypie resources
+            desc_key = _.last _.keys(@DIRECTIONS)
+            sort_by = if order is desc_key then "-#{sort}" else "#{sort}"
+
             @modifyChannel('/filters',
                 sort: sort
                 order: order
+                sort_by: sort_by
             )
 
             # It was a click on a link so this prevents default
@@ -35,13 +46,10 @@ define ['cs!widget'], (Widget) ->
                 When filters arrive, render all the options passed,
                 and keep into account the directionality (enabled/disabled).
             ###
-            # Build order options
-            directions = {'asc': 'ASC', 'desc': 'DESC'}
             sort_options = []
             for sort_name, order of @options
-
                 order_direction = _.last(_.string.words(order, ' '))
-                order_with_direction = _.has(directions, order_direction)
+                order_with_direction = _.has(@DIRECTIONS, order_direction)
 
                 # If a default directions is specified in options (e.g. published+)
                 # then do not insert both ASC and DESC for this field
@@ -51,8 +59,8 @@ define ['cs!widget'], (Widget) ->
                         value: order)
                 else
                     sort_options.push(
-                        name: "#{sort_name} #{directions[dir]}"
-                        value: "#{order} #{dir}") for dir in _.keys(directions)
+                        name: "#{sort_name} #{@DIRECTIONS[dir]}"
+                        value: "#{order} #{dir}") for dir in _.keys(@DIRECTIONS)
 
             @renderLayout({options: sort_options}, false)
 
