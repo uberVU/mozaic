@@ -72,4 +72,24 @@ define [], () ->
             ###
             return (@get(arg) for arg in args)
 
+        _onModelEvent: (event, model, collection, options) ->
+            ###
+                _onModelEvent is an internal Backbone function that it uses
+                to bubble up events from individual models all the way to
+                collections.
+
+                We want to prevent Backbone from bubbling up our custom
+                invalidate model, because when a model is invalidated,
+                that doesn't mean anything about the whole collection
+                (the collection still owns those items, only one of them
+                has to be re-rendered correctly).
+            ###
+
+            # Prevent 'invalidate' from bubbling up
+            if event == 'invalidate'
+                return
+
+            # Bubble up all other events as Backbone wishes
+            super(event, model, collection, options)
+
     return BaseCollection
