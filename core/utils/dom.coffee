@@ -29,5 +29,15 @@ define [], () ->
                 document.documentElement.scrollTop
             else
                 document.body.scrollTop
-    
+
+        escape_css_name: (name) ->
+            ###
+                Makes sure that name is safe to be used as element's class or id.
+                If it finds any element not matching [_a-zA-Z0-9-] it simply removes it.
+                This is needed for g+ reactions/comments which contain a dot `.` in the id.
+                @param {String} name
+                @return {String}
+            ###
+            name.replace /[^_a-zA-Z0-9-]/gi, '' if _.isString(name)
+
     return dom
