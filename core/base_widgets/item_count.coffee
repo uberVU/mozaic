@@ -21,6 +21,9 @@ define ['cs!widget'], (Widget) ->
             prefix: 'data-params'
             # If the number is greater than max_value, display max_value
             max_value: 'data-params'
+            # Flag which controls if the widget should display rounded value + tooltip
+            # or the actual value. Default true, ie. show rounded value + tooltip
+            show_rounded: 'data-params'
             # Round a number to a specific number of decimals, which means
             # - round_value: 0 rounds to integer form
             # - round_value: 2 rounds to a 2-decial float
