@@ -39,7 +39,9 @@ define ['cs!mozaic_module'], (Module) ->
         # If the admin changed the group, personalize
         # loading message.
         updateLoadingMessage: =>
-            if window.location.href.indexOf('group_id') != -1
+            if window.location.href.indexOf('print') != -1
+                $('.loading-text').append(' Generating preview...')
+            else if window.location.href.indexOf('group_id') != -1
                 $('.loading-text').append(' Changing view...')
 
         newWidgetAppeared: (message) =>
@@ -157,7 +159,7 @@ define ['cs!mozaic_module'], (Module) ->
             # user experience.
             if @iterations % 20 == 1
                 names = (id + "(" + @id_to_name[id] + ")" for id in nasty)
-                log.error('Nasty widgets: ' + names)
+                logger.error('Nasty widgets: ' + names)
 
         getProgress: =>
             ###
