@@ -66,6 +66,7 @@ define [
             # collections and data which will be rendered
             @data = {}
             @meta_data = {}
+            @reference_data = {}
 
             # Setting this to false will cause all fetches to perform
             # synchronous ajax requests (used only for testing).
@@ -128,6 +129,12 @@ define [
 
                     # Cannot use @_getType() because channel doesn't exist yet.
                     if channel_type of @config.channel_types
+                        # Create reference data synchronously, in order for it
+                        # to be available ASAP, e.g. on /new_widget events
+                        # In theory, this won't longer be needed after we fix
+                        # issue https://github.com/uberVU/mozaic/issues/54
+                        @reference_data[channel_guid] = {}
+
                         resource_type = @config.channel_types[channel_type].type
                         if resource_type == 'relational'
                             @_initRelationalChannel(channel_guid, channel_type, channel_params)
