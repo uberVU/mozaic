@@ -196,8 +196,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             pipe = loader.get_module('pubsub')
             pipe.publish('/destroy_widget', {
                 name: @params['name']
-                channels: _.values(@channel_mapping)
-                widget: @})
+                widget: this})
 
         startBeingDetached: =>
             ###
