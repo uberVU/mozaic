@@ -15,6 +15,10 @@ define [], () ->
             if path?
                 return "#{path.replace(/cs!/, '')}"
 
+        widget_path: (name) ->
+            # Only add widget prefix if not base widget module
+            return if name is 'widget' then 'cs!widget' else "cs!widget/#{name}"
+
         load_module: (original_path, callback=null, instantiate=true, params...) ->
             ###
                 Load a module at a given path
@@ -110,8 +114,7 @@ define [], () ->
                 Instantiates a given widget, when we know for a fact that its
                 code has been loaded client-side.
             ###
-            path = "cs!widget/" + name
-            path = loader.normalize_path(path)
+            path = loader.normalize_path(loader.widget_path(name))
 
             if not (path of loader.modules)
                 logger.error "Trying to instantiate a widget that hasn't been loaded: #{name}"
@@ -160,7 +163,7 @@ define [], () ->
                 in the require.js configuration to point to the correct file.
             ###
             logger.info "Loading widget #{id} (name = #{name })"
-            path = "cs!widget/" + name
+            path = loader.widget_path(name)
 
             callback = => loader.instantiate_widget(name, id, params)
             loader.load_module(path, callback, false)
