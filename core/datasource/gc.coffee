@@ -26,13 +26,14 @@ define [], () ->
             ###
             for collection of @meta_data
                 meta = @meta_data[collection]
+                reference = @reference_data[collection]
 
                 # Eternal collections are never expired
                 if meta.eternal
                     continue
 
                 # If this collection still has references attached, so skip it.
-                if meta['time_of_reference_expiry'] == null
+                if reference['time_of_reference_expiry'] == null
                     continue
 
                 # Channels with pending fetches should not be garbage collected
@@ -41,7 +42,7 @@ define [], () ->
 
                 # Check if the current collection has had
                 # 0 reference count for quite a while.
-                expired_for = (new Date).getTime() - meta['time_of_reference_expiry']
+                expired_for = (new Date).getTime() - reference['time_of_reference_expiry']
                 if expired_for > @checkIntervalForUnusedCollections
                     # Declare that channel has expired loudly and openly.
                     logger.warn("#{collection} collection expired in DataSource.")

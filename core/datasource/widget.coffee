@@ -15,18 +15,19 @@ define ['cs!channels_utils'], (channels_utils) ->
             ###
             logger.info "Initializing #{widget_data.name} widget in DataSource"
 
-            # For each of the data channels the widget is subscribed to
-            for channel, real_channel of widget_data.subscribed_channels
-                do (channel, real_channel) =>
-                    # Subscribe the widget to the events of the channel
-                    @_bindWidgetToChannel(channel, real_channel, widget_data)
-                    #add reference counter for determining if this channel
-                    #is still in use or not
-                    collection = channels_utils.getChannelKey(real_channel)
-                    @meta_data[collection]['reference_count'] = (@meta_data[collection]['reference_count'] ? 0) + 1
-                    #this timestamp allows us to see for how long the channel
-                    #has been inactive
-                    @meta_data[collection]['time_of_reference_expiry'] = null
+            for reference, key of widget_data.widget.channel_mapping
+                # Add reference counter for determining if this channel
+                # is still in use or not
+                @reference_data[key]['reference_count'] ?= 0
+                @reference_data[key]['reference_count'] += 1
+                # This timestamp allows us to see for how long the channel
+                # has been inactive
+                @reference_data[key]['time_of_reference_expiry'] = null
+
+            # Only bind widget to data of channels it has subscribed to
+            for reference, translated of widget_data.subscribed_channels
+                # Subscribe the widget to the events of the channel
+                @_bindWidgetToChannel(reference, translated, widget_data)
 
         destroyWidget: (widget_data) ->
 
@@ -59,9 +60,9 @@ define ['cs!channels_utils'], (channels_utils) ->
                 else if @_getType(channel) == 'api'
                     @data[channel].off(events, widget_method, widget_data.widget)
 
-                @meta_data[channel]['reference_count'] -= 1
-                if @meta_data[channel]['reference_count'] == 0
-                    @meta_data[channel]['time_of_reference_expiry'] = (new Date).getTime()
+                @reference_data[channel]['reference_count'] -= 1
+                if @reference_data[channel]['reference_count'] == 0
+                    @reference_data[channel]['time_of_reference_expiry'] = (new Date).getTime()
 
         _getWidgetMethod: (fake_channel, widget) ->
             ###
