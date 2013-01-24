@@ -34,7 +34,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             for fake_channel, channel of widget_data.widget.channel_mapping
                 if not (channel of @meta_data)
                     logger.warn('Could not unbind widget from collection ' +
-                                 collection + ' because it was already gone')
+                                 channel + ' because it was already gone')
                     continue
 
                 # Start unbinding the widget to the existing channel.
