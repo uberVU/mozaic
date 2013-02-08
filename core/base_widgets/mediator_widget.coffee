@@ -20,6 +20,12 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
                 (can be '/refresh', '/scroll', etc., anything
                 that receivs a list of channels as a parameter).
                 Default value: 'refresh'.
+
+            The Mediator widget also supports a list of ignored attributes for
+            the input channels, which changed alone shouldn't trigger any
+            changes on the output channels. The ignored attributes are also
+            removed from the output channel params when other (not ignored)
+            attributes trigger publishing.
         ###
 
         # This widget has priority when it comes to garbage collection
@@ -32,6 +38,7 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
             'output_channel': 'data-params'
             'output_channels': 'data-params'
             'skip_first': 'data-params'
+            'ignored_attributes': (attrs) -> attrs or []
 
         initialize: =>
             # HORRIBLE HACK (see https://github.com/bogdans83/ubvu-unleashed/issues/1190)
@@ -73,7 +80,16 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
                 if @skip_first
                     return
 
-            @publishToChannel(params)
+            # Decide whether to continue with publishing on the output channels
+            # if other attributes than the ignored ones have been changed
+            eventIsRelevant = false
+            for channel_params in params
+                changedAttributes = _.keys(channel_params.model.changed)
+                changedAttributes = _.without(changedAttributes,
+                                              @ignored_attributes...)
+                eventIsRelevant = true if changedAttributes.length
+
+            @publishToChannel(params) if eventIsRelevant
 
         publishToChannel: (params, options = {}) =>
             ###
@@ -113,6 +129,6 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
                         on channels that are backed by a single model. Ex: /streams/{{id}}
                 @params {Object} [params.collection] - instance of BaseCollection backing the channel.
             ###
-            params.model.toJSON()
+            return _.omit(params.model.toJSON(), @ignored_attributes)
 
     return MediatorWidget
