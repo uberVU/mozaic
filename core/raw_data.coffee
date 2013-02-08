@@ -5,6 +5,7 @@ define [], () ->
         constructor: ->
             _.extend(@, Backbone.Events)
             @data = {}
+            @changed = {}
             @default_value = {}
 
         setDefaultValue: (default_value) =>
@@ -56,13 +57,19 @@ define [], () ->
                 dict[k] = v
             @_internal_set(dict, options)
 
+            return this
+
         _internal_set: (dict, options) =>
+            previousData = _.clone(@data)
+
             if options.reset or options.new_data
                 @data = {}
 
             # Alter the internal data
             for k, v of dict
                 @data[k] = v
+
+            @_updateChanged(previousData)
 
             # Before triggering reset/change events
             # we need to handle datasource logic when fetching channel data
@@ -81,17 +88,28 @@ define [], () ->
                 else
                     @trigger('change', @)
 
+            # Clear changed attributes after triggering change events
+            @changed = {}
+
         unset: (dict, options={}) =>
             ###
                 unset an attribute
             ###
+            previousData = _.clone(@data)
+
             for k, v of dict
                 if k of @data
                     delete @data[k]
 
+            @_updateChanged(previousData)
+
             if (options.silent != true)
                 @trigger('change', @)
-            @
+
+            # Clear changed attributes after triggering change events
+            @changed = {}
+
+            return this
 
         fetch: (options = {}) =>
             ###
@@ -149,5 +167,27 @@ define [], () ->
                 call_params.contentType = options.contentType
 
             $.ajax(call_params)
+
+        hasChanged: (attr) ->
+            ###
+                Check whether or not an attribute has been changed with the
+                last change.
+
+                Not sending any attribute name will check whether or not any
+                attribute has changed at all.
+            ###
+            return @changed.hasOwnProperty(attr) if attr
+            return not _.isEmpty(@changed)
+
+        _updateChanged: (previousData) ->
+            ###
+                Compare a previous set of data and establish the changed
+                attributes between the two
+            ###
+            # Get the union of all attribute keys from both the previous and
+            # the current data set
+            for k in _.union(_.keys(previousData), _.keys(@data))
+                # Only mark attributes with different values as changed
+                @changed[k] = @data[k] if @data[k] isnt previousData[k]
 
     return RawData
