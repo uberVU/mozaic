@@ -10,7 +10,7 @@ define ['cs!widget'], (Widget) ->
 
             Provided events:
 
-            - close: called when the modal is closed by the user (override the @close method)
+            - on_close: called when the modal is closed by the user (override the @close method)
         ###
 
         initialize: () ->
@@ -22,5 +22,5 @@ define ['cs!widget'], (Widget) ->
             ###
 
             # Bind a callback to the close button of the modal
-            ($ '.icon-close-modal').one 'click', @close?
+            ($ '.icon-close-modal').one 'click', @on_close?
 
