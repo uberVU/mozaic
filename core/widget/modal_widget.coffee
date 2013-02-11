@@ -22,5 +22,5 @@ define ['cs!widget'], (Widget) ->
             ###
 
             # Bind a callback to the close button of the modal
-            ($ '.icon-close-modal').one 'click', @on_close?
+            ($ '.icon-close-modal').one 'click', @on_close
 
