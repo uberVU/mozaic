@@ -2,9 +2,48 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
 
     class WidgetList extends ScrollableWidget
         ###
-            Generic Widget: receives a collection and injects
-            a list of widgets. This handles common operations like
-            add/remove and also has filtering/sorting support.
+            Widget which is able to render a list of items, by injecting
+            one widget per each item. An item to be displayed will be named
+            ListItem.
+
+            Features:
+
+                - not all widgets for all items must be the same. There is
+                  a mappings parameter which specifies different parameters
+                  and different channels for each type of widget. In order
+                  to find out the correct param, the list takes into
+                  account ListItem['object_class].
+
+                - it's able to maintain a client-side sorted order for widgets,
+                  depending on one or more criteria. For example, it can sort
+                  by 'created_at' key descending as the primary key, and when
+                  two items are tied, break the tie with the 'name' field.
+                  It supports custom comparators for each field. Out of the box,
+                  it supports ints, floats, strings and dates.
+
+                - it keeps a CSS class on the first and last item of the
+                  list, even when the list order changes. And the list order
+                  might change because of a change in a field that's a sort key!
+                  This is very useful for design issues.
+
+                - it manages the lifecycle of the widgets corresponding to
+                  ListItems, by removing them from the DOM when the item
+                  is removed from the channel, or by adding new ones when
+                  an item is added to a channel. It is also able to MOVE
+                  around a widget, but by making a DELETE + INSERT (Mozaic
+                  core doesn't yet support moving widgets around in DOM)
+
+                - it can filter items from the collection and only display
+                  those we're interested in. For example, say that I'm
+                  fetching the list of all books from the server, and I want
+                  to display only the books by a certain author.
+
+            IMO lifecycle management of the widgets is the most important
+            feature of this widget - if I want to display a list, I can
+            concentrate on writing the widget for the list's item instead of
+            repeating the same boilerplate code for removing the widget from
+            DOM when it's removed from the channel, and so on.
+
         ###
         subscribed_channels: ['/items']
         loading_channels: ['/items']
