@@ -84,7 +84,7 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
             # if other attributes than the ignored ones have been changed
             eventIsRelevant = false
             for channel_params in params
-                changedAttributes = _.keys(channel_params.model.changed)
+                changedAttributes = _.keys(channel_params.changed)
                 changedAttributes = _.without(changedAttributes,
                                               @ignored_attributes...)
                 eventIsRelevant = true if changedAttributes.length

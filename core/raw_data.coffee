@@ -5,7 +5,6 @@ define [], () ->
         constructor: ->
             _.extend(@, Backbone.Events)
             @data = {}
-            @changed = {}
             @default_value = {}
 
         setDefaultValue: (default_value) =>
@@ -69,7 +68,7 @@ define [], () ->
             for k, v of dict
                 @data[k] = v
 
-            @_updateChanged(previousData)
+            changed_attributes = @_getChanged(previousData)
 
             # Before triggering reset/change events
             # we need to handle datasource logic when fetching channel data
@@ -83,13 +82,15 @@ define [], () ->
                 # If this was a complete reset of the RawData,
                 # trigger the reset event
                 if options.reset
-                    @trigger('reset', @)
+                    # The changed attributes are ALL the attributes in this
+                    # case, but it might be OK to have a consistent signature,
+                    # but also, since the events are async, it might be helpful
+                    # to know these attributes in the event callback since the
+                    # model could already have been altered at that point
+                    @trigger('reset', @, changed_attributes)
                 # Otherwise, trigger the change event.
                 else
-                    @trigger('change', @)
-
-            # Clear changed attributes after triggering change events
-            @changed = {}
+                    @trigger('change', @, changed_attributes)
 
         unset: (dict, options={}) =>
             ###
@@ -101,13 +102,10 @@ define [], () ->
                 if k of @data
                     delete @data[k]
 
-            @_updateChanged(previousData)
+            changed_attributes = @_getChanged(previousData)
 
             if (options.silent != true)
-                @trigger('change', @)
-
-            # Clear changed attributes after triggering change events
-            @changed = {}
+                @trigger('change', @, changed_attributes)
 
             return this
 
@@ -168,26 +166,17 @@ define [], () ->
 
             $.ajax(call_params)
 
-        hasChanged: (attr) ->
-            ###
-                Check whether or not an attribute has been changed with the
-                last change.
-
-                Not sending any attribute name will check whether or not any
-                attribute has changed at all.
-            ###
-            return @changed.hasOwnProperty(attr) if attr
-            return not _.isEmpty(@changed)
-
-        _updateChanged: (previousData) ->
+        _getChanged: (previousData) ->
             ###
                 Compare a previous set of data and establish the changed
                 attributes between the two
             ###
+            changed = {}
             # Get the union of all attribute keys from both the previous and
             # the current data set
             for k in _.union(_.keys(previousData), _.keys(@data))
                 # Only mark attributes with different values as changed
-                @changed[k] = @data[k] if @data[k] isnt previousData[k]
+                changed[k] = @data[k] if @data[k] isnt previousData[k]
+            return changed
 
     return RawData
