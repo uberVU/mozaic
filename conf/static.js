@@ -10,9 +10,9 @@ App.conf_files_bundle_name = 'conf_bundle.js';
 // Static libs included on every HTTP request
 // If environment is production, these will be served as a single bundle.
 App.static_libs = ['core/libs/json2.js',
-                   'core/libs/jquery/jquery-1.7.2.js',
+                   'core/libs/jquery/jquery-1.8.3.js',
                    'core/libs/jquery/jquery.event.fix.js',
-                   'core/libs/jquery/jquery-ui-1.8.20.custom.min.js',
+                   'core/libs/jquery/jquery-ui-1.9.2.custom.js',
                    'core/libs/jquery/jquery.timeago.js',
                    'core/libs/jquery/jquery.idletimer.js',
                    'core/libs/jquery/jquery.colorpicker.js',
