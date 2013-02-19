@@ -22,7 +22,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                     return {type: 'remove', model: params[0], collection: params[1]}
                 else if event_type == 'reset'
                     if params[0].collection_type == 'api'
-                        return {type: 'reset', model: params[0]}
+                        return {type: 'reset', model: params[0], changed: params[1]}
                     else
                         return {type: 'reset', collection: params[0]}
                 else if event_type == 'destroy'
@@ -37,7 +37,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                 else if event_type == 'change'
                     # For API channels, the first parameter is the collection
                     if params[0].collection_type == 'api'
-                        translated_event_params = {type: 'change', model: params[0]}
+                        translated_event_params = {type: 'change', model: params[0], changed: params[1]}
                     # Otherwise, for relational channels, we have
                     # a model and an optional collection
                     else

@@ -77,49 +77,39 @@ define ['cs!tests/base_test', 'cs!collection/raw_data'], (BaseTest, RawData) ->
             ###
                 Test more scenarios regarding the changed attributes of RawData
 
-                    - that more attributes are changed after init
-                    - that no attributes are changed outside event callbacks
-                    - that collection are marked as changed altogether whenever
-                      an event with changed attributes occurs
-                    - that invididual attributes are always marked as changed
-                      after being added, updated or removed
+                    - that collection is marked as changed and with all new
+                      attributes marked as changed after set
+                    - same as #1, but with both new and already existing
+                      attributes
+                    - same as #1, but when removing attributes using unset
             ###
             collection = new RawData()
 
-            ok(not collection.hasChanged(),
-               'RawData shouldn\'t have any attributes changed after created')
+            # Add new attributes
+            collection.on('change', (instance, changed) ->
+                ok(not _.isEmpty(changed),
+                   'Collection should be marked as changed inside reset event')
 
+                for k, v of values
+                    ok(changed[k] is v,
+                      'Initial attribute should\'ve changed inside reset event')
+            )
             values =
                 Jager: 'rock'
                 Elvis: 'roll'
             collection.set(values)
-
-            ok(not collection.hasChanged(),
-               'RawData shouldn\'t have any attributes changed after change
-               events finished')
-
-            # Remove all previously set attributes
-            collection.on('reset', ->
-                ok(@hasChanged(),
-                   'Collection should be marked as changed inside reset event')
-
-                for k, v of values
-                    ok(@hasChanged(k),
-                      'Initial attribute should\'ve changed inside reset event')
-            )
-            collection.set({}, null, {reset: true})
-            collection.off('reset')
+            collection.off('change')
 
             # Add one new attribute and change an existing one
             newValues =
                 Madonna: 'pop'
                 Elvis: 'rocknroll'
-            collection.on('change', ->
-                ok(@hasChanged(),
+            collection.on('change', (instance, changed) ->
+                ok(not _.isEmpty(changed),
                    'Collection should be marked as changed inside change event')
 
                 for k, v of newValues
-                    ok(@hasChanged(k),
+                    ok(changed[k] is v,
                       'New attribute should\'ve changed inside change event')
             )
             collection.set(newValues)
@@ -129,9 +119,12 @@ define ['cs!tests/base_test', 'cs!collection/raw_data'], (BaseTest, RawData) ->
             removedValues =
                 Madonna: null
                 Elvis: null
-            collection.on('change', ->
+            collection.on('change', (instance, changed) ->
+                ok(not _.isEmpty(changed),
+                   'Collection should be marked as changed inside change event')
+
                 for k, v of removedValues
-                    ok(@hasChanged(k),
+                    ok(changed.hasOwnProperty(k) and changed[k] is undefined,
                       'Removed attribute should\'ve changed inside change event')
             )
             collection.unset(removedValues)
