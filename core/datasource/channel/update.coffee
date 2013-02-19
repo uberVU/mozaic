@@ -155,25 +155,16 @@ define ['cs!channels_utils'], (channels_utils) ->
             silence = { silent: silent }
             if update_mode == 'append'
                 for k, v of dict
-                    # If the attribute of the model is an array
-                    # then push the non array value. If the value is an
-                    # array set the attribute as a list
-                    if _.isArray(model.get(k))
-                        current_attribute_value = model.get(k)
-                        # If the value to be set is actually a list,
-                        # set it directly, otherwise push it
-                        if _.isArray(v)
-                            current_attribute_value = v
-                        else
-                            current_attribute_value.push(v)
-                        model.set(k, current_attribute_value)
-                        # Trigger manually the change event for an
-                        # Array value as Backbone.set won't trigger it
-                        # TODO: patch Backbone do detect changes in
-                        # Array like attributes
-                        model.trigger('change', model)
+                    currentValue = model.get(k)
+                    # If the attribute of the model is an array and the value
+                    # set not, push it into that array instead of overwritting
+                    if _.isArray(currentValue) and not _.isArray(v)
+                        # Get current value first
+                        value = _.clone(currentValue)
+                        value.push(v)
                     else
-                        model.set(k, v, silence)
+                        value = v
+                    model.set(k, value, silence)
             else if update_mode == 'reset'
                 model.clear(silent)
                 model.set(dict, silence)
