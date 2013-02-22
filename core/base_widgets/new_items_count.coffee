@@ -6,8 +6,11 @@ define ['cs!widget'], (Widget) ->
         events:
             "click .item-refresh-link a": "refreshItems"
         params_defaults:
-            'single_item':      'data-params'
-            'multiple_items':   'data-params'
+            'single_item': 'data-params'
+            'multiple_items': 'data-params'
+            # Use the scroll of the entire window if not specific scrollable
+            # target has been specified
+            'scrollable_target': (target) -> target or 'html, body'
         bound_to_buffer: false
 
 
@@ -20,7 +23,7 @@ define ['cs!widget'], (Widget) ->
             # First, scroll to the top because the new mentions count
             # is shown permanently as an overlay. This will allow the user
             # to actually see the new mentions being inserted into the DOM.
-            $('html, body').animate({scrollTop:0}, 'slow')
+            $(@scrollable_target).animate(scrollTop: 0, 'slow')
 
             # Ask for a fresh batch of mentions. These might come from the
             # streampoll buffering mechanism immediately.
