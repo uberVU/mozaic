@@ -67,6 +67,6 @@ define ['cs!layout'], (Layout) ->
 
         triggerWidgetRendered: ->
                 pipe = loader.get_module('pubsub')
-                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'], this)
+                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
                 @rendered_signal_sent = true
 

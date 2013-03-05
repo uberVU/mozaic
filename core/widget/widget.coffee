@@ -138,7 +138,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             #
             # So it's a sane choice to announce immediately that it has rendered.
             if not @template_name
-                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'], this)
+                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
                 @rendered_signal_sent = true
 
         _initializeBackboneView: ->
