@@ -16,7 +16,6 @@ define [], () ->
 
         constructor: ->
             @_callbacks = {}
-            @_callbacks['all'] = {}
 
         initialize: ->
             logger.info "Initializing PubSub"
