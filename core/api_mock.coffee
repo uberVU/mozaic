@@ -29,7 +29,11 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
             response = master_factory.get(resource, param)
             # If is_api channel do not wrap the response under 'objects' key
             # Useful for calls to analytics
-            if response[0]?.is_api
+            # Api responses should be returned directly, w/out being wrapped
+            # inside any array (this should be the default actually)
+            if response?.is_api
+                return response
+            else if response[0]?.is_api
                 return response[0]
             else
                 return {'objects': response}
