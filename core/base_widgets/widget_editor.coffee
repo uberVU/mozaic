@@ -98,7 +98,7 @@ define [], () ->
             @widget?.setValue(@value)
 
             # Keep form model up to date with editor values
-            if @schema.sync_form_model and value isnt @form.model.get(@key)
+            if @schema.sync_form_model and not @formHasValue(value)
                 @form.model.set(@key, @getValue(), silent: true)
                 # After we update the editor's corresponding model value, go
                 # through all the other from editors (but this one), and update
@@ -121,3 +121,19 @@ define [], () ->
             # them if defined
             if _.isFunction(@form.formWidget?.modelChanged)
                 @form.formWidget.modelChanged(@key, value)
+
+        formHasValue: (value) ->
+            ###
+               Check if the editor value is equal with the current one inside
+               the form.
+               Match null and undefined as equal though, since they both
+               represent missing values
+            ###
+            formValue = @form.model.get(@key)
+            # Strict comparison (===)
+            return true if value is formValue
+            # If they're not strictly equal and one of the is defined, then
+            # they're not equal
+            return false if value? or formValue?
+            # At this point they're both null/undefined
+            return true
