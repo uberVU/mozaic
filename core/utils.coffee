@@ -444,6 +444,25 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
                 return value.apply(model, params)
             value
 
+        wrapMethod: (obj, methodName, options = {}) ->
+            ###
+                Add a before or after hook on a function belonging to a
+                specified object, preserving its scope (which means it works
+                even for methods without a fat arrow)
+            ###
+            obj[methodName] = _.wrap(obj[methodName], (fn, args...) ->
+                # Send the intercepted arguments to the callbacks as well, just
+                # in case we might want to use that information
+                options.before(args...) if _.isFunction(options.before)
+                returnValue = fn.apply(obj, args)
+                options.after(args...) if _.isFunction(options.after)
+
+                # Restore orignal method automatically after first call
+                obj[methodName] = fn if options.restore
+                # Make sure we preserve the return value
+                return returnValue
+            )
+
         _buildDomElementByWidgetOptions: (options) ->
             ###
                 Build DOM element based on the format of widget options
