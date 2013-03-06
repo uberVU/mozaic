@@ -91,7 +91,7 @@ define [], () ->
                     @widget.initializeWithForm(@form)
 
         getValue: () ->
-            return @widget?.getValue() or @default_value
+            return if @widget? then @widget.getValue() else @default_value
 
         setValue: (value) ->
             @value = value
