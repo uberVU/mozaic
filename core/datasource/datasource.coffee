@@ -134,7 +134,6 @@ define [
                         # In theory, this won't longer be needed after we fix
                         # issue https://github.com/uberVU/mozaic/issues/54
                         @reference_data[channel_guid] = {
-                            'reference_count': 0
                             # Initial timestamp for channel, to know when to
                             # garbage collect it.
                             'time_of_reference_expiry': (new Date).getTime()
