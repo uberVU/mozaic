@@ -53,11 +53,13 @@ define [], () ->
             rest = slice.call(arguments, 1)
             events = events.split(eventSplitter)
 
-            return unless (calls = @_callbacks)
+            calls = @_callbacks
+            return unless calls
 
             publishEventsOneByOne = (restOfEvents) =>
 
-                return unless (event = restOfEvents.shift())
+                event = restOfEvents.shift()
+                return unless event
 
                 triggerCallback = (calls) ->
                     if _.isArray(calls) and calls.length > 0
