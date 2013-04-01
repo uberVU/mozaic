@@ -61,7 +61,12 @@ define ['cs!channels_utils'], (channels_utils) ->
                     logger.warn("Aggregate function #{aggregate_function} does not exist")
                     continue
                 channels = aggregated_channels[aggregate_function]
-                @aggregateChannels(@[aggregate_function], channels)
+                # Wrap callback in order to make sure that the we're always
+                # calling the current method for a given key on the widget,
+                # since members of a class instance can be overridden
+                # dynamically at any point in JavaScript
+                @aggregateChannels((=> this[aggregate_function](arguments...)),
+                                   channels)
 
         aggregateChannels: (callback, channels) ->
             ###
