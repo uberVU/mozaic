@@ -46,6 +46,7 @@ App.main_modules = {
     'widget/delete_form': 'core/base_widgets/delete_form',
     'widget/item_count': 'core/base_widgets/item_count',
     'widget/list': 'core/base_widgets/list',
+    'widget/expanding_list': 'core/base_widgets/expanding_list',
     'widget/mediator_widget': 'core/base_widgets/mediator_widget',
     'widget/nested_attributes_form': 'core/base_widgets/nested_attributes_form',
     'widget/notifications': 'core/base_widgets/notifications',
