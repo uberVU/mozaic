@@ -5,13 +5,13 @@ App.default_loading_modules = ['cs!pubsub', 'cs!datasource', 'cs!widget_starter'
 
 // URLs that are available in our app
 App.urls = {
-	// The TODO list page is mapped to the empty (missing) hashbang
-	'': {
-		'controller': 'TodoPage',
-		'layout': 'templates/todo_page.hjs'
-	},
-  'news': {
-    'controller': 'NewsPage',
-    'layout': 'templates/news_page.hjs'
-  }
+    // The TODO list page is mapped to the empty (missing) hashbang
+    '': {
+        'controller': 'TodoPage',
+        'layout': 'templates/todo_page.hjs'
+    },
+    'news': {
+        'controller': 'NewsPage',
+        'layout': 'templates/news_page.hjs'
+    }
 };
