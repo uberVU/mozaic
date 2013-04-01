@@ -176,7 +176,7 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
 
         render: ->
 
-        destroy: ->
+        destroy: =>
             now = Utils.now() / 1000
             # If widget has only lived half a second, something is wrong
             # and somebody is wasting widgets for nothing.

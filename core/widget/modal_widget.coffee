@@ -10,7 +10,7 @@ define ['cs!widget'], (Widget) ->
 
             Provided events:
 
-            - on_close: called when the modal is closed by the user (override the @close method)
+            - close: called when the modal is closed by the user (override the @close method)
         ###
 
         initialize: () ->
