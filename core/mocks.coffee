@@ -39,5 +39,11 @@ define ['cs!api_mock'], (ApiMock) ->
                 breakdown: 'generator'
                 filters: ['generator']
         ]
-        'metrics/streams': 1
+        # This hack is needed to make the CurrentFactory usable to mock the
+        # /current api endpoint. This needs to return and array with an `is_api`
+        # flag setup.
+        # @see api_mocks.coffee#getMockedApiResponse
+        'current': [{
+            is_api: true
+        }]
     )

@@ -5,22 +5,33 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
     master_factory = new MasterFactory()
 
     Methods =
-        apiMock: (params) ->
+        apiMock: (resources) ->
             ###
                 Mock some api calls.
             ###
             result = {}
-            for resource, param of params
-                endpoint = "#{App.general.FRONTAPI_PREFIX}/#{resource}"
-                r = '.*' + endpoint.replace(/\//g, '\\/') + '.*'
-                regexp = new RegExp('.*' + endpoint.replace(/\//g, '\\/') + '.*')
-                mocked_response = @getMockedApiResponse(resource, param)
-                $.mockjax(
-                    url: regexp
-                    responseText: mocked_response
-                )
-                result[resource] = mocked_response['objects']
+            for resource, params of resources
+                response = @getMockedApiResponse(resource, params)
+                @mockResource(resource, response)
+
+                # Depending on the channel type (relational or api), populate
+                # the response object the same way as the objects would be
+                # received inside the channel callback
+                if response.objects
+                    result[resource] = response.objects
+                else
+                    result[resource] = response
             return result
+
+        mockResource: (resource, response) ->
+            $.mockjax
+                url: @getResourceRegExp(resource)
+                response: ->
+                    @responseText = response
+
+        getResourceRegExp: (resource) ->
+            endpoint = "#{App.general.FRONTAPI_URL}/.*/#{resource}/[^a-z]"
+            return new RegExp(endpoint)
 
         getMockedApiResponse: (resource, param) ->
             ###
@@ -37,5 +48,3 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
                 return response[0]
             else
                 return {'objects': response}
-
-    return Methods
