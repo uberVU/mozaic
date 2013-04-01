@@ -26,7 +26,7 @@ define [
 
     class DataSource extends Module
 
-        checkIntervalForUnusedCollections: 10000
+        checkIntervalForUnusedChannels: 10000
         default_max_refresh_factor: 10
 
         constructor: ->
@@ -88,7 +88,7 @@ define [
             # This binds the widgets' methods to the proper channel events
             # (we need this because channels are private to the DataSource)
             @pipe.subscribe('/destroy_widget', (data) => @destroyWidget(data))
-            setInterval(@checkForUnusedCollections, @checkIntervalForUnusedCollections)
+            setInterval(@checkForUnusedChannels, @checkIntervalForUnusedChannels)
 
             # Requests for scrolling channels
             @pipe.subscribe('/scroll', @pushDataAfterScroll)
