@@ -33,7 +33,16 @@ define ['cs!channels_utils'], (channels_utils) ->
                     else
                         return {type: 'sync', collection: params[0]}
                 else if event_type == 'error'
-                    return {type: 'error', model: params[0], collection: params[1], response: params[2]}
+                    #  https://github.com/uberVU/thehole/commit/323afcf3a1cac07ca2cae189559ca3be9fab8545
+                    # In #5516 we figured out the collection was not properly
+                    # set when returning this type of event. Now it's set
+                    # to the model's collection
+                    return {
+                        type: 'error'
+                        model: params[0]
+                        collection: params[0].collection
+                        response: params[2]
+                    }
                 else if event_type == 'change'
                     # For API channels, the first parameter is the collection
                     if params[0].collection_type == 'api'
