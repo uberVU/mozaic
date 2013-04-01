@@ -15,54 +15,12 @@ define ['cs!channels_utils'], (channels_utils) ->
             ###
             logger.info "Initializing #{widget_data.name} widget in DataSource"
 
-            for reference, key of widget_data.widget.channel_mapping
-                # Add reference counter for determining if this channel
-                # is still in use or not
-                @reference_data[key]['reference_count'] ?= 0
-                @reference_data[key]['reference_count'] += 1
-                # This timestamp allows us to see for how long the channel
-                # has been inactive
-                @reference_data[key]['time_of_reference_expiry'] = null
+            @increaseReferenceCountsForChannelsOfNewWidget(widget_data.widget)
 
             # Only bind widget to data of channels it has subscribed to
             for reference, translated of widget_data.subscribed_channels
                 # Subscribe the widget to the events of the channel
                 @_bindWidgetToChannel(reference, translated, widget_data)
-
-        destroyWidget: (widget_data) ->
-
-            logger.warn "Destroy #{widget_data.name} widget in DataSource"
-            for fake_channel, channel of widget_data.widget.channel_mapping
-                if not (channel of @meta_data)
-                    logger.warn('Could not unbind widget from collection ' +
-                                 channel + ' because it was already gone')
-                    continue
-
-                # Start unbinding the widget to the existing channel.
-                widget_method = @_getWidgetMethod(fake_channel, widget_data.widget)
-                [collection, item, events] = channels_utils.splitChannel(fake_channel)
-
-                # For relational channel, we have item-level unbinding and
-                # collection-level unbinding, depending on the type of widget
-                # subscription.
-                if @_getType(channel) == 'relational'
-                    if item == "all"
-                        @data[channel].off(events, widget_method, widget_data.widget)
-                    else
-                        individual_item = @data[channel].get(item)
-                        # Here we might have a problem: when resetting a
-                        # collection, there is no way to keep references to the
-                        # old widgets so that we unbind events from them.
-                        # TODO(andrei): investigate if we can do something in
-                        # the BaseModel class.
-                        if individual_item
-                            individual_item.off(events, widget_method, widget_data.widget)
-                else if @_getType(channel) == 'api'
-                    @data[channel].off(events, widget_method, widget_data.widget)
-
-                @reference_data[channel]['reference_count'] -= 1
-                if @reference_data[channel]['reference_count'] == 0
-                    @reference_data[channel]['time_of_reference_expiry'] = (new Date).getTime()
 
         _getWidgetMethod: (fake_channel, widget) ->
             ###
