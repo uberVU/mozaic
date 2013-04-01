@@ -191,4 +191,12 @@ define [], () ->
 
             return [url, params]
 
+        stripHTMLOutsideTags: (content) ->
+            ###
+                Given a text like <a href='#'>http://url.com</a>, remove the
+                anchors around the URL, returning only http://url.com.
+            ###
+            return $("<div>#{content}</div>").text()
+
+
     return urls
