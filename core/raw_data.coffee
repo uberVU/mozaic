@@ -149,9 +149,6 @@ define [], () ->
                 # Trigger a no_data event when the response is empty
                 if _.isEmpty(data)
                     @trigger('no_data', @)
-            # Trigger an invalidate event before performing the
-            # actual request
-            @trigger('invalidate', @)
             # Make the actual AJAX request
             call_params =
                 url: @url
