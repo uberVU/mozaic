@@ -63,9 +63,10 @@ define [], () ->
 
             # Compile and render widget container template
             template = Handlebars.compile(@template)
-            @$el.html template
+            @$el.html template(
                 widget_name: @widget_name
                 widget_params: JSON.stringify(@widget_params)
+            )
             return this
 
         newWidget: (message) =>
@@ -91,14 +92,14 @@ define [], () ->
                     @widget.initializeWithForm(@form)
 
         getValue: () ->
-            return @widget?.getValue() or @default_value
+            return if @widget? then @widget.getValue() else @default_value
 
         setValue: (value) ->
             @value = value
             @widget?.setValue(@value)
 
             # Keep form model up to date with editor values
-            if @schema.sync_form_model and value isnt @form.model.get(@key)
+            if @schema.sync_form_model and not @formHasValue(value)
                 @form.model.set(@key, @getValue(), silent: true)
                 # After we update the editor's corresponding model value, go
                 # through all the other from editors (but this one), and update
@@ -117,7 +118,28 @@ define [], () ->
                     unless _.isEqual(modelValue, editor.getValue())
                         editor.setValue(modelValue)
 
-            # Check for form hooks that listen to model changes and trigger
-            # them if defined
+            @notifyModelChanged(value)
+
+        notifyModelChanged: (value) ->
+            ###
+                Check for form hooks that listen to model changes and trigger
+                them if defined
+            ###
             if _.isFunction(@form.formWidget?.modelChanged)
                 @form.formWidget.modelChanged(@key, value)
+
+        formHasValue: (value) ->
+            ###
+               Check if the editor value is equal with the current one inside
+               the form.
+               Match null and undefined as equal though, since they both
+               represent missing values
+            ###
+            formValue = @form.model.get(@key)
+            # Strict comparison (===)
+            return true if value is formValue
+            # If they're not strictly equal and one of the is defined, then
+            # they're not equal
+            return false if value? or formValue?
+            # At this point they're both null/undefined
+            return true
