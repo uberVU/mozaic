@@ -30,7 +30,7 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
                     @responseText = response
 
         getResourceRegExp: (resource) ->
-            endpoint = "#{App.general.FRONTAPI_URL}/.*/#{resource}/[^a-z]"
+            endpoint = "#{App.general.FRONTAPI_URL}/.*/#{resource}/([^a-z]|$)"
             return new RegExp(endpoint)
 
         getMockedApiResponse: (resource, param) ->
