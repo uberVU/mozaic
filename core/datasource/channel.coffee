@@ -17,8 +17,13 @@ define ['cs!channels_utils'], (channels_utils) ->
             ###
 
             # Load the collection class via require.js
-            collection_name = @config.channel_types[type].collection or type[1..]
-            collection_module = "cs!collection/" + collection_name
+            collection_name = @config.channel_types[type].collection
+
+            # Allow using base_collection as a default
+            if collection_name?
+                collection_module = "cs!collection/#{collection_name}"
+            else
+                collection_module = "cs!base_collection"
 
             require [collection_module], (collection_class) =>
                 @data[name] = new collection_class()
