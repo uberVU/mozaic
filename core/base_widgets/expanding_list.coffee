@@ -171,15 +171,39 @@ define ['cs!widget'], (Widget) ->
             # should disable the expanding
             return if getSelection()?.toString()
 
+            @modifyChannel('/filters', @getFilterChangesForExpand(item))
+
+        getFilterChangesForExpand: (item) ->
+            ###
+                Filter changes for the case of item expansion.
+
+                By default, it only includes the id of the item, but feel
+                free to override this in your inherited class in order to
+                provide custom URL parameters.
+            ###
             filterChange = {}
             filterChange[@filter_key] = item.data('id')
-            @modifyChannel('/filters', filterChange)
+            return filterChange
 
         onRetract: (e) =>
             e.preventDefault()
+
+            @modifyChannel('/filters',
+                           @getFilterChangesForRetract(),
+                           {update_mode: 'exclude'})
+
+        getFilterChangesForRetract: ->
+            ###
+                Filter changes for the case of item retraction.
+
+                By default, we only clean up the item id, but please feel free
+                to do some more clean-up in your inherited class in order
+                to match the keys you're publishing to filters in
+                getFilterChangesForExpand.
+            ###
             filterChange = {}
             filterChange[@filter_key] = null
-            @modifyChannel('/filters', filterChange, {update_mode: 'exclude'})
+            return filterChange
 
         onScroll: (e) =>
             ###
