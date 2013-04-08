@@ -25,7 +25,7 @@ Example steps to inject a simple list widget
 Say we want to inject a list of users in the page from an application controller.
 Suppose we have a `/users` channel already instantiated in the controller.
 
-1. Before injecting a list widget, you must provide a widget to be rendered for
+_1._ Before injecting a list widget, you must provide a widget to be rendered for
 each element in the list. This can be any widget rigged to listen to a generic
 `/items` channel, which in this case it's the `/users` channel.
 
@@ -58,7 +58,7 @@ each of these model channels to a new instance of the `UserItemWidget`. In this 
 widget renders a different user model from the list and whenever a user record changes only
 it's widget will get re-rendered and not the entire list.
 
-2. buildup the injection params. At the very minimum you must supply the `/items` channel
+_2._ buildup the injection params. At the very minimum you must supply the `/items` channel
 and the `item` string param which holds the name of the widget to be injected for
 each model in the collection. Below is an exceprt from the controller's method the injects
 the users list.
@@ -82,11 +82,11 @@ _Note_ that we pass in the `/users` channel translated as `/items`. This is poss
 in mozaic and required by the list widget. It only knows how to list a channel if
 that channel is called `/items`. Also note that the `/users` channel was already
 created and stored in the controller's channel mappings. You can create a channel
-using [Utils.newDataChannels]()
+using [Utils.newDataChannels](https://github.com/uberVU/mozaic/blob/6931b572b7ef671877013b2697d99900c1005e3a/core/utils.coffee#L268-L302)
 
 The `item` param is the module name of the widget. Read more on module name in the
 docs for [require.js](http://requirejs.org/docs/api.html#define) a js lib used
 extensively in mozaic. Suffice to say that `user_item` corresponds to the widget
 defined in step 1 which was declared in your app's `conf/modules.js`.
 
-3. That's it! ;)
+_3._ That's it! ;)
