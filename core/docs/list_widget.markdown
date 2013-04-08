@@ -12,8 +12,8 @@ How it works
 The Mozaic core contains a [list widget](https://github.com/uberVU/mozaic/blob/master/core/base_widgets/list.coffee)
 It takes an `/items` channel and an item widget and renders a list of widgets,
 one for each element in the `/items` channels. It has the ability to pass
-aditional params to the individual item widget, it supports pagination, sorting,
-dinamic add/remove of elements on `/items` channel and thus is intended to be
+additional params to the individual item widget, it supports pagination, sorting,
+dynamic add/remove of elements on `/items` channel and thus is intended to be
 used `as is`, without extending it.
 
 See the [class docs for more details](https://github.com/uberVU/mozaic/blob/master/core/base_widgets/list.coffee)
@@ -33,12 +33,12 @@ each element in the list. This can be any widget rigged to listen to a generic
 # user_item.coffee
 class UserItemWidget extends Widget
 
-    subscribed_channels: ['/users/{{id}}']
+    subscribed_channels: ['/items/{{id}}']
 
     # Define a template for displaying the user data.
     template_name: 'teamplates/user_item.hjs'
 
-    get_users: (params) ->
+    get_items: (params) ->
         # We will only re-render the widget once the data has changed, either
         # completely (`reset`) or partially (`change`). Ignore other events.
         return unless params.type in ['reset', 'change']
@@ -48,8 +48,11 @@ class UserItemWidget extends Widget
         @renderLayout params
 ````
 
-_Notice_ that the channel this widget is subscribed to is called `/users/{{id}}`.
-This is because the list widget splits the input `/users`Y collection channel
+_Note_ that the channel this widget is subscribed to is called `/items/{{id}}`.
+This is in fact the `/users` channel renamed as `/items`. This is because the
+`list` widget's behaviour is agnostic to channel name, data or type. You can pass
+any channel to it as long as it's named `/items`.
+The list widget splits the input `/items` collection channel
 into multiple model channels, one for each model in the collection. It then passes
 each of these model channels to a new instance of the `UserItemWidget`. In this way each
 widget renders a different user model from the list and whenever a user record changes only
