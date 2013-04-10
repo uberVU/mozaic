@@ -119,6 +119,43 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
                     node.attr("data-#{k}", v)
             return node
 
+        onWidgetRender: (widgetName, parentWidget, onRender) ->
+            ###
+                Run a callback after a specific widget type rendered, that has
+                not been injected manually from a test but rather consequently,
+                from inside a parent widget injected manually.
+
+                The 1st parameter can be left null if looking for more than one
+                type of widget and all widgets will be sent to the onRender
+                callback once rendered. The name of the widget will be sent as
+                a second parameter to the callback for ease of use.
+
+                The 2nd parameter allows us to specify the parent widget
+                instance, in order to make sure we're not intercepting a
+                different widget of the same type loading somewhere else.
+
+                This method subscribes to /new_widget_rendered pubsub events
+                and keeps listening until the onRender callback returns true,
+                this way allowing the user to listen to one or more widgets of
+                a type to load before testing something.
+            ###
+            pipe = loader.get_module('pubsub')
+            f = (widget_id, widget_name) =>
+                widget = loader.widgets[widget_id]
+                return if widgetName and widget_name isnt widgetName
+                return if parentWidget and
+                          not parentWidget.view?.$el.has(widget.view.$el).length
+
+                # This handler can be removed automatically by returning true
+                # from inside the callback function
+                if onRender(widget, widget_name)
+                    pipe.unsubscribe('/new_widget_rendered', f)
+
+            pipe.subscribe('/new_widget_rendered', f)
+            # return event handler so it can be removed by hand as well, from
+            # the place this was registered
+            return f
+
         injectWidget: (el, widget_name, params, extra_classes = null, clean = null, el_type = null, modal = false, prepend = false, before = false, after = false) ->
             ###
                 @deprecated
