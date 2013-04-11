@@ -93,7 +93,12 @@ define ['cs!mozaic_module', 'cs!loader'], (Module) ->
 
         setDefaultFocus: =>
             # Focus on first "tabbable" element but ignore anchors or buttons
-            @modal.find(':tabbable:not(a,input.btn):first').focus()
+            $tabbableElement = @modal.find(':tabbable:not(a,input.btn):first')
+            return unless $tabbableElement.length
+            $tabbableElement.focus()
+            # XXX force the focus to move at the end of the contained text
+            val = $tabbableElement.val()
+            $tabbableElement.val('').val(val)
 
         validMessage: (message) ->
             ###

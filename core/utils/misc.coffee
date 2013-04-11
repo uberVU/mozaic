@@ -46,3 +46,39 @@ define [], () ->
         , timeout
 
         return deferred.promise()
+
+    truncateByWords: (originalString, length, suffix = false) ->
+        ###
+            Truncate a string while making sure words aren't split in any way,
+            especially important when truncating texts that contain links, that
+            are they going to be converted in html anchors.
+
+            The length of the resulted string might be a few chars smaller than
+            the proposed length (depending on the word found on that position),
+            but never longer
+        ###
+        # Remove any spaces at extremities
+        originalString = _.str.trim(originalString)
+        words = originalString.split(' ')
+        truncatedString = ''
+        for word, index in words
+            # Add another space char between the next and the previous word if
+            # it isn't the first (this helps the accuracy of the truncating,
+            # because we're taking the space in consideration when checking the
+            # length of the new word, as well)
+            word = " #{word}" if index > 0
+            proposedLength = truncatedString.length + word.length
+            # We must only account for the length of the suffix if one is
+            # specified and this isn't the last word (cause otherwise no
+            # truncating would take place and the suffix wouldn't be required)
+            if _.isString(suffix) and index < words.length - 1
+                proposedLength += suffix.length
+            if proposedLength <= length
+                truncatedString += word
+            else
+                # At least one word must have made it in order to add the
+                # suffix, otherwise it would be the suffix alone
+                if _.isString(suffix) and truncatedString.length
+                    truncatedString += suffix
+                break
+        return truncatedString

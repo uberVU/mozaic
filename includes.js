@@ -68,7 +68,19 @@ function includeStaticFilesInBundles() {
 
 function includeStaticFilesInBundles_Production() {
     includeJsFile(App.conf_files_bundle_name);
-    includeCssFile(getStaticUrl() + App.static_css_bundle_name);
+    // Include different CSS files for mobile devices
+    // #4964 - Disable CSS bundling on production (temporarily)
+    if (isMobileDevice()) {
+        for (var i = 0; i < App.static_touch_css.length; i++) {
+            includeCssFile(getStaticUrl() + App.static_touch_css[i]);
+        }
+        // includeCssFile(getStaticUrl() + App.static_touch_css_bundle_name);
+    } else {
+        for (var i = 0; i < App.static_css.length; i++) {
+            includeCssFile(getStaticUrl() + App.static_css[i]);
+        }
+        // includeCssFile(getStaticUrl() + App.static_css_bundle_name);
+    }
     includeJsFile(getStaticUrl() + App.static_libs_bundle_name);
     includeJsFileIE(getStaticUrl() + App.static_ie7_libs_bundle_name, 7);
 }
@@ -77,8 +89,15 @@ function includeStaticFilesInBundles_Development() {
     for (var i = 0; i < App.conf_files.length; i++) {
         includeJsFile(App.conf_files[i]);
     }
-    for (var i = 0; i < App.static_css.length; i++) {
-        includeCssFile(getStaticUrl() + App.static_css[i]);
+    // Include different CSS files for mobile devices
+    if (isMobileDevice()) {
+        for (var i = 0; i < App.static_touch_css.length; i++) {
+            includeCssFile(getStaticUrl() + App.static_touch_css[i]);
+        }
+    } else {
+        for (var i = 0; i < App.static_css.length; i++) {
+            includeCssFile(getStaticUrl() + App.static_css[i]);
+        }
     }
     for (var i = 0; i < App.static_libs.length; i++) {
         includeJsFile(getStaticUrl() + App.static_libs[i]);
@@ -177,6 +196,16 @@ function replaceReferencesFromConfigVariables() {
         });
     }
 };
+
+/**
+ * Check if current user is browsing from a mobile devices (normally with touch
+ * capabilities)
+ * XXX user agent sniffing is not an ideal technique since it can change at any
+ * time and also new devices can appear, but does the job for an MVP situation
+ */
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent)
+}
 
 overrideGeneralConfigWithUserConfig();
 replaceReferencesFromConfigVariables();
