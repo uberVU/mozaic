@@ -20,7 +20,8 @@ define [], () ->
 
             # Support a default value for when the editor has not yet
             # initialized
-            @default_value = @schema.default_value or null
+            @default_value = @schema.default_value
+            @default_value ?= null
             # Default widget params can be specified in the model schema
             # as well, as a starting point
             @widget_params = @schema.widget_params or {}
