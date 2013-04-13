@@ -133,7 +133,11 @@ define [
                         # to be available ASAP, e.g. on /new_widget events
                         # In theory, this won't longer be needed after we fix
                         # issue https://github.com/uberVU/mozaic/issues/54
-                        @reference_data[channel_guid] = {}
+                        @reference_data[channel_guid] = {
+                            # Initial timestamp for channel, to know when to
+                            # garbage collect it.
+                            'time_of_reference_expiry': (new Date).getTime()
+                        }
 
                         resource_type = @config.channel_types[channel_type].type
                         if resource_type == 'relational'
