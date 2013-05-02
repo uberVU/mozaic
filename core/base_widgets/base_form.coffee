@@ -2,6 +2,8 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
 
     class BaseForm extends Widget
 
+        ENTER = 13 # Cross Browser character code for `Enter` key.
+
         ###
             Execute the afterCommit event in your child classes
             Render only executes if the model is new and doesn't
@@ -28,6 +30,7 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
             "click .commit": "commit"
             "click .cancel": "cancel"
             "click .toggle": "toggle"
+            'keypress': 'onKeypress'
 
         initialize: ->
             # Only start the setup process after model module has
@@ -78,10 +81,17 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
                 Also setup aggregated channels for additional data that
                 is required in the form rendering process.
             ###
-            if @isNew()
-                @subscribed_channels = [channels_utils.formChannel(@channel_key)]
-            else
-                @subscribed_channels = [channels_utils.formChannel(@channel_key, @model_id)]
+            # Initialize subscribed_channels as array, if not already.
+            @subscribed_channels = [] if not @subscribed_channels
+            # Add an additional channel to subscribed channels, the one
+            # the form is going to do CRUD events on it.
+            @subscribed_channels = _.union(
+                @subscribed_channels,
+                if @isNew()
+                    [channels_utils.formChannel(@channel_key)]
+                else
+                    [channels_utils.formChannel(@channel_key, @model_id)]
+            )
             # Setup subscribed channel handler (like /folders for a folder form)
             @["#{channels_utils.widgetMethodForChannel(@, @channel_key)}"] = @get_subscribed_channel_events
             # Setup aggregated channel handler for all required data for the form
@@ -320,12 +330,13 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
             for el in @formHTMLElements()
                 el.prop('disabled', false).removeClass('disabled')
 
-        destroyForm: ->
+        destroyForm: (force_close=false) ->
             ###
                 Dispose this form by deleting this widget.
                 # TODO: dispose the form attrribute in destroyForm
             ###
-            if @destroy_after_commit? and @destroy_after_commit
+            if force_close or
+               (@destroy_after_commit? and @destroy_after_commit)
                 Utils.closeModal()
 
         cancel: (event) ->
@@ -384,4 +395,21 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
                     @form.fields[name].$el.parent().toggle('fast')
             false
 
-    return BaseForm
+        onKeypress: (event) =>
+            ###
+                This method will trigger commit when the user hits `enter`.
+                To achive this, we listen for all `keypress` events, filter
+                only `Enters` and make sure the focus is not on a textarea,
+                as this will result in a horrible experience.
+                @param {Object} event - instance of jQuery.Event
+            ###
+            return unless event.which is ENTER
+
+            $elem = ($ document.activeElement)
+            return if ($elem.is 'textarea') or
+                $elem.attr('contenteditable') is 'true'
+
+            event.stopPropagation()
+            event.preventDefault()
+
+            @commit()

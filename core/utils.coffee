@@ -425,7 +425,7 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
             if !$.isFunction(Module)
                 throw "Trying to instantiate something uninstantiable: " + Module
                 return
-            if App.general.THROW_UNCAUGHT_EXCEPTIONS
+            if App.general.PASS_THROUGH_EXCEPTIONS
                 result = new Module(params...)
             else
                 try
@@ -487,18 +487,33 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
                 specified object, preserving its scope (which means it works
                 even for methods without a fat arrow)
             ###
-            obj[methodName] = _.wrap(obj[methodName], (fn, args...) ->
+            originalMethod = obj[methodName]
+
+            # Replace the original method with a wrapper function that
+            # intercepts any calls to the original one and passes them on,
+            # while honoring the given before/after callbacks
+            obj[methodName] = ->
                 # Send the intercepted arguments to the callbacks as well, just
                 # in case we might want to use that information
-                options.before(args...) if _.isFunction(options.before)
-                returnValue = fn.apply(obj, args)
-                options.after(args...) if _.isFunction(options.after)
+                options.before(arguments...) if _.isFunction(options.before)
+                returnValue = originalMethod.apply(obj, arguments)
+                options.after(arguments...) if _.isFunction(options.after)
 
-                # Restore orignal method automatically after first call
-                obj[methodName] = fn if options.restore
+                # Restore original method automatically after first call
+                # (it it hasn't been already restored by hand)
+                if options.restore and _.isFunction(obj[methodName].restore)
+                    obj[methodName].restore()
+
                 # Make sure we preserve the return value
                 return returnValue
-            )
+
+            # Create a restore method attached to the wrapped method that
+            # can be called from anywhere, at any time
+            obj[methodName].restore = ->
+                obj[methodName] = originalMethod
+
+            # Return the wrapper method
+            return obj[methodName]
 
         _buildDomElementByWidgetOptions: (options) ->
             ###

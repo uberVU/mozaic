@@ -111,6 +111,9 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             # translate the parameters from Backbone.Collections format to ours.
             @_setupEventParamsTranslation()
 
+            # Hook to events from child widgets
+            @_setupChildEvents()
+
             # Publish to the datasource that there is a new widget which
             # is interested in certain data channels
             @announceNewWidget()
@@ -172,6 +175,24 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
                 # Trigger initial data state
                 @changeState(@initial_state)
 
+        _setupChildEvents: ->
+            ###
+                Hook to events from child widgets. We're currently only
+                listening to render events from child widgets, but more could
+                be implemented in the future.
+
+                TODO: Big refactoring, make all widgets run around a
+                pubsub channel of their own and have this sort of widget events
+                run on their respecive channel only, with the option to bubble
+                up to parent widgets up to the top widgets of the app
+            ###
+            # Only add an event listener if a handler function
+            # for it appears to be defined
+            return unless typeof(@onChildRender) is 'function'
+            # Save handler method reference so it can be removed from pubsub
+            # when trying to GC widget
+            @_onChildRender = Utils.onWidgetRender(null, this, @onChildRender)
+
         initialize: ->
 
         render: ->
@@ -197,6 +218,13 @@ define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widge
             pipe.publish('/destroy_widget', {
                 name: @params['name']
                 widget: this})
+
+            # Remove the on child render event listener, if previously set
+            # TODO: There should be a more elegant way to handle more events
+            # of this type and unsubscribing them all at once through some
+            # sort of system (rather than addressing them individually)
+            if _.isFunction(@_onChildRender)
+                pipe.unsubscribe('/new_widget_rendered', @_onChildRender)
 
         startBeingDetached: =>
             ###

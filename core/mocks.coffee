@@ -47,3 +47,5 @@ define ['cs!api_mock'], (ApiMock) ->
             is_api: true
         }]
     )
+    # Mock stream refresh w/out any factory around it
+    ApiMock.mockResource('keywords/[0-9]+/refresh', {})

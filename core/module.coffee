@@ -3,10 +3,16 @@ define [], () ->
         ###
             Base Mozaic module
 
-            Its only current function is to wrap all of its methods
+            Wraps all of its methods
             into an anonymous function that catches all thrown
             exceptions. The caught execptions are handled in
             conformity with the application settings. @see #_wrapMethod
+
+            Allows child classes to add mixins to their prototypes, using
+            the `@includeMixin()` static method.
+
+            Allows for easy inheritance of class properties using
+            `@extendHash()` static method.
 
             Note: it cannot be defined as `module` because
             require.js already has an internal module with that
@@ -41,6 +47,8 @@ define [], () ->
                 # been wrapped
                 if _.isFunction(member) and not member.__wrapped__
                     @[key] = @_wrapMethod(this, member)
+                    # Mark wrapper method
+                    @[key].__wrapped__ = true
 
         _wrapMethod: (instance, method) =>
             ###
@@ -48,10 +56,8 @@ define [], () ->
                 fat arrow to prevent from creating two new functions
                 with every wrapped one.
             ###
-            # Mark method as wrapped
-            method.__wrapped__ = true
             return () ->
-                if App.general.THROW_UNCAUGHT_EXCEPTIONS
+                if App.general.PASS_THROUGH_EXCEPTIONS
                     # Let any possible uncaught exception run its course
                     result = method.apply(instance, arguments)
                 else
@@ -82,3 +88,20 @@ define [], () ->
             # This one is for Ovidiu, so that we don't do return MyClass
             # for classes with mixins enabled :)
             return this
+
+
+        @extendProperty: (property, extensions) ->
+            ###
+                Defines a hash of values that will extend those of the
+                prototype property with the same name. If the property is not
+                defined, then this method will set it, so you can use it to
+                set prototype properties as well.
+
+                @param {String} property - the name of the prototype property
+                        to create/extend. Ex: subscribed_channels, events, etc.
+                @param {Object} extensions - the values to be appended to the
+                        existing prototype property.
+
+                Note! Currently only one-level deep extends are supported.
+            ###
+            @::[property] = _.extend {}, @::[property], extensions

@@ -62,6 +62,8 @@ define ['cs!widget/base_form'], (BaseForm) ->
             ###
             params =
                 message: if @params.message? then @params.message else @message
+                yes_text: @params.yes_text or 'Yes'
+                no_text: @params.no_text or 'No'
                 model: @model.toJSON()
             @renderLayout(params, @render_stringified)
 

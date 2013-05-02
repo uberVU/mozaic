@@ -11,8 +11,11 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
             ###
             result = {}
             for resource, params of resources
-                response = @getMockedApiResponse(resource, params)
-                @mockResource(resource, response)
+                if params.response
+                    response = params.response
+                else
+                    response = @getMockedApiResponse(resource, params)
+                @mockResource(resource, response, params)
 
                 # Depending on the channel type (relational or api), populate
                 # the response object the same way as the objects would be
@@ -23,11 +26,14 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
                     result[resource] = response
             return result
 
-        mockResource: (resource, response) ->
-            $.mockjax
-                url: @getResourceRegExp(resource)
-                response: ->
-                    @responseText = response
+        mockResource: (resource, response, params = {}) ->
+            $.mockjax(
+                _.extend({}, params,
+                    url: @getResourceRegExp(resource)
+                    response: ->
+                        @responseText = response
+                )
+            )
 
         getResourceRegExp: (resource) ->
             endpoint = "#{App.general.FRONTAPI_URL}/.*/#{resource}/([^a-z]|$)"
