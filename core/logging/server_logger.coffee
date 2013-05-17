@@ -53,7 +53,7 @@ define ['cs!interceptor', 'cs!logger_store'], (Interceptor, LoggerStore) ->
                 if stack_frame.match(/server_logger/)
                     continue
                 remaining_frames.push(stack_frame)
-            return JSON.stringify(remaining_frames)
+            return remaining_frames.join('\n')
 
         _log: (type, level=INFO, args = {}) ->
             ###

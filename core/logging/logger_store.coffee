@@ -16,7 +16,7 @@ define [], ->
             Tomcat: varies by version, 8K - 48K (?!)
             these values are actually entire headers size
         ###
-        MAX_LOGS_PER_REQUEST: 4 # kb
+        MAX_LOGS_PER_REQUEST: 3 # kb
 
         # Don't occupy more than LOG_MEGABYTES memory on your client
         MAX_LOGS_CLIENT_SIDE: 1024 # kb
@@ -27,9 +27,9 @@ define [], ->
             @_logger_store_size = 0
 
         _sizeof: (log_entry) ->
-            # Attempt to estimate the size of log_entry after serialization. 
+            # Attempt to estimate the size of log_entry after serialization.
             # We cannot send requests larger than 8k to tasty so we must calculate how many logs we can send.
-            # Because of the way django parses error logs, we need to send javascript objects json'ed twice. 
+            # Because of the way django parses error logs, we need to send javascript objects json'ed twice.
             # That's why, to estimate the size of a serialized log_entry we apply JSON.stringify twice.
 
             try
@@ -85,7 +85,7 @@ define [], ->
                 for each log item. The sum of these guys should be more
                 than the length of JSON.stringify of the whole array.
 
-                @param {Number} maxSize Optional - number of kilobytes of logs to send to the server 
+                @param {Number} maxSize Optional - number of kilobytes of logs to send to the server
                                                    Defaults to @MAX_LOGS_PER_REQUESTS
                 @return {String|undefined} - returns the serialized logs to be attached directly to the headers
                                              or undefined when no logs are stored.
@@ -115,7 +115,19 @@ define [], ->
 
             # Form the log entry for this message
             entry = {l: level, m: msg}
-            if stack_trace.length > 0
+            trace_length = stack_trace.length
+
+            if trace_length > 0
+                # If the stack trace exceeds the max size allowed per in a
+                # request truncate it so that it fits. We do that by figuring
+                # out which is the last line that fits inside the request
+                # and remove everything after it.
+                size_exceeded_by = trace_length - @MAX_LOGS_PER_REQUEST * 1024
+
+                if size_exceeded_by > 0
+                    last_line_end = stack_trace.slice(0, size_exceeded_by).lastIndexOf('\n')
+                    stack_trace = stack_trace.slice(0, last_line_end)
+
                 entry.t = stack_trace
 
             # Evict items if necessary until we make room for the new log entry.
