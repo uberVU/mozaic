@@ -7,20 +7,16 @@ App.the_modules = {
     'core_application_controller': 'core/application_controller',
 
     // Backbone Model + Collection
-    'model/todo': 'modules/todo_model',
-    'model/news': 'modules/news_model',
-    'collection/todos': 'modules/todo_collection',
-    'collection/news': 'modules/news_collection',
+    'model/todo': 'modules/todo/model/todo',
+    'collection/todos': 'modules/todo/model/todo_collection',
 
     // Widgets
-    'widget/todo_list_widget': 'modules/todo_list_widget',
-    'widget/todo_widget': 'modules/todo_widget',
-    'widget/todo_add_widget': 'modules/todo_add_widget',
-    'widget/news_list_widget': 'modules/news_list_widget',
+    'widget/todo_list': 'modules/todo/widget/list',
+    'widget/todo': 'modules/todo/widget/todo',
+    'widget/todo_form': 'modules/todo/widget/form',
 
     // Controllers
-    'widget/TodoPage': 'modules/todo_page_controller',
-    'widget/NewsPage': 'modules/news_page_controller'
+    'widget/TodoController': 'modules/todo/controller'
 };
 
 // This is actually how we check if this is being ran

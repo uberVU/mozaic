@@ -1,7 +1,7 @@
 define ['cs!widget'], (Widget) ->
-    class TodoAddWidget extends Widget
+    class TodoForm extends Widget
         subscribed_channels: ['/todos']
-        template_name: 'templates/todo_add_widget.hjs'
+        template_name: 'templates/todo/form.hjs'
 
         events:
             'click input[type="submit"]': 'newTodo'

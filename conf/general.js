@@ -11,7 +11,7 @@ App.general = {
     CURRENT_USER_URL: '{{FRONTEND_URL}}/front-api/v1/current/',
     CURRENT_USER_TIMEOUT: 60 * 1000,
     DEFAULT_PAGE_AFTER_LOGIN: 'index.html',
-    PAGE_LAYOUT: 'templates/page.hjs',
+    PAGE_LAYOUT: 'templates/layout.hjs',
     SVG_PATH: '/public/svg',
     ENVIRONMENT: 'testing',
 

@@ -5,10 +5,6 @@ App.DataSourceConfig = {
         '/todos': {
             type: 'relational',
             collection: 'todos'
-        },
-        '/news': {
-            type: 'relational',
-            collection: 'news'
         }
     }
 };

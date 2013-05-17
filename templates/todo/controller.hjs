@@ -1,0 +1,2 @@
+<div class="mozaic-widget" data-widget="todo_form" data-params="{{todo_form_params}}"></div>
+<div class="mozaic-widget" data-widget="todo_list" data-params="{{todo_list_params}}"></div>

@@ -1,7 +1,7 @@
 define ['cs!widget'], (Widget) ->
     class TodoListWidget extends Widget
         subscribed_channels: ['/todos']
-        template_name: 'templates/todo_list_widget.hjs'
+        template_name: 'templates/todo/list.hjs'
 
         append: (todo) ->
             ###
@@ -15,7 +15,7 @@ define ['cs!widget'], (Widget) ->
                     '/todos': @channel_mapping['/todos']
 
             container = @view.$el.find("#todo-list-container")
-            Utils.injectWidget(container, 'todo_widget', params_for_todo_widget)
+            Utils.injectWidget(container, 'todo', params_for_todo_widget)
 
         reset: (params) ->
             ###
