@@ -4,6 +4,9 @@ define ['cs!widget'], (Widget) ->
         subscribed_channels: ['/todos']
         template_name: 'templates/todo/list.hjs'
 
+        elements:
+            listContainer: '#todo-list-container'
+
         events:
             'click a.clear-items': 'clear_items'
 
@@ -18,9 +21,10 @@ define ['cs!widget'], (Widget) ->
                 'channels':
                     '/todos': @channel_mapping['/todos']
 
-            container = @view.$el.find("#todo-list-container")
-
-            Utils.injectWidget(container, 'todo', todo_params, null, null, 'tr')
+            Utils.inject('todo'
+                params: todo_params
+                container: @listContainer
+                type: 'tr')
 
         reset: (params) ->
             ###
