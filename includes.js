@@ -125,7 +125,7 @@ function includeBranding() {
 
     if (App.EXTRA_BRANDING) {
         var id = "'custom-css' ";
-        for(var i=0; i < files.length;i++) {
+        for(var i=0; i < App.EXTRA_BRANDING.length;i++) {
             if (i > 0) {
                 id = "'custom-css" + i + "' ";
             }
