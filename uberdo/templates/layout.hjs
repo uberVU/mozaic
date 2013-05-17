@@ -1,0 +1,13 @@
+<div id="container" class="clearfix">
+    <div id="header" class="logo clearfix">
+        <h1>uberDO</h1>
+    </div>
+    <div id="content">
+        <div class="row-fluid">
+            <div id="controller-container" class="span12">
+                <!-- Controllers load here -->
+            </div>
+        </div>
+    </div>
+</div>
+<div id="footer">This is a demo app for <a href="https://github.com/uberVU/mozaic">Mozaic</a>, an open-source JavaScript framework for rapid application<br/>development. The layout is powered by Bootstrap</div>

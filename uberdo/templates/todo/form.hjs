@@ -1,0 +1,2 @@
+<input id="add-text" name="task" type="text" placeholder="What needs to be done?">
+<input id="add-text-box" class="btn btn-primary btn-large" name="add" type="submit" value="Add it!" disabled="disabled">
