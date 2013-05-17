@@ -1,4 +1,5 @@
 define ['cs!controller'], (Controller) ->
+
     class TodoController extends Controller
         action: =>
             # Create a new data channel holding the TODO list items.
@@ -10,7 +11,9 @@ define ['cs!controller'], (Controller) ->
             #
             # In the variable "todos", we are storing a unique identifier
             # of the todos channel in the datasource.
-            [todos] = Utils.newDataChannels({'/todos': {}})
+            [todos] = Utils.newDataChannels
+                '/todos':
+                    _initial_data_: Constants.TODO_MOCKS
 
             # We're using Handlebars.js for templating and in the template
             # associated with this controller (todo_page.hjs, configured in

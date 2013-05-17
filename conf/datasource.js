@@ -4,7 +4,8 @@ App.DataSourceConfig = {
     channel_types: {
         '/todos': {
             type: 'relational',
-            collection: 'todos'
+            collection: 'todos',
+            populate_on_init: true
         }
     }
 };
