@@ -20,12 +20,17 @@ define ['cs!channels_utils'], (channels_utils) ->
                 @param {Object}     [options.filter]        Filter the objects to be modified
             ###
             logger.info "Modifying data from #{channel} in DataSource"
-            resource_type = @_getType(channel)
 
             # Split the channel into its components and get the "id" part.
             item = channels_utils.splitChannel(channel)[1]
             channel_guid = channels_utils.getChannelKey(channel)
 
+            unless @reference_data[channel_guid]?
+                logger.warn("Couldn't modify data from channel #{channel_guid} " +
+                            "because it was already removed")
+                return
+
+            resource_type = @_getType(channel)
             if resource_type == 'relational'
                 if item == "all"
                     # Modifying the whole collection is not supported for Backbone collections

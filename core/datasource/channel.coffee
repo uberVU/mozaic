@@ -26,6 +26,10 @@ define ['cs!channels_utils'], (channels_utils) ->
                 collection_module = "cs!base_collection"
 
             require [collection_module], (collection_class) =>
+                # Stop with the channel initialization if the reference data
+                # for this channel was removed in the meantime
+                return unless @reference_data[name]?
+
                 @data[name] = new collection_class()
                 conf = @config.channel_types[type]
                 eternal = params['__eternal__']?
@@ -72,6 +76,10 @@ define ['cs!channels_utils'], (channels_utils) ->
             collection_module = "cs!collection/" + collection_name
 
             require [collection_module], (collection_class) =>
+                # Stop with the channel initialization if the reference data
+                # for this channel was removed in the meantime
+                return unless @reference_data[name]?
+
                 @data[name] = new collection_class()
                 conf = @config.channel_types[type]
                 eternal = params['__eternal__']?

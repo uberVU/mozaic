@@ -67,6 +67,10 @@ define ['cs!channels_utils'], (channels_utils) ->
             ####
             # Declare that channel has expired loudly and openly.
             logger.info("Garbage collecting channel #{channel} in DataSource.")
+            delete @reference_data[channel]
+            # The meta_data might not have even been created if a channel got
+            # removed before its collection loaded
+            return unless @meta_data[channel]?
             # Stop periodic refresh if it was enabled
             @_stopRefreshing(channel)
             # Throw away channel meta-data
@@ -80,7 +84,6 @@ define ['cs!channels_utils'], (channels_utils) ->
             @data[channel].off()
             # Throw away reference to the actual data
             delete @data[channel]
-            delete @reference_data[channel]
 
         checkForUnusedChannels: ->
             ###
@@ -112,6 +115,10 @@ define ['cs!channels_utils'], (channels_utils) ->
               Datasource).
           ###
           for reference, key of widget.channel_mapping
+                unless @reference_data[key]?
+                    logger.warn("Couldn't increase count of #{key} " +
+                                "because it was already removed")
+                    continue
                 # Add reference counter for determining if this channel
                 # is still in use or not
                 @reference_data[key]['reference_count'] ?= 0
@@ -129,6 +136,10 @@ define ['cs!channels_utils'], (channels_utils) ->
                 @checkForUnusedChannels).
             ###
             for channel in _.values(widget.channel_mapping)
+                unless @reference_data[channel]?
+                    logger.warn("Couldn't decrease count of #{channel} " +
+                                "because it was already removed")
+                    continue
                 @reference_data[channel]['reference_count'] -= 1
                 new_count = @reference_data[channel]['reference_count']
                 if @reference_data[channel]['reference_count'] == 0

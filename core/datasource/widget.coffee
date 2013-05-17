@@ -19,6 +19,11 @@ define ['cs!channels_utils'], (channels_utils) ->
 
             # Only bind widget to data of channels it has subscribed to
             for reference, translated of widget_data.subscribed_channels
+                channel_key = channels_utils.getChannelKey(translated)
+                unless @reference_data[channel_key]?
+                    logger.warn("Couldn't bind widget to channel #{channel_key} " +
+                                "because it was already removed")
+                    continue
                 # Subscribe the widget to the events of the channel
                 @_bindWidgetToChannel(reference, translated, widget_data)
 

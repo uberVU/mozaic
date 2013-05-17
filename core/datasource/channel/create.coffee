@@ -55,11 +55,15 @@ define ['cs!channels_utils'], (channels_utils) ->
                 # successfully (and we don't want that)
                 model.save(model.attributes, {
                     error: (model, response, options) =>
+                        # Ignore response if channel was removed in the meantime
+                        return unless @reference_data[collection]?
                         # Trigger an error event on the collection, even though the model
                         # is not part of the collection yet. This is a CONVENTION to
                         # ease the work with new models
                         @data[collection].trigger('error', model, @data[collection], response)
                     success: (model, response) =>
+                        # Ignore response if channel was removed in the meantime
+                        return unless @reference_data[collection]?
                         if _.isArray(response)
                             # Sometimes, we make one single POST which
                             # result in multiple items being created. In

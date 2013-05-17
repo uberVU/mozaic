@@ -92,6 +92,9 @@ define ['cs!channels_utils'], (channels_utils) ->
                 meta.last_fetch = Utils.now()
             # Define success & error functions as wrappers around callback.
             fetch_params.success = (collection, response) =>
+                # Ignore response if channel was removed in the meantime
+                return unless @reference_data[channel_key]?
+
                 @_checkForNewlyArrivedAndAwaitedModels(channel_key)
 
                 # Only fill waiting channels the first time this
@@ -108,6 +111,9 @@ define ['cs!channels_utils'], (channels_utils) ->
 
                 callback(channel_key, true) if callback
             fetch_params.error = (collection, response) =>
+                # Ignore response if channel was removed in the meantime
+                return unless @reference_data[channel_key]?
+
                 callback(channel_key, false) if callback
 
             # What channel should receive the data we're about to fetch -
