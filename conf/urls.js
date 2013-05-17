@@ -8,6 +8,7 @@ App.urls = {
     // The TODO list page is mapped to the empty (missing) hashbang
     '': {
         'controller': 'TodoController',
-        'layout': 'templates/todo/controller.hjs'
+        'layout': 'templates/todo/controller.hjs',
+        'page_title': 'uberDO'
     }
 };
