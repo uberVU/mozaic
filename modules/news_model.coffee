@@ -1,4 +1,2 @@
-define [], () ->
-    class News extends Backbone.Model
-    return News
-
+define ['cs!base_model'], (BaseModel) ->
+    class NewsModel extends BaseModel

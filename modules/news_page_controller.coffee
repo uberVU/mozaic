@@ -9,5 +9,3 @@ define ['cs!controller'], (Controller) ->
                         '/news': news
 
             @renderLayout(params)
-
-    return NewsListController

@@ -34,5 +34,3 @@ define ['cs!widget'], (Widget) ->
             # Reset the HTML form
             input.attr('value', '')
             return false
-
-    return TodoAddWidget

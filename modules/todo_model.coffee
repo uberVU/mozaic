@@ -1,3 +1,2 @@
-define [], () ->
-    class Todo extends Backbone.Model
-    return Todo
+define ['cs!base_model'], (BaseModel) ->
+    class TodoModel extends BaseModel

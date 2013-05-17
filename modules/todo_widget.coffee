@@ -1,5 +1,4 @@
 define ['cs!widget'], (Widget) ->
-
     class TodoWidget extends Widget
         subscribed_channels: ['/todos/{{id}}']
         template_name: 'templates/todo_widget.hjs'
@@ -9,5 +8,3 @@ define ['cs!widget'], (Widget) ->
                 Whenever any field of a TODO item changes, re-render it completely.
             ###
             @renderLayout({"task" : params.model.get('task')})
-
-    return TodoWidget

@@ -1,4 +1,3 @@
-define ['cs!model/todo'], (Todo) ->
-    class TodoCollection extends Backbone.Collection
-        model: Todo
-    return TodoCollection
+define ['cs!base_collection', 'cs!model/todo'], (BaseCollection, TodoModel) ->
+    class TodoCollection extends BaseCollection
+        model: TodoModel

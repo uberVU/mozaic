@@ -12,6 +12,3 @@ define ['cs!widget'], (Widget) ->
                 JSON data).
             ###
             @renderLayout({"news" : params.collection.models})
-
-    return NewsListWidget
-

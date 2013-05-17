@@ -23,7 +23,7 @@ define ['cs!controller'], (Controller) ->
                 todo_list_params:
                     'channels':
                         '/todos': todos
-                # Parameters passed to the add todo widget. It needs to know 
+                # Parameters passed to the add todo widget. It needs to know
                 # the channel in order to add items to it.
                 todo_add_params:
                     'channels':
@@ -31,5 +31,3 @@ define ['cs!controller'], (Controller) ->
 
             # Render the layout (todo_page.hjs)
             @renderLayout(params)
-
-    return TodoListController

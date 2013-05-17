@@ -47,5 +47,3 @@ define ['cs!widget'], (Widget) ->
             switch params.type
                 when 'reset' then @reset(params)
                 when 'add' then @add(params)
-
-    return TodoListWidget
