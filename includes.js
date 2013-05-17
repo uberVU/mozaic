@@ -37,8 +37,7 @@ function getStaticUrl() {
 
 function includeCssAndJs() {
     includeStaticFilesInBundles();
-    if (App.general.EXTRA_BRANDING.length){
-        includeBranding(App.general.EXTRA_BRANDING);
+    includeBranding();
     includeMainEntryPoint();
     includeTemplates();
 }
@@ -122,10 +121,17 @@ function includeStaticFilesInBundles_Development() {
  *       Also, we cannot use includeCss because we need it to have an ID
  *       (#custom-css).
  */
-function includeBranding(files) {
-    for(var i=0; i < files.length;i++) {
-        document.write("<link rel='stylesheet' id='custom-css' " +
-                      "href= '" + files[i] + "'/>");
+function includeBranding() {
+
+    if (App.EXTRA_BRANDING) {
+        var id = "'custom-css' ";
+        for(var i=0; i < files.length;i++) {
+            if (i > 0) {
+                id = "'custom-css" + i + "' ";
+            }
+            document.write("<link rel='stylesheet' id=" + id +
+                        "href= '" + App.EXTRA_BRANDING[i] + "'/>");
+        }
     }
 }
 
