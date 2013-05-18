@@ -8,28 +8,28 @@ define [], () ->
 
         TODO_MOCKS: [
             id: 1
-            name: "grandma' needs a bath"
+            name: "rob the bank",
+            starred: true
         ,
             id: 2
-            name: "feed that damn dog"
+            name: "grandma' needs a bath"
         ,
             id: 3
-            checked: true,
-            name: "remember the milk"
+            name: "feed that damn dog"
         ,
             id: 4
             name: "finish the hackton"
         ,
             id: 5
-            checked: true,
-            name: "shake that ass"
-        ,
-            id: 6
             name: "do your homework"
         ,
+            id: 6
+            name: "remember the milk",
+            checked: true
+        ,
             id: 7
-            starred: true,
-            name: "rob the bank"
+            name: "shake that ass",
+            checked: true
         ]
 
     window.Constants = Constants
