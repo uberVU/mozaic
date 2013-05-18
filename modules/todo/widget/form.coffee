@@ -4,8 +4,13 @@ define ['cs!widget'], (Widget) ->
         subscribed_channels: ['/todos']
         template_name: 'templates/todo/form.hjs'
 
+        elements:
+            input: 'input[name="task"]'
+            button: 'input[type="submit"]'
+
         events:
-            'click input[type="submit"]': 'newTodo'
+            'keyup @input': 'onKeyUp'
+            'click @button': 'newTodo'
 
         initialize: =>
             ###
@@ -13,14 +18,7 @@ define ['cs!widget'], (Widget) ->
             ###
             @renderLayout()
 
-            # Fetch input and add keyup events
-            @input = @view.$el.find('input[name="task"]')
-            @input.on('keyup', @onKeyUp)
-
-            # Fetch button
-            @button = @view.$el.find('input[type="submit"]')
-
-        newTodo: (event) =>
+        newTodo: (e) =>
             ###
                 Whenever user clicks on submit to add a new TODO,
                 take the value from the DOM and publish a message
@@ -30,6 +28,8 @@ define ['cs!widget'], (Widget) ->
                 and sync the data to the server (in our case, this
                 is not necessary).
             ###
+            e.preventDefault()
+
             # Get the value from the HTML form
             task_name = @input.attr('value')
 
@@ -42,15 +42,12 @@ define ['cs!widget'], (Widget) ->
 
             # Reset the HTML form
             @input.attr('value', '')
-            return false
 
         onKeyUp: (e) =>
-
-
-            if e.keyCode == 13
+            # Whenever ENTER is pressed
+            if e.keyCode is 13
                 @button.click()
                 e.preventDefault()
-            if $(e.currentTarget).val()
-                @button.prop('disabled', false)
-            else
-                @button.prop('disabled', true)
+            # Only make the submit button available when there's text entered
+            # in the input
+            @button.prop('disabled', not $(e.currentTarget).val())
