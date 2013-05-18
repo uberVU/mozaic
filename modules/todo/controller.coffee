@@ -25,11 +25,7 @@ define ['cs!controller'], (Controller) ->
                 # display the items and treat events like new items added.
                 todo_list_params:
                     channels:
-                        '/items': todos
-                    item: 'todo'
-                    item_channels:
                         '/todos': todos
-                    item_element: 'tr'
                 # Parameters passed to the add todo widget. It needs to know
                 # the channel in order to add items to it.
                 todo_form_params:
