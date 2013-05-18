@@ -1,5 +1,5 @@
 <table class="table table-bordered table-striped">
-    <tbody id="todo-list-container"></tbody>
+    <tbody id="todo-list-container" class="mozaic-widget" data-widget="list" data-params="{{list_params}}"></tbody>
 </table>
 <a href="#clear" class="btn clear-items">
     <i class="icon-tasks"></i> clear checked items
