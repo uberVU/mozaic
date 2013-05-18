@@ -20,6 +20,10 @@ define ['cs!widget'], (Widget) ->
                 list_params:
                     channels:
                         '/items': @channel_mapping['/todos']
+                    sort_by:
+                        'checked': 'bool'
+                        'starred desc': 'bool'
+                        'id': 'int'
                     item: 'todo'
                     item_channels:
                         '/todos': @channel_mapping['/todos']
