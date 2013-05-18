@@ -1,69 +1,42 @@
 define ['cs!widget'], (Widget) ->
 
     class TodoListWidget extends Widget
+        ###
+            Wrapper for todo list to include aditional controls, like clearing
+            all checked items
+        ###
         subscribed_channels: ['/todos']
         template_name: 'templates/todo/list.hjs'
 
-        elements:
-            listContainer: '#todo-list-container'
-
         events:
-            'click a.clear-items': 'clear_items'
+            'click .clear-items': 'clear_items'
 
-        append: (todo) ->
-            ###
-                This method injects a TODO widget into the DOM.
-                The widget needs to know the /todos channel in order
-                to listen to changes for an individual TODO item.
-            ###
-            todo_params =
-                'id': todo.id
-                'channels':
-                    '/todos': @channel_mapping['/todos']
+        # The IDs of all checked TODOs. We need our reference for removing them
+        # all at once
+        checked_ids: []
 
-            Utils.inject('todo'
-                params: todo_params
-                container: @listContainer
-                type: 'tr')
-
-        reset: (params) ->
-            ###
-                This method is called to reset the graphical representation of
-                the todos from scratch (because the collection itself has
-                been reset from scratch).
-            ###
-            # Fetch models
-            models = params.collection.models
-            # Store ids
-            @ids = ((model.get('id') or model.id) for model in models when model.get 'checked')
-
-            # Re-render the clean HTML
-            @renderLayout()
-            # Inject the TODO widgets
-            @append(todo) for todo in models
-            # Smoothen div height change
-            #@view.$el.css('height', 'auto')
-            #@view.$el.css('height', @view.$el.height())
-
-        change: (params) ->
-            # Sort collection before resetting layout
-            params.model.collection.sort()
+        initialize: ->
+            @renderLayout
+                list_params:
+                    channels:
+                        '/items': @channel_mapping['/todos']
+                    sort_by:
+                        'checked': 'bool'
+                        'starred desc': 'bool'
+                        'id': 'int'
+                    item: 'todo'
+                    item_channels:
+                        '/todos': @channel_mapping['/todos']
+                    item_element: 'tr'
 
         get_todos: (params) =>
-            ###
-                This method will be called whenever there are changes
-                to the /todos channel. Changes can be of multiple types,
-                as this data channel is actually a Backbone Collection.
-                (There is another type of channel as well, which can store raw
-                JSON data).
-            ###
-            switch params.type
-                when 'reset' then @reset(params)
-                when 'add' then params.model.collection.sort()
-                when 'change' then @change(params)
-                when 'remove' then @reset(params)
+            return unless params.collection?
+
+            @checked_ids = []
+            for model in params.collection.models
+                @checked_ids.push(model.id) if model.get('checked')
 
         clear_items: (e) =>
-            for id in @ids
+            e.preventDefault()
+            for id in @checked_ids
                 @deleteChannel("/todos/#{id}", {sync: false})
-            false

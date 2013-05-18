@@ -81,6 +81,7 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             int: 'intComparator'
             float: 'floatComparator'
             date: 'dateComparator'
+            bool: 'boolComparator'
 
         registerComparator: (key, comparator) ->
             ###
@@ -217,6 +218,13 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             b = _.str.trim (b).toLowerCase()
             return -1 if a < b
             return 1 if a > b
+            return 0
+
+        boolComparator: (a, b) ->
+            a = Boolean(a)
+            b = Boolean(b)
+            return -1 if b and not a
+            return 1 if a and not b
             return 0
 
         dateComparator: (a, b) ->
