@@ -24,10 +24,11 @@ define [
             The following is a centralized list of the properties supported
             by the widget class and their use-cases:
 
-            @property {String} @template_name
+            @property {String} @template_name - path to widget's template, it's
+                                    relative to the root of the application.
             @property {Object} @template - instance of Handlebars
-            @property {Number} @constructed_at - unix timestamp
-            @property {String} @initial_state
+            @property {Number} @constructed_at - unix timestamp for the date
+                                         when the widget constructor was run.
 
             @property {Object} @params - hash of parameters passed by parent
                                          widget upon injection into the DOM.
@@ -50,14 +51,31 @@ define [
                     Maps an `event` on the previously computed `@element` to
                     the `function` name that acts as a handler of that event.
 
+            STATES
+            @property {String} @initial_state
+            @property {String} @loadingStates
+            @property {String} @data_state
+            @property {Boolean} @STRICT_CHANGE_STATE
 
-
-            @property {Object} @channel_mapping -
-            @property {Object} @subscribed_channels
-            @property {Object} @loading_channels
-            @property {Object} @aggregated_channels
+            CHANNELS
+            @property {Array} @subscribed_channels - list of channely types the
+                                    channel is bound to. Whenever events are
+                                    published on one of channels defined in
+                                    @subscribed_channels, a method named
+                                    @get_<channel_name>() gets executed. Widget
+                                    implementations must implement such methods
+                                    in order to get updates from the channel.
+            @property {Array} @loading_channels -list of channels types whose
+                                    aggregated events determine the widget's
+                                    transition to a certain state
+            @property {Object} @aggregated_channels - provides a way to bind
+                                    callbacks that get executed on aggregated
+                                    channels.
             @property {Object} @aggregator - holds data from the latest events
                                     of all channels the widget is bound to.
+            @property {Object} @channel_mapping - this is an internal hash that
+                                    maps channel type from @subscribed_channels
+                                    to the actual instances of the channel.
 
             @property {Boolean} @URGENT_FOR_GC
 
@@ -72,7 +90,7 @@ define [
                                     executed before the widget is rendered.
             @property {Object} @post_render - hash of context processors to be
                                     executed after the widget is rendered.
-            @property {Object} @layout -
+            @property {Object} @layout - instance of core/layout class.
 
             @property {Object} @profiler - instance of YUIProfiler class. Does
                                     what it says on the tin! it's a class and
