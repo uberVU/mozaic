@@ -1,5 +1,85 @@
-define ['cs!mozaic_module', 'cs!core/widget/aggregated_channels', 'cs!core/widget/backbone_events', 'cs!core/widget/channels', 'cs!core/widget/params', 'cs!core/widget/rendering', 'cs!core/widget/states'], (Module, WidgetAggregatedChannelsMixin, WidgetBackboneEventsMixin, WidgetChannelsMixin, WidgetParamsMixin, WidgetRenderingMixin, WidgetStatesMixin) ->
+define [
+    'cs!mozaic_module'
+    'cs!core/widget/aggregated_channels'
+    'cs!core/widget/backbone_events'
+    'cs!core/widget/channels'
+    'cs!core/widget/params'
+    'cs!core/widget/rendering'
+    'cs!core/widget/states'
+], (
+    Module,
+    WidgetAggregatedChannelsMixin,
+    WidgetBackboneEventsMixin,
+    WidgetChannelsMixin,
+    WidgetParamsMixin,
+    WidgetRenderingMixin,
+    WidgetStatesMixin
+) ->
+
     class Widget extends Module
+        ###
+            The widget is the building block of UIs in mozaic.js ie. interfaces
+            are built by composing widgets that encapsulate functionality.
+
+            The following is a centralized list of the properties supported
+            by the widget class and their use-cases:
+
+            @property {String} @template_name
+            @property {Object} @template - instance of Handlebars
+            @property {Number} @constructed_at - unix timestamp
+            @property {String} @initial_state
+
+            @property {Object} @params - hash of parameters passed by parent
+                                         widget upon injection into the DOM.
+            @property {Object} @params_defaults - Specifies default values for
+                    the widget params. The format is `{key:value}`.
+                    All specified keys are attached to the instance.
+                    If `value` is a function then @key gets it's return value.
+                        Note that these functions get executed in the context
+                        of the widget after all other defaults have been set.
+                    If `value` is `data-params` then @key gets the value from
+                        the passed @params[key] object.
+                    Otherwise, @key receives whatever `value` is passed.
+            @property {Object} @params_required - an array of parameters
+                                expected in @params from the injector widget.
+
+            @property {Object} @elements - a hash `{'name':'selector'}`
+                    This hash is processed on widget construction and sets
+                    `@['name']` to be a jQuery element that matches `'selector'`
+            @property {Object} @events - a hash `{'event @element': 'function'}
+                    Maps an `event` on the previously computed `@element` to
+                    the `function` name that acts as a handler of that event.
+
+
+
+            @property {Object} @channel_mapping -
+            @property {Object} @subscribed_channels
+            @property {Object} @loading_channels
+            @property {Object} @aggregated_channels
+            @property {Object} @aggregator - holds data from the latest events
+                                    of all channels the widget is bound to.
+
+            @property {Boolean} @URGENT_FOR_GC
+
+            RENDERING
+            @property {Object} @view - instance of Backbone.View
+            @property {Object} @el - intance of jQuery, @deprecated
+            @property {Boolean} @isDetachedFromDOM - flag indicating if the
+                                    widget is not in the DOM anymore.
+            @property {Object} @saved_view - instance of Backbone.View
+            @property {Object} @saved_el - instance of jQuery
+            @property {Object} @pre_render - hash of context processors to be
+                                    executed before the widget is rendered.
+            @property {Object} @post_render - hash of context processors to be
+                                    executed after the widget is rendered.
+            @property {Object} @layout -
+
+            @property {Object} @profiler - instance of YUIProfiler class. Does
+                                    what it says on the tin! it's a class and
+                                    function profiler.
+            @property {Boolean} @rendered_signal_sent - flag sent right after
+                                    publishing `/new_widget_rendered`.
+        ###
 
         ###
             /new_widget_rendered can be sent only once per widget instance.
