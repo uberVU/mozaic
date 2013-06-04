@@ -70,13 +70,18 @@ define ['cs!mozaic_module', 'cs!pubsub'], (Module) ->
             # @reference http://www.w3.org/TR/dom/#mutation-observers
             # @reference http://www.w3.org/TR/DOM-Level-3-Events/#events-mutationevents
             ###
+            nodeClassName = mutation.target?.className
+            # The className can be a SVGAnimatedString because that's what a
+            # SVG dom element returns for className
+            # Reference: https://developer.mozilla.org/en-US/docs/Web/API/SVGAnimatedString
+            nodeClassName = if nodeClassName?.baseVal? then nodeClassName.baseVal else nodeClassName
 
             isMutationRecord =
                 mutation.type is 'attributes' and
                 mutation.attributeName is 'class' and
-                mutation.target?.className?.indexOf('mozaic-widget') isnt -1 and # Must be widget.
+                nodeClassName?.indexOf('mozaic-widget') isnt -1 and # Must be widget.
                 mutation.oldValue?.indexOf(Constants.DELAY_WIDGET) isnt -1 and # Should have been delayed
-                mutation.target?.className?.indexOf(Constants.DELAY_WIDGET) is -1 # Should not be delayed anymore
+                nodeClassName?.indexOf(Constants.DELAY_WIDGET) is -1 # Should not be delayed anymore
 
             isMutationEvent = # for DOM Mutation Events
                 mutation.attrChange is 1 and # MODIFICATION type change.
