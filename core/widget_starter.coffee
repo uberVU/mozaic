@@ -79,16 +79,20 @@ define ['cs!mozaic_module', 'cs!pubsub'], (Module) ->
             isMutationRecord =
                 mutation.type is 'attributes' and
                 mutation.attributeName is 'class' and
-                nodeClassName?.indexOf('mozaic-widget') isnt -1 and # Must be widget.
-                mutation.oldValue?.indexOf(Constants.DELAY_WIDGET) isnt -1 and # Should have been delayed
-                nodeClassName?.indexOf(Constants.DELAY_WIDGET) is -1 # Should not be delayed anymore
+                nodeClassName? and
+                nodeClassName.indexOf('mozaic-widget') isnt -1 and # Must be widget.
+                mutation.oldValue? and
+                mutation.oldValue.indexOf(Constants.DELAY_WIDGET) isnt -1 and # Should have been delayed
+                nodeClassName.indexOf(Constants.DELAY_WIDGET) is -1 # Should not be delayed anymore
 
             isMutationEvent = # for DOM Mutation Events
                 mutation.attrChange is 1 and # MODIFICATION type change.
                 mutation.attrName is 'class' and # Changed attr should be a class.
-                mutation.newValue?.indexOf('mozaic-widget') isnt -1 and # Element should be a widget.
-                mutation.newValue?.indexOf(Constants.DELAY_WIDGET) is -1 and # Element should no longer be delayed.
-                mutation.prevValue?.indexOf(Constants.DELAY_WIDGET) isnt -1 # Element was previously marked as delayed.
+                mutation.newValue? and
+                mutation.newValue.indexOf('mozaic-widget') isnt -1 and # Element should be a widget.
+                mutation.newValue.indexOf(Constants.DELAY_WIDGET) is -1 and # Element should no longer be delayed.
+                mutation.prevValue? and
+                mutation.prevValue.indexOf(Constants.DELAY_WIDGET) isnt -1 # Element was previously marked as delayed.
 
             return isMutationRecord or isMutationEvent
 
