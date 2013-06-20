@@ -40,7 +40,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                     return {
                         type: 'error'
                         model: params[0]
-                        collection: params[0].collection
+                        collection: params[0].collection or params[1]
                         response: params[2]
                     }
                 else if event_type == 'change'
