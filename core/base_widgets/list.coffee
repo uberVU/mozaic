@@ -1,6 +1,6 @@
 define ['cs!scrollable_widget'], (ScrollableWidget) ->
 
-    class WidgetList extends ScrollableWidget
+    class List extends ScrollableWidget
         ###
             Widget which is able to render a list of items, by injecting
             one widget per each item. An item to be displayed will be named
@@ -455,5 +455,3 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
                 User can send an item_params which is send in as params in items
             ###
             _.extend({}, @widget_params, @item_params) if @item_params?
-
-    return WidgetList
