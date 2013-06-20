@@ -86,6 +86,7 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             int: 'intComparator'
             float: 'floatComparator'
             date: 'dateComparator'
+            date: 'boolComparator'
 
         registerComparator: (key, comparator) ->
             ###
@@ -231,6 +232,13 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             ###
             f = Utils.getUTCTimestampFromDate
             return f(a) - f(b)
+
+        boolComparator: (a, b) ->
+            a = Boolean(a)
+            b = Boolean(b)
+            return -1 if b and not a
+            return 1 if a and not b
+            return 0
 
         matchesFilters: (model) =>
             ###
