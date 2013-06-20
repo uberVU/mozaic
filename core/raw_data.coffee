@@ -155,7 +155,7 @@ define [], () ->
                 # (including 3xx redirect and timeouts).
                 # This is important because we need to have a response from
                 # widgets on error events.
-                @trigger('error', @, @, xhr.status)
+                @trigger('error', this, this, xhr.status)
 
             # Make the actual AJAX request
             call_params =
