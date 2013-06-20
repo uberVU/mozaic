@@ -152,7 +152,7 @@ define [], () ->
 
             error_callback = (xhr, response_status, error_string) =>
                 # Trigger an 'error' event when the request results in an error
-                # (including 3xx redirect).
+                # (including 3xx redirect and timeouts).
                 # This is important because we need to have a response from
                 # widgets on error events.
                 @trigger('error', @, @, xhr.status)
