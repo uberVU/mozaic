@@ -37,8 +37,13 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
             return result
 
         mockResource: (resource, response, params = {}) ->
+            # The mockjax_options allow you to pass extra params
+            # to the mockjax configuration.
+            # Example of use case:
+            # you want the status to be 403, not 200 which is by
+            # default.
             $.mockjax(
-                _.extend({}, params,
+                _.extend({}, params.mockjax_options,
                     url: @getResourceRegExp(resource)
                     response: ->
                         @responseText = response
@@ -49,11 +54,11 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
             endpoint = "#{App.general.FRONTAPI_URL}/.*/#{resource}/([^a-z]|$)"
             return new RegExp(endpoint)
 
-        getMockedApiResponse: (resource, param) ->
+        getMockedApiResponse: (resource, params) ->
             ###
                 Mock some API response
             ###
-            response = master_factory.get(resource, param)
+            response = master_factory.get(resource, params)
             # If is_api channel do not wrap the response under 'objects' key
             # Useful for calls to analytics
             # Api responses should be returned directly, w/out being wrapped
