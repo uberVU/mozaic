@@ -122,17 +122,8 @@ function includeStaticFilesInBundles_Development() {
  *       (#custom-css).
  */
 function includeBranding() {
-
-    if (App.EXTRA_BRANDING) {
-        var id = "'custom-css' ";
-        for(var i = 0; i < App.EXTRA_BRANDING.length;i++) {
-            if (i > 0) {
-                id = "'custom-css-" + i + "' ";
-            }
-            document.write("<link rel='stylesheet' id=" + id +
-                        "href= '" + App.EXTRA_BRANDING[i] + "'/>");
-        }
-    }
+   document.write("<link rel='stylesheet' id='custom-css' " +
+                  "href='/assets/custom.css'/>");
 }
 
 /*

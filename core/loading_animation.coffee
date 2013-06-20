@@ -35,6 +35,8 @@ define ['cs!mozaic_module'], (Module) ->
             @pipe.subscribe('/new_widget_rendered', @newWidgetRendered)
             @start_time = new Date().getTime()
             @intervalHandle = setInterval(@checkIfLoadingFinished, @LOADING_FINISHED_CHECK_INTERVAL)
+            # Mark the entire application as "loading"
+            Mozaic.isLoading = true
 
         # If the admin changed the group, personalize
         # loading message.
@@ -125,6 +127,9 @@ define ['cs!mozaic_module'], (Module) ->
             ###
             $('#loading-animation').hide()
             clearInterval(@intervalHandle)
+            # Update the global "loading" flag from the application once the
+            # loading is done
+            Mozaic.isLoading = false
             @pipe.publish('/loading_animation_finished')
 
         getNastyWidgets: =>

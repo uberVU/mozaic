@@ -30,7 +30,7 @@ define ['cs!widget'], (Widget) ->
 
         onScroll: =>
             dif = $(window).scrollTop() - $(document).height() + $(window).height()
-            if Math.abs(dif) < 5
+            if Math.abs(dif) < 5 and $(document).height() > $(window).height()
                 @scrollDown()
             return false
 

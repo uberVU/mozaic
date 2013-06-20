@@ -61,6 +61,7 @@ define [], () ->
             ###
             @pipe = loader.get_module('pubsub')
             @pipe.subscribe('/new_widget', @newWidget)
+            @subscribed_to_widget_rendering = false
 
             # Compile and render widget container template
             template = Handlebars.compile(@template)
@@ -88,9 +89,28 @@ define [], () ->
                 # Create a back-reference to editor in widget
                 @widget.editor = this
                 # Call initializeWithForm method on editor, if one is
-                # implemented
+                # implemented. Delay this call until renderLayout() has
+                # been called at least once, because most widget editors
+                # do setValue() in initializeWithForm, which implicitly
+                # requires the DOM to be ready.
                 if _.isFunction(@widget.initializeWithForm)
-                    @widget.initializeWithForm(@form)
+                    if @widget.DELAYED_INITIALIZE_WITH_FORM? and @widget.DELAYED_INITIALIZE_WITH_FORM
+                        @pipe.subscribe('/new_widget_rendered', @editorWidgetHasRendered)
+                    else
+                        @widget.initializeWithForm(@form)
+
+        editorWidgetHasRendered: (widget_id, widget_name) =>
+            ###
+                Callback for running initialize-like method of widget editor,
+                that is called whenever the proxy widget and the editor itself
+                are setup and cross-referenced correctly.
+
+                Since most editor widgets also use the DOM in initializeWithForm,
+                we make sure that the DOM is right there by waiting for at least
+                one renderLayout() to occur.
+            ###
+            @widget.initializeWithForm(@form)
+            @pipe.unsubscribe('/new_widget_rendered', @editorWidgetHasRendered)
 
         getValue: () ->
             return if @widget? then @widget.getValue() else @default_value

@@ -82,3 +82,21 @@ define [], () ->
                     truncatedString += suffix
                 break
         return truncatedString
+
+    sameArrays: (array1, array2) ->
+        ###
+            Check if array1 and array2 are identical.
+
+            array1 = [1,2,3,4,5]
+            array2 = [1,2,3,4,5]
+            array3 = [3,5,1,2,4]
+
+            array1 and array2 are identical, but 3 is not.
+        ###
+        if array1?.length != array2?.length
+            return false
+        else
+            for i in [0..array1?.length-1]
+                if array1[i] != array2[i]
+                    return false
+            return true

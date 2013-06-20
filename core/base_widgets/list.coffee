@@ -59,10 +59,10 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
 
         params_defaults:
             enable_scroll: 'data-params'
-            className: 'data-params'
             item: 'data-params'
             item_channels: 'data-params'
             item_params: 'data-params'
+            item_class: 'data-params'
             # Used to specify what fields to dynamically extract
             # from model. Should look like {key1: new_key1, key2: new_key2, ..}
             # where key is the one in model, and new_key is the one will be used
@@ -71,14 +71,12 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             filter_by: 'data-params'
             sort_by: 'data-params'
             container: 'data-params'
-            item_element: 'data-params'
+            item_element: (value) -> value or 'li'
             prepend: 'data-params'
             # This mappings params is used to be able
             # to insert different widgets (with different
             # models).
             mappings: 'data-params'
-            first_class: 'data-params'
-            last_class: 'data-params'
 
         # A list of comparators for list. You can also push to
         # this list and define your own comparator in your type
@@ -88,7 +86,6 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             int: 'intComparator'
             float: 'floatComparator'
             date: 'dateComparator'
-            bool: 'boolComparator'
 
         registerComparator: (key, comparator) ->
             ###
@@ -108,7 +105,9 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             # If the scroll is enabled in the params, then make
             # the items channel a scrollable one
             if @enable_scroll
-                @scrollable_channels = ['/items']
+                # Make all loading channels scrollable because widget states
+                # are triggered by loading ones and affect the scrollable ones
+                @scrollable_channels = _.clone(@loading_channels)
 
             @extendWidgetParamsFromItem()
 
@@ -132,19 +131,15 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             # Initialize the array of IDs
             @ids = []
 
-            # Initialize first_class and last_class
-            if not @first_class?
-                @first_class = 'first'
-            if not @last_class?
-                @last_class = 'last'
-
             super()
 
-        changeState: (state, item_params) ->
-            super(state, item_params)
+        changeState: (state, params...) ->
+            super(arguments...)
             if state == 'empty'
                 # TODO: Add `end` state to widget base
-                if not item_params.collection.length
+                # Support multiple loading channels for building the list's
+                # item feed
+                if not @getModelsFromChannelData(params...).length
                     @renderLayout {state: state}
                 else
                     # Maybe add something to the bottom of all items instead
@@ -227,13 +222,6 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             return 1 if a > b
             return 0
 
-        boolComparator: (a, b) ->
-            a = Boolean(a)
-            b = Boolean(b)
-            return -1 if b and not a
-            return 1 if a and not b
-            return 0
-
         dateComparator: (a, b) ->
             ###
                 If you are comparing two dates that
@@ -255,48 +243,83 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             return true
 
         get_items: (item_params) =>
+            @handleChannelEvents(item_params)
 
-            if item_params.type == 'reset' and not @isChannelDataEmpty(item_params)
+        handleChannelEvents: (item_params) ->
+            ###
+                Method for processing channel data and inserting received items
+                onto the list. It is called w/ the single /items channel from
+                its channel callback method in the default implementation, but
+                can be used in subclasses to have additional channels that
+                construct the list's items. The items from more than one
+                channel can be aggregated using the @getModelsFromChannelData
+                method, which receives all arguments that this method received,
+                which can be a list of channel events
+            ###
+            model = item_params.model
+            models = @getModelsFromChannelData(arguments...)
+
+            # Detecting whether we need to re-render the entire list is tricky,
+            # we need a reset event on at least one channel, and either reset
+            # or no_data on the others.
+            events = _.pluck(arguments, 'type')
+            isResetEvent = 'reset' in events and
+                           _.difference(events, ['reset', 'no_data']).length is 0
+            if isResetEvent and models.length
                 # Render layout with "available" state flag
                 @renderLayout {state: 'available'}
-                @ids = []
-                # Insert each item one by one
-                item_params.collection.each( (model) =>
-                    if @matchesFilters(model)
-                        @insertItem(model, item_params.collection)
-                )
+                @insertItems(models)
 
             # Add a new item to a list by injecting a widget to the end of it
             else if item_params.type == 'add'
                 # Clear template blank state if previous state was "empty"
                 # and no _reset_ event has been triggered in the meantime
-                if @data_state == 'empty'
+                # The "empty" state is also triggered at the end of scrolling,
+                # so we need to check that there were no previous items before
+                # emptying the template
+                if @data_state is 'empty' and models.length <= 1
                     @renderLayout {state: 'available'}
-                unless item_params.model.id?
-                    item_params.model.set('id', Utils.guid('new'))
-                if @matchesFilters(item_params.model)
-                    @insertItem(item_params.model, item_params.collection)
+                # Create a dummy model id if missing. This can only happen if a
+                # list is hosting client-side volatile data that is not synced
+                # with a database (by adding to channel with sync: false)
+                unless model.id?
+                    # Prevent from triggering a change/change_attribute event
+                    # as well, by setting with silent: true
+                    model.set('id', Utils.guid('new'), silent: true)
+                if @matchesFilters(model)
+                    @insertItem(model, models, isLoadedLater: true)
 
             # If the event is `change_attribute`, check if the model matches the
             # filters and decide whether to add it or not
             else if item_params.type == 'change_attribute'
-                if @matchesFilters(item_params.model)
+                if @matchesFilters(model)
                     # If we have a change in one of the sort_by attributes, we
                     # need to remove this item and add it again, to go through
                     # all the insert-in-sorted-place logic. And will be added
                     # by the right below code again.
                     if item_params.attribute in @getSortByFields()
-                        @deleteItem(item_params.model, item_params.collection)
+                        @deleteItem(model)
                     # Don't create duplicates and add it only if it is unique
-                    if @el.find(".item-#{item_params.model.id}").length == 0
-                        @insertItem(item_params.model, item_params.collection)
+                    if @view.$el.find(".item-#{model.id}").length == 0
+                        @insertItem(model, models)
 
             # Delete a specific item from a list
             else if item_params.type == 'remove'
-                if @matchesFilters(item_params.model)
-                    @deleteItem(item_params.model, item_params.collection)
+                if @matchesFilters(model)
+                    @deleteItem(model)
 
-        insertItem: (model, collection, options = {}) =>
+        insertItems: (models) ->
+            ###
+                Batch insert, for adding more models at the same time on
+                'reset' events. Useful for subclasses that might aggregate more
+                than one channel to build its list items
+            ###
+            @ids = []
+            # Insert each item one by one
+            _.each models, (model) =>
+                @insertItem(model, models) if @matchesFilters(model)
+
+        insertItem: (model, models, options = {}) =>
             ###
                 @param {Object} options
                 @param {Boolean} [options.isLoadedLater] - mark the item as being
@@ -305,61 +328,63 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             _.defaults options,
                  isLoadedLater: false
 
-            @removeFirstAndLastCSS(collection)
-            @_insertItem(model, collection, options)
-            @addFirstAndLastCSS(collection)
-
-        _insertItem: (model, collection, options) =>
             # Find the name of the widget to insert.
             item = @getItemWidgetName model
             # Skip the insertion if widget not found
             return unless item?
             # Extra params of the widget.
             extra_params = _.pick(options, 'isLoadedLater')
-            item_widget_params = @getItemWidgetParams model, collection, extra_params
+            item_widget_params = @getItemWidgetParams(model, extra_params)
 
             # Also add a class to uniquely identify the item
             # Needed when deleting the item from the list
-            class_name = if !@className then "item-#{model.id}" else "#{@className} item-#{model.id}"
+            item_class = "item-#{model.id}"
+            item_class += " #{@item_class}" if @item_class?
+
+            injectOptions =
+                params: item_widget_params
+                container: @view.$el
+                type: @item_element
+                classes: item_class
 
             if @sort_by?
+                firstModel = @_findItemById(models, _.first(@ids))
+                lastModel = @_findItemById(models, _.last(@ids))
+
                 # No element so far means that the insertion is straight forward
                 if @ids.length == 0
-                    Utils.injectWidget(@el, item, item_widget_params, class_name, null, @item_element ? 'li')
                     @ids.push(model.id)
-                    return
 
                 # Otherwise, see where in the list we can insert it
                 # See if we must insert it before the first model
-                first_model_so_far = collection.get(_.first(@ids))
-                if @compare(model, first_model_so_far) <= 0
-                    Utils.injectWidget(@el, item, item_widget_params, class_name, null, @item_element ? 'li', false, true)
+                else if @compare(model, firstModel) <= 0
                     @ids.unshift(model.id)
-                    return
+                    injectOptions.placement = 'prepend'
 
                 # See if we must insert it after the last model
-                last_model_so_far = collection.get(_.last(@ids))
-                if @compare(model, last_model_so_far) > 0
-                    Utils.injectWidget(@el, item, item_widget_params, class_name, null, @item_element ? 'li')
+                else if @compare(model, lastModel) > 0
                     @ids.push(model.id)
-                    return
 
                 # Otherwise, we're inserting it somewhere in the middle
                 # Also, it means that we have at least two elements in
                 # @ids (because if there is only one, the element e will
                 # either be <= it and be inserted before, or be > it and
                 # be inserted after).
-                for i in [0..@ids.length-2]
-                    cur_model = collection.get(@ids[i])
-                    next_model = collection.get(@ids[i+1])
-                    if @compare(cur_model, model) < 0 and @compare(model, next_model) <= 0
-                        @ids.splice(i + 1, 0, model.id)
-                        dom_element = @el.find(".item-#{next_model.id}")
-                        # Insert before next_model's DOM element
-                        Utils.injectWidget(dom_element, item, item_widget_params, class_name, null, @item_element ? 'li', false, @prepend, true)
-                        return
-            else
-                Utils.injectWidget(@el, item, item_widget_params, class_name, null, @item_element ? 'li', false, @prepend)
+                else
+                    for i in [0..@ids.length-2]
+                        cur_model = @_findItemById(models, @ids[i])
+                        next_model = @_findItemById(models, @ids[i + 1])
+                        if @compare(cur_model, model) < 0 and
+                           @compare(model, next_model) <= 0
+                            @ids.splice(i + 1, 0, model.id)
+                            # Insert before next_model's DOM element
+                            injectOptions.container =
+                                @view.$el.find(".item-#{next_model.id}")
+                            injectOptions.placement = 'before'
+                            break
+
+            Utils.inject(item, injectOptions)
+            @updateFirstAndLastDOMClasses()
 
         getSortByFields: ->
             fields = []
@@ -370,12 +395,7 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
                 fields.push(field)
             fields
 
-        deleteItem: (model, collection) =>
-            @removeFirstAndLastCSS(collection)
-            @_deleteItem(model, collection)
-            @addFirstAndLastCSS(collection)
-
-        _deleteItem: (model, collection) =>
+        deleteItem: (model) =>
             ###
                 Deletes a specific item from a list
             ###
@@ -384,44 +404,32 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
             @ids.splice(idx, 1)
 
             # Remove the DOM element
-            @el.find(".item-#{model.id}").remove()
+            @view.$el.find(".item-#{model.id}").remove()
 
-        addFirstAndLastCSS: (collection) =>
+            @updateFirstAndLastDOMClasses()
+
+        updateFirstAndLastDOMClasses: ->
             ###
-                Add CSS classes to the first and last items in the collection.
-
-                In order to find out which are the first and last items,
-                we will use @ids, which contains the current sorted state
-                of the models.
+                Make sure the first and the last items of the list have a
+                'first' and 'last' class, respectively. This is useful for
+                older browser which do not support :first-child and :last-child
+                CSS selectors but also for cases where list items might have
+                neighbors of other types inside the list wrapper (in a
+                hypothetical list subclass scenario)
             ###
-            if @ids.length == 0
-                return
-            first_id = @ids[0]
-            last_id = @ids[@ids.length - 1]
-            @el.find(".item-#{first_id}").addClass(@first_class)
-            @el.find(".item-#{last_id}").addClass(@last_class)
+            # Only select first-level widgets (which means a list should never
+            # have inner wrappers between its view element and its item widgets)
+            $items = @view.$el.children('.mozaic-widget')
+            # Clear all items of first/last classes first
+            $items.removeClass('first').removeClass('last')
+            $items.first().addClass('first')
+            $items.last().addClass('last')
 
-        removeFirstAndLastCSS: (collection) =>
-            ###
-                Remove first and last CSS classes to items in the collectoin.
-
-                In order to find out which are the first and last items,
-                we will use @ids, which contains the current sorted state
-                of the models.
-            ###
-            if @ids.length == 0
-                return
-            first_id = @ids[0]
-            last_id = @ids[@ids.length - 1]
-            @el.find(".item-#{first_id}").removeClass(@first_class)
-            @el.find(".item-#{last_id}").removeClass(@last_class)
-
-        getItemWidgetParams: (model, collection, extra_params) =>
+        getItemWidgetParams: (model, extra_params) =>
             ###
                 Method returns the params of the item widget which will be inserted as part of the current list.
                 Can be overridden in specialiazed list classes to provide custom params to list items.
                 @param {Object} model Backbone.Model instance of the item to be inserted
-                @param {Object} collection Backbone.Collection instance of all the items in the list
                 @param {Object} extra_params - extra params to be passed to item widgets
                 @return {Object}
             ###
@@ -462,3 +470,19 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
                 User can send an item_params which is send in as params in items
             ###
             _.extend({}, @widget_params, @item_params) if @item_params?
+
+        getModelsFromChannelData: (item_params) ->
+            ###
+                Get models from one or more channel events. The default list
+                implementation only uses an /items channel to draw its items
+                from
+            ###
+            return item_params.collection?.models or []
+
+        _findItemById: (list, id) ->
+            ###
+                Find an item from a sorted list, by id
+                Note: _.findWhere(list, id: id) can be used once we update to
+                Underscore 1.4.4: http://underscorejs.org/#findWhere
+            ###
+            return _.find(list, (item) -> item.id is id)
