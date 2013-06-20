@@ -16,12 +16,16 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
                 Mock some api calls.
             ###
             result = {}
+            if not @mocks
+                @mocks = {}
             for resource, params of resources
                 if params.response
                     response = params.response
                 else
                     response = @getMockedApiResponse(resource, params)
-                @mockResource(resource, response, params)
+                id = @mockResource(resource, response, params)
+                # Save the id to be able to clear it later and rebind it.
+                @mocks[resource] = id
 
                 # Depending on the channel type (relational or api), populate
                 # the response object the same way as the objects would be
@@ -60,3 +64,6 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
                 return response[0]
             else
                 return {'objects': response}
+
+        clearResource: (resource) ->
+            $.mockjaxClear(@mocks[resource])
