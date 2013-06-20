@@ -5,6 +5,12 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
     master_factory = new MasterFactory()
 
     Methods =
+
+        # Property exposes MasterFactory's mapping between channels
+        # and factories.
+        channelsToFactoriesMapping: \
+            master_factory.getChannelsToFactoriesMapping()
+
         apiMock: (resources) ->
             ###
                 Mock some api calls.
