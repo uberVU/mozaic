@@ -38,6 +38,13 @@ define ['cs!scrollable_widget'], (ScrollableWidget) ->
                   fetching the list of all books from the server, and I want
                   to display only the books by a certain author.
 
+                - while the list is built around an /items channel in the
+                  default implementation, its interface allows having more than
+                  one channel (using aggregated channels) for building the list
+                  items. All channel events must be funneled into the
+                  @handleChannelEvents method, and items are joined together
+                  under the @getModelsFromChannelData method
+
             IMO lifecycle management of the widgets is the most important
             feature of this widget - if I want to display a list, I can
             concentrate on writing the widget for the list's item instead of
