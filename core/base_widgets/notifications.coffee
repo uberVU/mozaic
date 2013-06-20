@@ -48,7 +48,7 @@ define ['cs!widget'], (Widget) ->
             # Note: Loading notifications shouldn't be delayed because they
             # need to be canceled synchrounously and they don't reveal any
             # actual information that the user might miss anyway
-            if Mozaic.isLoading and params.type isnt 'loading'
+            if App.isLoading and params.type isnt 'loading'
                 @pendingNotifications.push(params)
             else
                 @injectNotification(params)
