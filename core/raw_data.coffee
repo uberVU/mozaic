@@ -149,12 +149,21 @@ define [], () ->
                 # Trigger a no_data event when the response is empty
                 if _.isEmpty(data)
                     @trigger('no_data', @)
+
+            error_callback = (xhr, response_status, error_string) =>
+                # Trigger an 'error' event when the request results in an error
+                # (including 3xx redirect and excluding 304 timeout)
+                # This is important because we need to have a response from
+                # widgets on error events.
+                @trigger('error', this, this, xhr.status)
+
             # Make the actual AJAX request
             call_params =
                 url: @url
                 dataType: 'json'
                 data: params
                 success: success_callback
+                error: error_callback
                 type: options.type || 'GET'
 
             # If we are passed contentType, pass it through
