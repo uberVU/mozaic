@@ -219,14 +219,3 @@ define ['cs!channels_utils'], (channels_utils) ->
                         "subscribed to #{channel}")
 
             return @channel_mapping[channel]
-
-       _translateGlobalChannelsFromChannelMapping: ->
-            ###
-                Alter @channel_mapping by translating the global channels
-                contained within. This means that for the DataSource and
-                for the widget itself, the existence of global channels
-                will be completely transparent.
-            ###
-            for channel, channel_guid of @channel_mapping
-                if channels_utils.isGlobal(channel_guid)
-                    @channel_mapping[channel] = channels_utils.translateGlobalChannel(channel_guid)
