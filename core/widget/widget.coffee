@@ -189,6 +189,7 @@ define [
                 @template_name = params.template_name
             @params = params
             @channel_mapping = params.channels or {}
+            @_translateGlobalChannelsFromChannelMapping()
 
             @_initParamsDefaults()
             @_checkForRequiredParams()
