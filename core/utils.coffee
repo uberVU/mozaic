@@ -37,6 +37,7 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
                 @param (object) options Extra options for injecting the widgets,
                                         here are the available ones:
                     - (string) id The id attribute
+                    - (string) type of DOM element to inject
                     - (string) classes Extra set of classes
                     - (object) data Extra set of data attributes (the `widget`
                                     and `params` keys are reserved for the widget
@@ -528,6 +529,8 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
             data.widget = options.name
             data.params = options.params or {}
             node = @buildDomElement(type, id, classes, data)
+
+        getControllerContainer: -> $('#controller-container')
 
     # Extend Utils with other utils functions (see utils/ dir) in order
     # to keep the same Utils.method() interface.

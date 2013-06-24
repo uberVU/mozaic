@@ -21,6 +21,10 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
                 that receivs a list of channels as a parameter).
                 Default value: 'refresh'.
 
+            The Mediator widget also supports a list of fixed attributes for
+            the output channels, which should always be present regardless of
+            what the input channels trigger.
+
             The Mediator widget also supports a list of ignored attributes for
             the input channels, which changed alone shouldn't trigger any
             changes on the output channels. The ignored attributes are also
@@ -38,6 +42,7 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
             'output_channel': 'data-params'
             'output_channels': 'data-params'
             'skip_first': 'data-params'
+            'fixed_attributes': (attrs) -> attrs or {}
             'ignored_attributes': (attrs) -> attrs or []
 
         initialize: =>
@@ -103,7 +108,7 @@ define ['cs!channels_utils', 'cs!widget'], (channels_utils, Widget) ->
             skipStreampollBuffer = if options.skipStreampollBuffer? then options.skipStreampollBuffer else false
 
             # Merge data input channels data into a single object.
-            translated_channel_params = {}
+            translated_channel_params = _.clone(@fixed_attributes)
             for channel_params in params
                 _.extend(translated_channel_params, @translateParams(channel_params))
 
