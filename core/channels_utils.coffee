@@ -146,13 +146,13 @@ define [], () ->
             ###
                 Removes the 'GLOBAL' prefix from a given channel.
             ###
-            return channel['GLOBAL'.length...]
+            return channel['GLOBAL'.length..]
 
         translateGlobalChannel: (channel) ->
             ###
                 Given a global channel of the form:
 
-                GLOBAL/social_profiles/123/change
+                GLOBAL/social_profiles
 
                 extract the name of the alias from the channel and translate
                 it into the actual channel id of that alias.
@@ -167,10 +167,24 @@ define [], () ->
             channel_without_prefix = channels_utils.removeGlobalPrefix(channel)
 
             # Split the channel into its components, and perform translation
-            channel_key = channels_utils.getChannelKey(channel)
-            channel_uid = getGlobalChannel(channel_key)
+            channel_key = channels_utils.getChannelKey(channel_without_prefix)
+            channel_uid = channels_utils.getGlobalChannel(channel_key)
             if not channel_uid
                 return null
 
-            # Prefer to use existing API over calling formChannel directly
-            return translateChannel(channel, {channel_key: channel_uid})
+            return channel_uid
+
+        translateGlobalChannels: (channel_mapping) ->
+            ###
+                Translate a bunch of global channels given in the format
+                of widget.channel_mapping.
+            ###
+
+            result = {}
+
+            for channel, channel_guid of channel_mapping
+                if channels_utils.isGlobal(channel_guid)
+                    channel_guid = channels_utils.translateGlobalChannel(channel_guid)
+                result[channel] = channel_guid
+
+            return result

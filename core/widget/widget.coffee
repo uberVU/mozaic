@@ -6,7 +6,6 @@ define [
     'cs!core/widget/params'
     'cs!core/widget/rendering'
     'cs!core/widget/states'
-    'cs!channels_utils'
 ], (
     Module,
     WidgetAggregatedChannelsMixin,
@@ -14,8 +13,7 @@ define [
     WidgetChannelsMixin,
     WidgetParamsMixin,
     WidgetRenderingMixin,
-    WidgetStatesMixin,
-    channels_utils
+    WidgetStatesMixin
 ) ->
 
     class Widget extends Module
@@ -191,7 +189,6 @@ define [
                 @template_name = params.template_name
             @params = params
             @channel_mapping = params.channels or {}
-            @_translateGlobalChannelsFromChannelMapping()
 
             @_initParamsDefaults()
             @_checkForRequiredParams()
@@ -380,17 +377,6 @@ define [
             @view = null
             @saved_el = @el
             @el = null
-
-        _translateGlobalChannelsFromChannelMapping: =>
-            ###
-                Alter @channel_mapping by translating the global channels
-                contained within. This means that for the DataSource and
-                for the widget itself, the existence of global channels
-                will be completely transparent.
-            ###
-            for channel, channel_guid of @channel_mapping
-                if channels_utils.isGlobal(channel_guid)
-                    @channel_mapping[channel] = channels_utils.translateGlobalChannel(channel_guid)
 
     Widget.includeMixin(WidgetAggregatedChannelsMixin)
     Widget.includeMixin(WidgetBackboneEventsMixin)
