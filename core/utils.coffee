@@ -516,6 +516,16 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
             # Return the wrapper method
             return obj[methodName]
 
+        inPrintMode: ->
+            ###
+                Check if app is opened in print mode
+
+                XXX this can be faked easily by adding the ?print=1 GET
+                parameter, but there's no exploit that can be done by adding it
+                so there's no reason why we shouldn't rely solely on it
+            ###
+            return window.location.href.indexOf('print') != -1
+
         _buildDomElementByWidgetOptions: (options) ->
             ###
                 Build DOM element based on the format of widget options
