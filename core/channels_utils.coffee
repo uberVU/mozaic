@@ -115,7 +115,7 @@ define [], () ->
                                  wrong.
             ###
 
-            # By default, if not type is specified, alias is the type of channel
+            # By default, type is not specified, alias is the type of channel
             type = type or alias
             params = params or {}
 
