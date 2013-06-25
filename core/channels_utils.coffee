@@ -147,11 +147,10 @@ define [], () ->
                                   the given alias
             ###
 
-            # Make sure that Mozaic.global_channels key exists
-            Mozaic.globalChannels = Mozaic.globalChannels or {}
+            channels = Mozaic.globalChannels or {}
 
             # Sanity check for retrieving an unknown global channel
-            if not (alias of Mozaic.globalChannels)
+            if not (alias of channels)
                 logger.error("Trying to retrieve inexisting " +
                              "global channel: #{alias}")
                 return null
