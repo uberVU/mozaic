@@ -4,7 +4,7 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
     ###
     master_factory = new MasterFactory()
 
-    Methods =
+    ApiMock =
 
         # Property exposes MasterFactory's mapping between channels
         # and factories.
@@ -68,7 +68,53 @@ define ['cs!tests/factories/master_factory'], (MasterFactory) ->
             else if response[0]?.is_api
                 return response[0]
             else
+                if not _.isArray(response)
+                    response = [response]
                 return {'objects': response}
 
         clearResource: (resource) ->
             $.mockjaxClear(@mocks[resource])
+
+        mockChannel: (args) ->
+            ###
+                This method mocks channels. It create It uses @apiMock internally,
+                however it mocks and creates __one__ channel instead of
+                mocking multiple urls.
+
+                @see tests/modules/reports/widget/report_widget_sentiment_meter_form.coffee#injectSentimentMeterForm()
+                @param {Object} args
+                @param {String} args.type - the channel type to mock
+                                  @see conf/datasource.js for channel types.
+                @param {Object} args.params - params to pass on to ApiMock.
+                            Defaults to {}. @see BaseTest#_apiMock for params.
+                @param {Object} args.channel_params - optional params for
+                                channel creation - used for the cases when
+                                creating a channel needs mandatory params
+                                for building the channel URL.
+
+                @return {Object} output - an object with the following props:
+                @return {String} output.id - id of newly created channel
+                @return {Object|Array} output.data - data that will be served
+                            to the channel when a request to it will be made.
+
+            ###
+            factoryType = ApiMock.channelsToFactoriesMapping[args.type]
+            unless factoryType?
+                throw new Error "No factory for channel `#{args.type}`"
+
+            new_data_channels_params = {}
+            new_data_channels_params[args.type] = args.channel_creation_params or {}
+            [channelInstanceId] = Utils.newDataChannels(new_data_channels_params)
+
+            mockParams = {}
+            mockParams[factoryType] = args.params or {}
+            channelMocks = @apiMock(mockParams)[factoryType]
+
+            # Always return an array for consistency
+            if not _.isArray(channelMocks)
+                channelMocks = [channelMocks]
+
+            output =
+                id: channelInstanceId
+                data: channelMocks
+
