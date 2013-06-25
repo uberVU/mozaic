@@ -172,9 +172,6 @@ define ['cs!channels_utils'], (channels_utils) ->
 
             # Prevent widgets from subscribing 2 times to the same
             # channel. The behaviour is unpredictable in this case.
-            # However, we do support use-cases like this:
-            #
-            # subscribed_channels: ['/mentions', '/mentions/123']
             if _.contains(@subscribed_channels, channel)
                 logger.warn("Widget #{@params.widget_id} is already " +
                             "subscribed to #{channel}")
