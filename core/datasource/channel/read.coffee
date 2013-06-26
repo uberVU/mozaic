@@ -16,6 +16,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                           be called after the fetch is complete
                 Returns: nothing
             ###
+
             # Sanity check - the only valid reasons for fetching data are
             # 'refresh', 'scroll' and 'streampoll'.
             if not (reason in ['refresh', 'scroll', 'streampoll'])
@@ -90,9 +91,14 @@ define ['cs!channels_utils'], (channels_utils) ->
             fetch_params.fetched = =>
                 meta.firstTimeFetch = !meta.last_fetch?
                 meta.last_fetch = Utils.now()
+
             # Define success & error functions as wrappers around callback.
             fetch_params.success = (collection, response) =>
+
                 # Ignore response if channel was removed in the meantime
+                # One scenario for this happening is a really slow API call
+                # while user changes the page and channel gets garbage
+                # collected.
                 return unless @reference_data[channel_key]?
 
                 @_checkForNewlyArrivedAndAwaitedModels(channel_key)
@@ -113,7 +119,6 @@ define ['cs!channels_utils'], (channels_utils) ->
             fetch_params.error = (collection, response) =>
                 # Ignore response if channel was removed in the meantime
                 return unless @reference_data[channel_key]?
-
                 callback(channel_key, false) if callback
 
             # What channel should receive the data we're about to fetch -

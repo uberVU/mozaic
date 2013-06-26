@@ -18,8 +18,17 @@
 
 ###
 
-define ['cs!mozaic_module', 'cs!pubsub'], (Module) ->
+define [
+    'cs!mozaic_module'
+    'cs!pubsub'
+    'cs!channels_utils'
+], (
+    Module
+    PubSub
+    channels_utils
+) ->
     checkDOMInterval = 200
+
     class WidgetStarter extends Module
         ###
             Monitors the DOM for the appearance of new widgets.
@@ -59,7 +68,6 @@ define ['cs!mozaic_module', 'cs!pubsub'], (Module) ->
                         @loadWidget(@widgets[widget].params)
                         delete @widgets[widget]
             )
-
 
         wasDelayedNode: (mutation) ->
             ###
@@ -301,6 +309,9 @@ define ['cs!mozaic_module', 'cs!pubsub'], (Module) ->
             params['widget_id'] = widget_id
 
             $el.addClass("widget-#{name}")
+
+            # We need to translate global channels into their true uid here
+            params.channels = channels_utils.translateGlobalChannels(params.channels)
 
             # Start the widget
             @startWidget(params)
