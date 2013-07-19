@@ -421,21 +421,20 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
             pipe = loader.get_module('pubsub')
             pipe.publish('/closemodal', {})
 
-        createModuleInstance: (Module, params...) ->
-            #wrap the new Module() instantiation in order to prevent error propagation
-            if !$.isFunction(Module)
-                throw "Trying to instantiate something uninstantiable: " + Module
-                return
-            if App.general.PASS_THROUGH_EXCEPTIONS
-                result = new Module(params...)
+        createModuleInstance: (Module, params, tpl) ->
+            if not _.isFunction(Module)
+                logger.error("Trying to instantiate something uninstantiable",
+                             Module)
             else
-                try
-                    result = new Module(params...)
-                catch error
-                    if error.message == Constants.UNAUTHORIZED_EXCEPTION
-                        throw error
-                    logger.error("Exception trying to instantiate " + Module.name + " with params " + arguments + ":" + error)
-            return result
+                return Mozaic.execute (-> return new Module(params, tpl)),
+                    # Provide attributes for extra context in case of an error
+                    action: 'Instantiating module'
+                    module: Module.name
+                    # Remove jQuery element (there shouldn't be any circular
+                    # dependency in this params so that they can be
+                    # JSON-encoded and logged along with a possible exception
+                    params: _.omit(params, 'el')
+                    template: tpl
 
         mixin: (mixins..., classReference) ->
             ###

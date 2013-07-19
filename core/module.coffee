@@ -35,7 +35,7 @@ define [], () ->
                 if _.isFunction(v) and v.fromMixin? and v.fromMixin
                     @[k] = _.bind(v, this)
 
-        _wrapInstance: =>
+        _wrapInstance: ->
             ###
                 Wrap instance object with an error handler that
                 prevents the interpreter from stopping execution
@@ -50,28 +50,14 @@ define [], () ->
                     # Mark wrapper method
                     @[key].__wrapped__ = true
 
-        _wrapMethod: (instance, method) =>
+        _wrapMethod: (instance, method) ->
             ###
                 Pass own instance reference instead of using the
                 fat arrow to prevent from creating two new functions
                 with every wrapped one.
             ###
-            return () ->
-                if App.general.PASS_THROUGH_EXCEPTIONS
-                    # Let any possible uncaught exception run its course
-                    result = method.apply(instance, arguments)
-                else
-                    # Catch any thrown exceptions from within the wrapper
-                    # method, but throw it back again if it happens to be
-                    # an authentication exception (aka _unauthorized_)
-                    try
-                        result = method.apply(instance, arguments)
-                    catch error
-                        if error.message == '__UNAUTHORIZED__'
-                            throw error
-                        # Log all caught errors
-                        logger.error error
-                return result
+            return Mozaic.wrap ->
+                return method.apply(instance, arguments)
 
         @includeMixin: (klass) ->
             ###

@@ -39,6 +39,7 @@ App.main_modules = {
     'router': 'core/router',
     'controller': 'core/controller',
     'core/utils': 'core/utils',
+    'utils/mozaic': 'core/utils/mozaic',
     'utils/urls': 'core/utils/urls',
     'utils/time': 'core/utils/time',
     'utils/dom': 'core/utils/dom',

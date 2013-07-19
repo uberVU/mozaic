@@ -1,5 +1,4 @@
 define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_user_data'], (Interceptor, Constants, Utils, CurrentUserData) ->
-    window.Mozaic = window.Mozaic or {}
     window.ajaxRequests = []
 
     class Auth
