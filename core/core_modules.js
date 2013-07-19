@@ -8,6 +8,7 @@ App.main_modules = {
     'interceptor': 'core/interceptor',
     'loader': 'core/loader',
     'standard_logger': 'core/logging/standard_logger',
+    'sentry_logger': 'core/logging/sentry_logger',
     'mozaic_module': 'core/module',
     'auth': 'core/auth',
     'base_model': 'core/base_model',
