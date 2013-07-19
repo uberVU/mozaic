@@ -1,1 +1,4 @@
 *.DS_STORE
+
+# User js config
+conf/general.user.js

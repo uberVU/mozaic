@@ -45,13 +45,6 @@ define ['cs!layout', 'cs!mozaic_module'], (Layout, Module) ->
                                    new_controller_config.controller)
 
         new_controller: (new_controller_config, url_params) =>
-            # Catch all errors that weren't caught locally by module wrappers
-            # and reached the global scope, but not in development environments
-            # where exceptions are left uncaught on purpose
-            unless App.general.PASS_THROUGH_EXCEPTIONS
-                window.onerror = (errorMsg, url, lineNumber) ->
-                    logger.error "#{url}, line ##{lineNumber}, error: #{errorMsg}"
-
             loader.load_modules ['cs!pubsub'], =>
                 loader.load_modules ['cs!widget_starter'], =>
                     loader.load_modules @bootstrapModules(), =>

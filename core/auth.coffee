@@ -1,5 +1,4 @@
 define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_user_data'], (Interceptor, Constants, Utils, CurrentUserData) ->
-    window.Mozaic = window.Mozaic or {}
     window.ajaxRequests = []
 
     class Auth
@@ -125,6 +124,10 @@ define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_use
                     # user in window.user before setting the new data.
                     if not window.user?
                         window.user = new CurrentUserData()
+                        if App.general.LOGGER_MODULE is 'sentry_logger'
+                            # Register the currently logged-in user with the
+                            # logging service for enhanced exception tracking
+                            logger.setUser(_.pick(data, 'id', 'email'))
                     window.user.set(data)
 
                 user_callback(type, data) if user_callback
