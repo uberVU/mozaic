@@ -4,7 +4,8 @@ App.general = {
     USE_MOCKS: false,
     FRONTEND_URL: 'http://127.0.0.1:8000',
     STATIC_URL: '/static/app',
-    LOG_LEVEL: 1000, // Everything
+    LOGGER_MODULE: 'standard_logger',
+    LOG_LEVEL: 2, // ERROR & WARN
     LOGIN_PAGE: '{{FRONTEND_URL}}/front/login',
     LOGIN_URL: '{{FRONTEND_URL}}/front-api/v1/login/',
     LOGOUT_URL: '{{FRONTEND_URL}}/front-api/v1/logout/',

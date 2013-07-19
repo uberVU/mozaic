@@ -23,5 +23,5 @@ var LOG_LEVEL = {
 App.user = {
     FRONTEND_URL: FRONTEND.TEST,
     STATIC_URL: 'http://ubervu.localhost',
-    LOG_LEVEL: LOG_LEVEL.INFO
+    LOG_LEVEL: LOG_LEVEL.WARN
 };

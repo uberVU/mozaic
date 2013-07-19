@@ -9,6 +9,7 @@ App.main_modules = {
     'loader': 'core/loader',
     'logger': 'core/logging/server_logger',
     'logger_store': 'core/logging/logger_store',
+    'standard_logger': 'core/logging/standard_logger',
     'mozaic_module': 'core/module',
     'auth': 'core/auth',
     'base_model': 'core/base_model',
