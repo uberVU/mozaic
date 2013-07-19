@@ -4,15 +4,6 @@
 // if needed
 var App = App || {};
 
-// Paths for working with an external frontend (useful especially when not
-// having the frontend installed locally)
-var FRONTEND = {
-    LOCAL: 'http://127.0.0.1:8000',
-    APP: 'http://app.ubervu.com',
-    TEST: 'http://test-app.ubervu.local',
-    WL: 'http://wldemo.com'
-};
-
 var LOG_LEVEL = {
     NONE: 0,
     ERROR: 1,
@@ -21,7 +12,6 @@ var LOG_LEVEL = {
 };
 
 App.user = {
-    FRONTEND_URL: FRONTEND.TEST,
     STATIC_URL: 'http://ubervu.localhost',
-    LOG_LEVEL: LOG_LEVEL.INFO
+    LOG_LEVEL: LOG_LEVEL.WARN
 };

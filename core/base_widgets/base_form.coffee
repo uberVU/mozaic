@@ -289,7 +289,7 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
                 if errors.errors?
                     @addFormErrors(errors.errors)
             catch exception
-                logger.error(exception)
+                logger.handleException(exception)
             finally
                 @enableForm()
 
