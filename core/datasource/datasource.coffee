@@ -133,7 +133,12 @@ define [
                         # to be available ASAP, e.g. on /new_widget events
                         # In theory, this won't longer be needed after we fix
                         # issue https://github.com/uberVU/mozaic/issues/54
-                        @reference_data[channel_guid] = {}
+                        @reference_data[channel_guid] =
+                            # Create the reference data of a channel with an
+                            # empty object for referencing all widgets that
+                            # will be subscribed to that channel at any
+                            # specific point in time
+                            widgets: {}
 
                         resource_type = @config.channel_types[channel_type].type
                         if resource_type == 'relational'
