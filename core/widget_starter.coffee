@@ -78,6 +78,11 @@ define [
             # @reference http://www.w3.org/TR/dom/#mutation-observers
             # @reference http://www.w3.org/TR/DOM-Level-3-Events/#events-mutationevents
             ###
+            nodeClassName = mutation.target?.className
+            # The className can be a SVGAnimatedString because that's what a
+            # SVG dom element returns for className
+            # Reference: https://developer.mozilla.org/en-US/docs/Web/API/SVGAnimatedString
+            nodeClassName = if nodeClassName?.baseVal? then nodeClassName.baseVal else nodeClassName
 
             nodeClassName = mutation.target?.className
             # The className can be a SVGAnimatedString because that's what a
