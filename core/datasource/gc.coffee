@@ -125,7 +125,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                 @reference_data[key]['reference_count'] += 1
                 # Store a direct reference to the widget as well, it helps
                 # debugging and providing more transparency to the datasource
-                @reference_data[key].widgets[widget.params.widget_id] = widget
+                @reference_data[key].widgets.push(widget.params.widget_id)
                 # This timestamp allows us to see for how long the channel
                 # has been inactive
                 @reference_data[key]['time_of_reference_expiry'] = null
@@ -146,7 +146,9 @@ define ['cs!channels_utils'], (channels_utils) ->
                 @reference_data[channel]['reference_count'] -= 1
                 # Remove this widget's reference from the channel reference
                 # data because they will no longer be tied together
-                delete @reference_data[channel].widgets[widget.params.widget_id]
+                @reference_data[channel].widgets =
+                    _.without(@reference_data[channel].widgets,
+                              widget.params.widget_id)
                 if @reference_data[channel]['reference_count'] == 0
                     @reference_data[channel]['time_of_reference_expiry'] = (new Date).getTime()
 

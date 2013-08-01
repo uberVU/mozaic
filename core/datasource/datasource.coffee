@@ -138,7 +138,7 @@ define [
                             # empty object for referencing all widgets that
                             # will be subscribed to that channel at any
                             # specific point in time
-                            widgets: {}
+                            widgets: []
 
                         resource_type = @config.channel_types[channel_type].type
                         if resource_type == 'relational'
