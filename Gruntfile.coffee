@@ -8,12 +8,7 @@ module.exports = (grunt) ->
     docco_husky:
         project_name:'testing'
 
-  grunt.loadNpmTasks 'grunt-docco'
-  grunt.loadNpmTasks 'grunt-docco-husky'
-
   grunt.registerTask 'default', 'Change comments', ->
-      grunt.log.writeln 'running default' 
-
       shell = require('shelljs')
       shell.exec("cp -R core core~")
       shell.exec("rm -rf core~/libs")
