@@ -1,0 +1,317 @@
+<!DOCTYPE html><html><head><title>base_form.coffee</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../index.html" class="source"><span class="file_name">README</span></a><a href="../../core~/api_mock.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">api_mock.coffee</span></a><a href="../../core~/application_controller.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">application_controller.coffee</span></a><a href="../../core~/auth.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">auth.coffee</span></a><a href="../../core~/base_collection.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">base_collection.coffee</span></a><a href="../../core~/base_model.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">base_model.coffee</span></a><a href="../../core~/base_widgets/autocomplete.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">autocomplete.coffee</span></a><a href="../../core~/base_widgets/base_form.coffee.html" class="source selected"><span class="base_path">core~ / base_widgets / </span><span class="file_name">base_form.coffee</span></a><a href="../../core~/base_widgets/delete_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">delete_form.coffee</span></a><a href="../../core~/base_widgets/expanding_list.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">expanding_list.coffee</span></a><a href="../../core~/base_widgets/item_count.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">item_count.coffee</span></a><a href="../../core~/base_widgets/list.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">list.coffee</span></a><a href="../../core~/base_widgets/mediator_widget.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">mediator_widget.coffee</span></a><a href="../../core~/base_widgets/nested_attributes_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">nested_attributes_form.coffee</span></a><a href="../../core~/base_widgets/new_items_count.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">new_items_count.coffee</span></a><a href="../../core~/base_widgets/notification_bar.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">notification_bar.coffee</span></a><a href="../../core~/base_widgets/notifications.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">notifications.coffee</span></a><a href="../../core~/base_widgets/order_by.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">order_by.coffee</span></a><a href="../../core~/base_widgets/update_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">update_form.coffee</span></a><a href="../../core~/base_widgets/url.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">url.coffee</span></a><a href="../../core~/base_widgets/user_item_count.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">user_item_count.coffee</span></a><a href="../../core~/base_widgets/widget_editor.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">widget_editor.coffee</span></a><a href="../../core~/channels_utils.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">channels_utils.coffee</span></a><a href="../../core~/constants.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">constants.coffee</span></a><a href="../../core~/context_processors.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">context_processors.coffee</span></a><a href="../../core~/controller.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">controller.coffee</span></a><a href="../../core~/core_modules.js.html" class="source "><span class="base_path">core~ / </span><span class="file_name">core_modules.js</span></a><a href="../../core~/datasource/channel/create.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">create.coffee</span></a><a href="../../core~/datasource/channel/destroy.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">destroy.coffee</span></a><a href="../../core~/datasource/channel/read.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">read.coffee</span></a><a href="../../core~/datasource/channel/update.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">update.coffee</span></a><a href="../../core~/datasource/channel.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">channel.coffee</span></a><a href="../../core~/datasource/datasource.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">datasource.coffee</span></a><a href="../../core~/datasource/gc.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">gc.coffee</span></a><a href="../../core~/datasource/refresher.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">refresher.coffee</span></a><a href="../../core~/datasource/scheduler.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">scheduler.coffee</span></a><a href="../../core~/datasource/widget.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">widget.coffee</span></a><a href="../../core~/flags_collection.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">flags_collection.coffee</span></a><a href="../../core~/interceptor.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">interceptor.coffee</span></a><a href="../../core~/layout.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">layout.coffee</span></a><a href="../../core~/loader.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">loader.coffee</span></a><a href="../../core~/loading_animation.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">loading_animation.coffee</span></a><a href="../../core~/logging/sentry_logger.coffee.html" class="source "><span class="base_path">core~ / logging / </span><span class="file_name">sentry_logger.coffee</span></a><a href="../../core~/logging/standard_logger.coffee.html" class="source "><span class="base_path">core~ / logging / </span><span class="file_name">standard_logger.coffee</span></a><a href="../../core~/mocks.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">mocks.coffee</span></a><a href="../../core~/modal_window.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">modal_window.coffee</span></a><a href="../../core~/module.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">module.coffee</span></a><a href="../../core~/mozaic_backbone_form.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">mozaic_backbone_form.coffee</span></a><a href="../../core~/profiler.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">profiler.coffee</span></a><a href="../../core~/pubsub.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">pubsub.coffee</span></a><a href="../../core~/raw_data.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">raw_data.coffee</span></a><a href="../../core~/router.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">router.coffee</span></a><a href="../../core~/scrollable_widget.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">scrollable_widget.coffee</span></a><a href="../../core~/utils/dom.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">dom.coffee</span></a><a href="../../core~/utils/images.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">images.coffee</span></a><a href="../../core~/utils/misc.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">misc.coffee</span></a><a href="../../core~/utils/mozaic.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">mozaic.coffee</span></a><a href="../../core~/utils/time.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">time.coffee</span></a><a href="../../core~/utils/urls.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">urls.coffee</span></a><a href="../../core~/utils.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">utils.coffee</span></a><a href="../../core~/widget/aggregated_channels.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">aggregated_channels.coffee</span></a><a href="../../core~/widget/backbone_events.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">backbone_events.coffee</span></a><a href="../../core~/widget/channels.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">channels.coffee</span></a><a href="../../core~/widget/modal_widget.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">modal_widget.coffee</span></a><a href="../../core~/widget/params.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">params.coffee</span></a><a href="../../core~/widget/rendering.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">rendering.coffee</span></a><a href="../../core~/widget/states.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">states.coffee</span></a><a href="../../core~/widget/widget.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">widget.coffee</span></a><a href="../../core~/widget_starter.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">widget_starter.coffee</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>base_form.coffee</h1><div class="filepath">core~/base_widgets/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">define</span> <span class="p">[</span><span class="s">&#39;cs!widget&#39;</span><span class="p">,</span> <span class="s">&#39;cs!channels_utils&#39;</span><span class="p">],</span> <span class="nf">(Widget, channels_utils) -&gt;</span>
+
+    <span class="k">class</span> <span class="nx">BaseForm</span> <span class="k">extends</span> <span class="nx">Widget</span>
+
+        <span class="nv">ENTER = </span><span class="mi">13</span> <span class="c1"># Cross Browser character code for `Enter` key.</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>Execute the afterCommit event in your child classes
+Render only executes if the model is new and doesn't
+requires aggregateData</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>TODO (bogdan): perform arguments checking for channel<em>key, model</em>path</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">params_defaults:</span>
+            <span class="s">&#39;model_id&#39;</span><span class="o">:</span> <span class="s">&#39;data-params&#39;</span>
+            <span class="s">&#39;model_path&#39;</span><span class="o">:</span> <span class="s">&#39;data-params&#39;</span>
+            <span class="s">&#39;model_schema&#39;</span><span class="o">:</span> <span class="s">&#39;data-params&#39;</span>
+            <span class="s">&#39;model_sync&#39;</span><span class="o">:</span> <span class="kc">true</span>
+            <span class="s">&#39;channel_key&#39;</span><span class="o">:</span> <span class="s">&#39;data-params&#39;</span>
+            <span class="s">&#39;required_channels&#39;</span><span class="o">:</span> <span class="s">&#39;data-params&#39;</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>Whether we should destroy the form
+after the commit has been performed
+If not specified defaults to True</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="s">&#39;destroy_after_commit&#39;</span><span class="o">:</span>  <span class="nf">(data_params) =&gt;</span>
+                <span class="vi">@destroy_after_commit = </span><span class="nx">data_params</span> <span class="o">?</span> <span class="kc">true</span>
+            <span class="s">&#39;extra_params&#39;</span><span class="o">:</span> <span class="s">&#39;data-params&#39;</span>
+
+        <span class="nv">events:</span>
+            <span class="s">&quot;click .commit&quot;</span><span class="o">:</span> <span class="s">&quot;commit&quot;</span>
+            <span class="s">&quot;click .cancel&quot;</span><span class="o">:</span> <span class="s">&quot;cancel&quot;</span>
+            <span class="s">&quot;click .toggle&quot;</span><span class="o">:</span> <span class="s">&quot;toggle&quot;</span>
+            <span class="s">&#39;keypress&#39;</span><span class="o">:</span> <span class="s">&#39;onKeypress&#39;</span>
+
+        <span class="nv">initialize: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>Only start the setup process after model module has
+finished loading</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@loadModelClass</span><span class="p">(</span><span class="nx">@setup</span><span class="p">)</span>
+
+        <span class="nv">setup: </span><span class="o">=&gt;</span>
+            <span class="k">if</span> <span class="nx">@checkRequiredChannels</span><span class="p">()</span>
+                <span class="nx">@subscribeDataChannels</span><span class="p">()</span>
+                <span class="nx">@subscribeAggregateDataChannels</span><span class="p">()</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>Init model, form and render layout if the form doesn't
+depend on any data, otherwise wait for it to be fetched</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@isNew</span><span class="p">()</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">@requiresAggregateData</span><span class="p">()</span>
+                <span class="nx">@setModel</span><span class="p">()</span>
+                <span class="nx">@createForm</span><span class="p">()</span>
+                <span class="nx">@render</span><span class="p">()</span>
+
+        <span class="nv">loadModelClass: </span><span class="nf">(callback) -&gt;</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>Load model class via require. The model<em>path contains
+the path of the model class and we set @model</em>class
+in the load callback</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">require</span> <span class="p">[</span><span class="nx">@model_path</span><span class="p">],</span> <span class="nf">(model_class) =&gt;</span>
+                <span class="vi">@model_class = </span><span class="nx">model_class</span>
+                <span class="nx">callback</span><span class="p">()</span>
+
+        <span class="nv">checkRequiredChannels: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>TODO</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">return</span> <span class="kc">true</span>
+
+        <span class="nv">requiresAggregateData: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>Return true if the model requires data from other channels
+(like task requiring users). Returns false otherwise (like
+folder that doesn't depend on anything)</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@required_channels</span><span class="o">?</span>
+                <span class="k">return</span> <span class="nx">@required_channels</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="kc">false</span>
+
+        <span class="nv">subscribeDataChannels: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>This widget handles the edit and new actions of a model.
+If the model is new then we should subscribe
+to the '/folders' channel. Otherwise subscribe to the
+'/folders/{{folder<em>id}}' channel.
+Also setup aggregated channels for additional data that
+is required in the form rendering process.
+Initialize subscribed</em>channels as array, if not already.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="vi">@subscribed_channels = </span><span class="p">[]</span> <span class="k">if</span> <span class="o">not</span> <span class="nx">@subscribed_channels</span></pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><p>Add an additional channel to subscribed channels, the one
+the form is going to do CRUD events on it.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="vi">@subscribed_channels = </span><span class="nx">_</span><span class="p">.</span><span class="nx">union</span><span class="p">(</span>
+                <span class="nx">@subscribed_channels</span><span class="p">,</span>
+                <span class="k">if</span> <span class="nx">@isNew</span><span class="p">()</span>
+                    <span class="p">[</span><span class="nx">channels_utils</span><span class="p">.</span><span class="nx">formChannel</span><span class="p">(</span><span class="nx">@channel_key</span><span class="p">)]</span>
+                <span class="k">else</span>
+                    <span class="p">[</span><span class="nx">channels_utils</span><span class="p">.</span><span class="nx">formChannel</span><span class="p">(</span><span class="nx">@channel_key</span><span class="p">,</span> <span class="nx">@model_id</span><span class="p">)]</span>
+            <span class="p">)</span></pre></div></td></tr><tr id="section-12"><td class="docs"><div class="pilwrap"><a href="#section-12" class="pilcrow">&#182;</a></div><p>Setup subscribed channel handler (like /folders for a folder form)</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@</span><span class="p">[</span><span class="s">&quot;</span><span class="si">#{</span><span class="nx">channels_utils</span><span class="p">.</span><span class="nx">widgetMethodForChannel</span><span class="p">(</span><span class="nx">@</span><span class="p">,</span> <span class="nx">@channel_key</span><span class="p">)</span><span class="si">}</span><span class="s">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">@get_subscribed_channel_events</span></pre></div></td></tr><tr id="section-13"><td class="docs"><div class="pilwrap"><a href="#section-13" class="pilcrow">&#182;</a></div><p>Setup aggregated channel handler for all required data for the form
+that's on other channels</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@requiresAggregateData</span><span class="p">()</span></pre></div></td></tr><tr id="section-14"><td class="docs"><div class="pilwrap"><a href="#section-14" class="pilcrow">&#182;</a></div><p>In order for an aggregate method to work we need to supply
+the aggregated channels as subscribed channels, even if
+we don't need their events. Ex: assuming we require streams
+for the new folder form, besides folders. The form is subscribed
+by default to folders, but not on streams (no need for the data).
+Create an anonymous method for the missing aggregated channel
+and add it to the subscribed channels</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="k">for</span> <span class="nx">data</span> <span class="k">in</span> <span class="nx">@required_channels</span></pre></div></td></tr><tr id="section-15"><td class="docs"><div class="pilwrap"><a href="#section-15" class="pilcrow">&#182;</a></div><p>Don't subscribe twice to a channel</p>
+</td><td class="code"><div class="highlight"><pre>                    <span class="k">if</span> <span class="o">not</span> <span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">channel</span> <span class="k">in</span> <span class="nx">@subscribed_channels</span><span class="p">)</span>
+                        <span class="nx">@subscribed_channels</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">channel</span><span class="p">)</span>
+
+        <span class="nv">subscribeAggregateDataChannels: </span><span class="nf">-&gt;</span>
+            <span class="k">if</span> <span class="nx">@requiresAggregateData</span><span class="p">()</span>
+                <span class="vi">@aggregated_channels =</span>
+                    <span class="nv">get_aggregated_channel_events: </span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">channel</span> <span class="k">for</span> <span class="nx">data</span> <span class="k">in</span> <span class="nx">@required_channels</span><span class="p">)</span>
+
+        <span class="nv">get_subscribed_channel_events: </span><span class="nf">(params) =&gt;</span></pre></div></td></tr><tr id="section-16"><td class="docs"><div class="pilwrap"><a href="#section-16" class="pilcrow">&#182;</a></div><p>Handle any incoming notification on the subscribed's model channel.
+Overwrite this method in your forms</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">get_aggregated_channel_events: </span><span class="nf">(params...) =&gt;</span></pre></div></td></tr><tr id="section-17"><td class="docs"><div class="pilwrap"><a href="#section-17" class="pilcrow">&#182;</a></div><p>Handler for all data required by the form (like users or
+mentions) to render. For example, a task needs users and
+the mention of the task to render (a save form). A folder
+might need it's streams to display the form (a delete form).
+Setup a single aggregated channel for all @required<em>channels.
+FIX IN FUTURE: this is a wanted limitation for now, to prevent
+further bugs. After base</em>form::get<em>aggregated</em>channel_events was
+successfully called, don't allow form re-rendering because
+the user could have already modified the form content, and
+re-rendering it would mean deleting all the introduced data,
+not necessarily existent in the model (the introduced user data is
+saved into the form model only when the user pushes commit).</p>
+
+<p>E.g. The user adds text to post a new social post, but while doing so,
+a required channel modifies, and causes the form re-rendering. So,
+all user's text will be lost. To make this work, we need to somehow
+render only a part of the form, not all of it. For now, just ignore
+this kind of events.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">return</span> <span class="kc">false</span> <span class="k">if</span> <span class="nx">@aggregated_channel_events_call_succeeded</span></pre></div></td></tr><tr id="section-18"><td class="docs"><div class="pilwrap"><a href="#section-18" class="pilcrow">&#182;</a></div><p>Ignore events that are not reset or change. This method is used to
+bootstrap the form with required data. It's outside the scope of this
+widget to keep the initial bootstrapped data up to date. Ex: Adding
+a new task requires the list of users. After we get the initial list
+a new user might be added and the form has to be rendered again. Will
+loose any user input if we handle this case.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">for</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">params</span></pre></div></td></tr><tr id="section-19"><td class="docs"><div class="pilwrap"><a href="#section-19" class="pilcrow">&#182;</a></div><p>Sometimes no_data events are received without being followed
+by reset ones, when fetching an empty collections, so we must
+for them as well</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="k">if</span> <span class="o">not</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="k">in</span> <span class="p">[</span><span class="s">&#39;no_data&#39;</span><span class="p">,</span> <span class="s">&#39;reset&#39;</span><span class="p">,</span> <span class="s">&#39;change&#39;</span><span class="p">])</span>
+                    <span class="k">return</span> <span class="kc">false</span>
+            <span class="nv">aggregated_results = </span><span class="p">{}</span>
+            <span class="k">for</span> <span class="nx">event</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">params</span></pre></div></td></tr><tr id="section-20"><td class="docs"><div class="pilwrap"><a href="#section-20" class="pilcrow">&#182;</a></div><p>There are two types of relational channels we can subscribe
+to: collection and model (still collection). Events for
+collections are coming in as reset and have a collection attribute
+and for models the event is change and has a model attribute.
+Determine which object (collection or model) from the event
+payload we should set on the form's model</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="k">in</span> <span class="p">[</span><span class="s">&#39;no_data&#39;</span><span class="p">,</span> <span class="s">&#39;reset&#39;</span><span class="p">]</span>
+                    <span class="nx">aggregated_results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">collection</span>
+                <span class="k">if</span> <span class="nx">event</span><span class="p">.</span><span class="nx">type</span> <span class="o">is</span> <span class="s">&#39;change&#39;</span>
+                    <span class="nx">aggregated_results</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">model</span></pre></div></td></tr><tr id="section-21"><td class="docs"><div class="pilwrap"><a href="#section-21" class="pilcrow">&#182;</a></div><p>Before setting the associated data from other channels we must have a model.
+If the form is not new, the model will come in from the required<em>channels.
+The model will be on the first position of the aggregated</em>results</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@isNew</span><span class="p">()</span>
+                <span class="nx">@setModel</span><span class="p">()</span>
+            <span class="k">else</span>
+                <span class="vi">@model = </span><span class="nx">aggregated_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></pre></div></td></tr><tr id="section-22"><td class="docs"><div class="pilwrap"><a href="#section-22" class="pilcrow">&#182;</a></div><p>For each aggregated event set either collection or model of the
+event on the model instance of the form. The attribute that will
+be set on the model is given as model<em>attribute of an item
+from required</em>channels.
+required<em>channels: [{ channel: '/users', model</em>attribute: 'users', sync: false }]</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">for</span> <span class="nx">k</span><span class="p">,</span> <span class="nx">v</span> <span class="k">of</span> <span class="nx">aggregated_results</span>
+                <span class="k">unless</span> <span class="nx">@required_channels</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">model_attribute</span> <span class="o">is</span> <span class="s">&#39;.&#39;</span>
+                    <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">@required_channels</span><span class="p">[</span><span class="nx">k</span><span class="p">].</span><span class="nx">model_attribute</span><span class="p">,</span> <span class="nx">v</span><span class="p">,</span> <span class="p">{</span> <span class="nv">silent: </span><span class="kc">true</span> <span class="p">})</span></pre></div></td></tr><tr id="section-23"><td class="docs"><div class="pilwrap"><a href="#section-23" class="pilcrow">&#182;</a></div><p>Mark this as true to prevent re-rendering the form for future calls,
+because we have received the initial data for rendering the form.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="vi">@aggregated_channel_events_call_succeeded = </span><span class="kc">true</span>
+
+        <span class="nv">isNew: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-24"><td class="docs"><div class="pilwrap"><a href="#section-24" class="pilcrow">&#182;</a></div><p>If we are editing a model return false, otherwise (we're
+adding a new folder) return true</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="o">not</span> <span class="nx">@model_id</span><span class="o">?</span>
+
+        <span class="nv">setModel: </span><span class="nf">(model = null) =&gt;</span>
+            <span class="vi">@model = </span><span class="k">if</span> <span class="nx">model</span><span class="o">?</span> <span class="k">then</span> <span class="nx">model</span> <span class="k">else</span> <span class="k">new</span> <span class="nx">@model_class</span><span class="p">()</span></pre></div></td></tr><tr id="section-25"><td class="docs"><div class="pilwrap"><a href="#section-25" class="pilcrow">&#182;</a></div><p>Set a 'form' attribute on the model. This way we know
+in other widgets when a model was modified via a
+form</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s">&#39;form&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="p">{</span> <span class="nv">silent: </span><span class="kc">true</span> <span class="p">})</span>
+
+        <span class="nv">syncModel: </span><span class="nf">(mode = &#39;update&#39;) -&gt;</span></pre></div></td></tr><tr id="section-26"><td class="docs"><div class="pilwrap"><a href="#section-26" class="pilcrow">&#182;</a></div><p>Save (or delete, based on the mode argument) the model
+associated with the form
+Decide what operation (create or update) we should perform
+on the model by inspecting it's id property (via isNew). If it's
+not present then perform a save, otherwise an update via
+addChannel or modifyChannel (widget.coffee)</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">switch</span> <span class="nx">mode</span>
+                <span class="k">when</span> <span class="s">&#39;update&#39;</span>
+                    <span class="k">if</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">isNew</span><span class="p">()</span>
+                        <span class="nx">@addChannel</span><span class="p">(</span><span class="nx">channels_utils</span><span class="p">.</span><span class="nx">formChannel</span><span class="p">(</span><span class="nx">@channel_key</span><span class="p">),</span>
+                                    <span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">,</span> <span class="s">&#39;append&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="nx">@model_sync</span><span class="p">)</span>
+                    <span class="k">else</span>
+                        <span class="nv">channel = </span><span class="nx">channels_utils</span><span class="p">.</span><span class="nx">formChannel</span><span class="p">(</span><span class="nx">@channel_key</span><span class="p">,</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+                        <span class="nx">@modifyChannel</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">attributes</span><span class="p">,</span>
+                            <span class="nv">update_mode: </span>       <span class="s">&#39;append&#39;</span>
+                            <span class="nv">already_translated: </span><span class="kc">false</span>
+                            <span class="nv">sync: </span>              <span class="nx">@model_sync</span><span class="p">)</span>
+                <span class="k">when</span> <span class="s">&#39;delete&#39;</span>
+                    <span class="nx">@deleteChannel</span><span class="p">(</span><span class="nx">channels_utils</span><span class="p">.</span><span class="nx">formChannel</span><span class="p">(</span><span class="nx">@channel_key</span><span class="p">,</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">id</span><span class="p">))</span>
+
+        <span class="nv">render: </span><span class="nf">(render_stringified = true)=&gt;</span></pre></div></td></tr><tr id="section-27"><td class="docs"><div class="pilwrap"><a href="#section-27" class="pilcrow">&#182;</a></div><p>Renders the layout and the associated form object if
+present.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nv">params = </span><span class="nx">@extra_params</span> <span class="o">?</span> <span class="p">{}</span>
+            <span class="nx">@renderLayout</span><span class="p">(</span>
+                <span class="k">if</span> <span class="nx">@model</span><span class="o">?</span> <span class="k">then</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">@model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">())</span> <span class="k">else</span> <span class="nx">params</span><span class="p">,</span>
+                <span class="nx">render_stringified</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nx">@form</span><span class="o">?</span>
+                <span class="nx">@renderForm</span><span class="p">()</span>
+
+        <span class="nv">beforeCommit: </span><span class="nf">(model) =&gt;</span></pre></div></td></tr><tr id="section-28"><td class="docs"><div class="pilwrap"><a href="#section-28" class="pilcrow">&#182;</a></div><p>Execute this callback before saving a model (
+before submitting a form). Disable form first and
+do any custom work in your child classes.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@disableForm</span><span class="p">()</span>
+
+        <span class="nv">commit: </span><span class="nf">(event) =&gt;</span></pre></div></td></tr><tr id="section-29"><td class="docs"><div class="pilwrap"><a href="#section-29" class="pilcrow">&#182;</a></div><p>Perform form validation and submission. First perform
+client side validation via @form and then send the
+data to the server and wait for server side errors.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@form</span><span class="o">?</span>
+                <span class="nx">@beforeCommit</span><span class="p">(</span><span class="nx">@form</span><span class="p">.</span><span class="nx">model</span><span class="p">)</span>
+            <span class="k">else</span>
+                <span class="nx">@beforeCommit</span><span class="p">(</span><span class="nx">@model</span><span class="p">)</span></pre></div></td></tr><tr id="section-30"><td class="docs"><div class="pilwrap"><a href="#section-30" class="pilcrow">&#182;</a></div><p>Disable the form during the entire process. Form
+is explicitely enabled when the model has been
+synced on server</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@action</span><span class="p">()</span>
+
+        <span class="nv">action: </span><span class="p">()</span> <span class="o">=&gt;</span></pre></div></td></tr><tr id="section-31"><td class="docs"><div class="pilwrap"><a href="#section-31" class="pilcrow">&#182;</a></div><p>This is the base action that's executed in the commit
+step of the form. This method should be overwritten in
+child classes.</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">afterCommit: </span><span class="nf">(model) =&gt;</span></pre></div></td></tr><tr id="section-32"><td class="docs"><div class="pilwrap"><a href="#section-32" class="pilcrow">&#182;</a></div><p>Execute this callback after the form has been saved.
+Receives a model argument (this can be improved by
+setting @model = model received from subscribed channels
+after a save or edit). Enable the form after the commit
+has been performed.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@enableForm</span><span class="p">()</span>
+
+        <span class="nv">parseServerErrors: </span><span class="nf">(response) -&gt;</span></pre></div></td></tr><tr id="section-33"><td class="docs"><div class="pilwrap"><a href="#section-33" class="pilcrow">&#182;</a></div><p>Parse server errors from a jQuery response object
+and add them on the form</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">try</span>
+                <span class="nv">errors = </span><span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">response</span><span class="p">.</span><span class="nx">responseText</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nx">errors</span><span class="p">.</span><span class="nx">errors</span><span class="o">?</span>
+                    <span class="nx">@addFormErrors</span><span class="p">(</span><span class="nx">errors</span><span class="p">.</span><span class="nx">errors</span><span class="p">)</span>
+            <span class="k">catch</span> <span class="nx">exception</span>
+                <span class="nx">logger</span><span class="p">.</span><span class="nx">handleException</span><span class="p">(</span><span class="nx">exception</span><span class="p">)</span>
+            <span class="k">finally</span>
+                <span class="nx">@enableForm</span><span class="p">()</span>
+
+        <span class="nv">createForm: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-34"><td class="docs"><div class="pilwrap"><a href="#section-34" class="pilcrow">&#182;</a></div><p>Creates a form object from the provided model using
+the given out schema and attaches it to this widget</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">formHTMLElements: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-35"><td class="docs"><div class="pilwrap"><a href="#section-35" class="pilcrow">&#182;</a></div><p>Return the list of all elements in the form: input elements and
+submit buttons
+Select all input, select and textarea (form) fields</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nv">inputElements = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@view</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;input,select,textarea&#39;</span><span class="p">)</span></pre></div></td></tr><tr id="section-36"><td class="docs"><div class="pilwrap"><a href="#section-36" class="pilcrow">&#182;</a></div><p>We might use buttons (not inputs) for submit elements.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nv">commitElements = </span><span class="nx">$</span><span class="p">(</span><span class="nx">@view</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;button.commit&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">union</span><span class="p">(</span><span class="nx">inputElements</span><span class="p">,</span> <span class="nx">commitElements</span><span class="p">)</span>
+
+        <span class="nv">disableForm: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-37"><td class="docs"><div class="pilwrap"><a href="#section-37" class="pilcrow">&#182;</a></div><p>Any form enters a disabled state after the
+submit button has been pressed. All fields
+of the form are disabled and the label of
+the submit button will be changed to "Saving"
+Disable all input elements and also add a disabled class</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">for</span> <span class="nx">el</span> <span class="k">in</span> <span class="nx">@formHTMLElements</span><span class="p">()</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">prop</span><span class="p">(</span><span class="s">&#39;disabled&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;disabled&#39;</span><span class="p">)</span>
+
+        <span class="nv">enableForm: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-38"><td class="docs"><div class="pilwrap"><a href="#section-38" class="pilcrow">&#182;</a></div><p>Enable the form by resetting the label of submit
+button to "Save" and enabling all fields
+Enable all input elements and remove any disabled class</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">for</span> <span class="nx">el</span> <span class="k">in</span> <span class="nx">@formHTMLElements</span><span class="p">()</span>
+                <span class="nx">el</span><span class="p">.</span><span class="nx">prop</span><span class="p">(</span><span class="s">&#39;disabled&#39;</span><span class="p">,</span> <span class="kc">false</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s">&#39;disabled&#39;</span><span class="p">)</span>
+
+        <span class="nv">destroyForm: </span><span class="nf">(force_close=false) -&gt;</span></pre></div></td></tr><tr id="section-39"><td class="docs"><div class="pilwrap"><a href="#section-39" class="pilcrow">&#182;</a></div><p>Dispose this form by deleting this widget.</p>
+
+<h1>TODO: dispose the form attrribute in destroyForm</h1>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">force_close</span> <span class="o">or</span>
+               <span class="p">(</span><span class="nx">@destroy_after_commit</span><span class="o">?</span> <span class="o">and</span> <span class="nx">@destroy_after_commit</span><span class="p">)</span>
+                <span class="nx">Utils</span><span class="p">.</span><span class="nx">closeModal</span><span class="p">()</span>
+
+        <span class="nv">cancel: </span><span class="nf">(event) -&gt;</span>
+            <span class="nx">Utils</span><span class="p">.</span><span class="nx">closeModal</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">false</span>
+
+        <span class="nv">addFormErrors: </span><span class="nf">(errors) -&gt;</span></pre></div></td></tr><tr id="section-40"><td class="docs"><div class="pilwrap"><a href="#section-40" class="pilcrow">&#182;</a></div><p>Display form errors</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-41"><td class="docs"><div class="pilwrap"><a href="#section-41" class="pilcrow">&#182;</a></div><p>errors is a dictionary of this form:
+{ '<strong>all</strong>': ['Error message one',], 'name': ['Name is required'] }</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="s">&#39;__all__&#39;</span> <span class="k">of</span> <span class="nx">errors</span>
+                <span class="nx">$</span><span class="p">(</span><span class="nx">@view</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.errors&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">errors</span><span class="p">[</span><span class="s">&#39;__all__&#39;</span><span class="p">].</span><span class="nx">join</span><span class="p">(</span><span class="s">&quot;. &quot;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="nx">field</span><span class="p">,</span> <span class="nx">e</span> <span class="k">of</span> <span class="nx">errors</span>
+                <span class="k">if</span> <span class="nx">field</span> <span class="o">!=</span> <span class="s">&#39;__all__&#39;</span>
+                    <span class="nx">@addFieldErrors</span><span class="p">(</span><span class="nx">field</span><span class="p">,</span> <span class="nx">e</span><span class="p">)</span>
+
+        <span class="nv">addFieldErrors: </span><span class="nf">(field, errors) -&gt;</span></pre></div></td></tr><tr id="section-42"><td class="docs"><div class="pilwrap"><a href="#section-42" class="pilcrow">&#182;</a></div><p>Add errors (received from the server) to the fields of
+the form by using the Backbone.Form instance (using setError
+on a form field). If there's no form on the object then
+the field errors won't be displayed!</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nv">error = </span><span class="nx">errors</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39;. &#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nx">@form</span><span class="o">?</span></pre></div></td></tr><tr id="section-43"><td class="docs"><div class="pilwrap"><a href="#section-43" class="pilcrow">&#182;</a></div><p>If the field received as the error field
+is defined in the form</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="k">if</span> <span class="nx">field</span> <span class="k">of</span> <span class="nx">@form</span><span class="p">.</span><span class="nx">fields</span>
+                    <span class="nx">@form</span><span class="p">.</span><span class="nx">fields</span><span class="p">[</span><span class="nx">field</span><span class="p">].</span><span class="nx">setError</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span>
+
+        <span class="nv">clearFormErrors: </span><span class="nf">-&gt;</span>
+
+            <span class="nx">@view</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s">&#39;.errors&#39;</span><span class="p">).</span><span class="nx">empty</span><span class="p">()</span>
+
+        <span class="nv">toggle: </span><span class="nf">(e) =&gt;</span></pre></div></td></tr><tr id="section-44"><td class="docs"><div class="pilwrap"><a href="#section-44" class="pilcrow">&#182;</a></div><p>Toggle fields</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-45"><td class="docs"><div class="pilwrap"><a href="#section-45" class="pilcrow">&#182;</a></div><p>Links with the "toggle" class with toggle
+the visibility of certain fields from the
+form.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-46"><td class="docs"><div class="pilwrap"><a href="#section-46" class="pilcrow">&#182;</a></div><p>The name of fields must be found inside the
+anchor's data-toggle attribute, and can be
+one or a list of space-separated fields.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nv">names = </span><span class="nb">String</span><span class="p">(</span><span class="nx">$</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">currentTarget</span><span class="p">).</span><span class="nx">data</span><span class="p">(</span><span class="s">&#39;toggle&#39;</span><span class="p">)).</span><span class="nx">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">names</span>
+                <span class="k">if</span> <span class="nx">@form</span><span class="p">.</span><span class="nx">fields</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span>
+                    <span class="nx">@form</span><span class="p">.</span><span class="nx">fields</span><span class="p">[</span><span class="nx">name</span><span class="p">].</span><span class="nx">$el</span><span class="p">.</span><span class="nx">parent</span><span class="p">().</span><span class="nx">toggle</span><span class="p">(</span><span class="s">&#39;fast&#39;</span><span class="p">)</span>
+            <span class="kc">false</span>
+
+        <span class="nv">onKeypress: </span><span class="nf">(event) =&gt;</span></pre></div></td></tr><tr id="section-47"><td class="docs"><div class="pilwrap"><a href="#section-47" class="pilcrow">&#182;</a></div><p>This method will trigger commit when the user hits <code>enter</code>.
+To achive this, we listen for all <code>keypress</code> events, filter
+only <code>Enters</code> and make sure the focus is not on a textarea,
+as this will result in a horrible experience.
+@param {Object} event - instance of jQuery.Event</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">return</span> <span class="k">unless</span> <span class="nx">event</span><span class="p">.</span><span class="nx">which</span> <span class="o">is</span> <span class="nx">ENTER</span>
+
+            <span class="nv">$elem = </span><span class="p">(</span><span class="nx">$</span> <span class="nb">document</span><span class="p">.</span><span class="nx">activeElement</span><span class="p">)</span>
+            <span class="k">return</span> <span class="k">if</span> <span class="p">(</span><span class="nx">$elem</span><span class="p">.</span><span class="o">is</span> <span class="s">&#39;textarea&#39;</span><span class="p">)</span> <span class="o">or</span>
+                <span class="nx">$elem</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s">&#39;contenteditable&#39;</span><span class="p">)</span> <span class="o">is</span> <span class="s">&#39;true&#39;</span>
+
+            <span class="nx">event</span><span class="p">.</span><span class="nx">stopPropagation</span><span class="p">()</span>
+            <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">()</span>
+
+            <span class="nx">@commit</span><span class="p">()</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Aug 05 2013 15:56:30 GMT+0300 (EEST)  </div></div></body></html>

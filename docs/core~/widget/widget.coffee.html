@@ -1,0 +1,303 @@
+<!DOCTYPE html><html><head><title>widget.coffee</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../index.html" class="source"><span class="file_name">README</span></a><a href="../../core~/api_mock.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">api_mock.coffee</span></a><a href="../../core~/application_controller.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">application_controller.coffee</span></a><a href="../../core~/auth.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">auth.coffee</span></a><a href="../../core~/base_collection.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">base_collection.coffee</span></a><a href="../../core~/base_model.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">base_model.coffee</span></a><a href="../../core~/base_widgets/autocomplete.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">autocomplete.coffee</span></a><a href="../../core~/base_widgets/base_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">base_form.coffee</span></a><a href="../../core~/base_widgets/delete_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">delete_form.coffee</span></a><a href="../../core~/base_widgets/expanding_list.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">expanding_list.coffee</span></a><a href="../../core~/base_widgets/item_count.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">item_count.coffee</span></a><a href="../../core~/base_widgets/list.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">list.coffee</span></a><a href="../../core~/base_widgets/mediator_widget.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">mediator_widget.coffee</span></a><a href="../../core~/base_widgets/nested_attributes_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">nested_attributes_form.coffee</span></a><a href="../../core~/base_widgets/new_items_count.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">new_items_count.coffee</span></a><a href="../../core~/base_widgets/notification_bar.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">notification_bar.coffee</span></a><a href="../../core~/base_widgets/notifications.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">notifications.coffee</span></a><a href="../../core~/base_widgets/order_by.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">order_by.coffee</span></a><a href="../../core~/base_widgets/update_form.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">update_form.coffee</span></a><a href="../../core~/base_widgets/url.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">url.coffee</span></a><a href="../../core~/base_widgets/user_item_count.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">user_item_count.coffee</span></a><a href="../../core~/base_widgets/widget_editor.coffee.html" class="source "><span class="base_path">core~ / base_widgets / </span><span class="file_name">widget_editor.coffee</span></a><a href="../../core~/channels_utils.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">channels_utils.coffee</span></a><a href="../../core~/constants.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">constants.coffee</span></a><a href="../../core~/context_processors.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">context_processors.coffee</span></a><a href="../../core~/controller.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">controller.coffee</span></a><a href="../../core~/core_modules.js.html" class="source "><span class="base_path">core~ / </span><span class="file_name">core_modules.js</span></a><a href="../../core~/datasource/channel/create.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">create.coffee</span></a><a href="../../core~/datasource/channel/destroy.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">destroy.coffee</span></a><a href="../../core~/datasource/channel/read.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">read.coffee</span></a><a href="../../core~/datasource/channel/update.coffee.html" class="source "><span class="base_path">core~ / datasource / channel / </span><span class="file_name">update.coffee</span></a><a href="../../core~/datasource/channel.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">channel.coffee</span></a><a href="../../core~/datasource/datasource.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">datasource.coffee</span></a><a href="../../core~/datasource/gc.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">gc.coffee</span></a><a href="../../core~/datasource/refresher.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">refresher.coffee</span></a><a href="../../core~/datasource/scheduler.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">scheduler.coffee</span></a><a href="../../core~/datasource/widget.coffee.html" class="source "><span class="base_path">core~ / datasource / </span><span class="file_name">widget.coffee</span></a><a href="../../core~/flags_collection.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">flags_collection.coffee</span></a><a href="../../core~/interceptor.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">interceptor.coffee</span></a><a href="../../core~/layout.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">layout.coffee</span></a><a href="../../core~/loader.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">loader.coffee</span></a><a href="../../core~/loading_animation.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">loading_animation.coffee</span></a><a href="../../core~/logging/sentry_logger.coffee.html" class="source "><span class="base_path">core~ / logging / </span><span class="file_name">sentry_logger.coffee</span></a><a href="../../core~/logging/standard_logger.coffee.html" class="source "><span class="base_path">core~ / logging / </span><span class="file_name">standard_logger.coffee</span></a><a href="../../core~/mocks.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">mocks.coffee</span></a><a href="../../core~/modal_window.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">modal_window.coffee</span></a><a href="../../core~/module.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">module.coffee</span></a><a href="../../core~/mozaic_backbone_form.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">mozaic_backbone_form.coffee</span></a><a href="../../core~/profiler.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">profiler.coffee</span></a><a href="../../core~/pubsub.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">pubsub.coffee</span></a><a href="../../core~/raw_data.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">raw_data.coffee</span></a><a href="../../core~/router.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">router.coffee</span></a><a href="../../core~/scrollable_widget.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">scrollable_widget.coffee</span></a><a href="../../core~/utils/dom.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">dom.coffee</span></a><a href="../../core~/utils/images.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">images.coffee</span></a><a href="../../core~/utils/misc.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">misc.coffee</span></a><a href="../../core~/utils/mozaic.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">mozaic.coffee</span></a><a href="../../core~/utils/time.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">time.coffee</span></a><a href="../../core~/utils/urls.coffee.html" class="source "><span class="base_path">core~ / utils / </span><span class="file_name">urls.coffee</span></a><a href="../../core~/utils.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">utils.coffee</span></a><a href="../../core~/widget/aggregated_channels.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">aggregated_channels.coffee</span></a><a href="../../core~/widget/backbone_events.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">backbone_events.coffee</span></a><a href="../../core~/widget/channels.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">channels.coffee</span></a><a href="../../core~/widget/modal_widget.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">modal_widget.coffee</span></a><a href="../../core~/widget/params.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">params.coffee</span></a><a href="../../core~/widget/rendering.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">rendering.coffee</span></a><a href="../../core~/widget/states.coffee.html" class="source "><span class="base_path">core~ / widget / </span><span class="file_name">states.coffee</span></a><a href="../../core~/widget/widget.coffee.html" class="source selected"><span class="base_path">core~ / widget / </span><span class="file_name">widget.coffee</span></a><a href="../../core~/widget_starter.coffee.html" class="source "><span class="base_path">core~ / </span><span class="file_name">widget_starter.coffee</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>widget.coffee</h1><div class="filepath">core~/widget/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">define</span> <span class="p">[</span>
+    <span class="s">&#39;cs!mozaic_module&#39;</span>
+    <span class="s">&#39;cs!core/widget/aggregated_channels&#39;</span>
+    <span class="s">&#39;cs!core/widget/backbone_events&#39;</span>
+    <span class="s">&#39;cs!core/widget/channels&#39;</span>
+    <span class="s">&#39;cs!core/widget/params&#39;</span>
+    <span class="s">&#39;cs!core/widget/rendering&#39;</span>
+    <span class="s">&#39;cs!core/widget/states&#39;</span>
+<span class="p">],</span> <span class="nf">(</span>
+<span class="nf">    Module,</span>
+<span class="nf">    WidgetAggregatedChannelsMixin,</span>
+<span class="nf">    WidgetBackboneEventsMixin,</span>
+<span class="nf">    WidgetChannelsMixin,</span>
+<span class="nf">    WidgetParamsMixin,</span>
+<span class="nf">    WidgetRenderingMixin,</span>
+<span class="nf">    WidgetStatesMixin</span>
+<span class="nf">) -&gt;</span>
+
+    <span class="k">class</span> <span class="nx">Widget</span> <span class="k">extends</span> <span class="nx">Module</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><p>The widget is the building block of UIs in mozaic.js ie. interfaces
+are built by composing widgets that encapsulate functionality.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>The following is a centralized list of the properties supported
+by the widget class and their use-cases:</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>@property {String} @template<em>name - path to widget's template, it's
+relative to the root of the application.
+@property {Object} @template - internal instance of a Handlebars
+object with compiled templates.
+@property {Number} @constructed</em>at - unix timestamp for the date
+when the widget constructor was run.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>@property {Object} @params - hash of parameters passed by parent
+widget upon injection into the DOM.
+@property {Object} @params<em>defaults - Specifies default values for
+the widget @params. The format is <code>{key:value}</code>.
+All specified keys are attached to the instance.
+If <code>value</code> is a function then @key gets it's return value.
+Note that these functions get executed in the context
+of the widget after all other defaults have been set,
+including the values set in @params, this means you can
+modify the received value dynamically.
+If <code>value</code> is <code>data-params</code> then @key gets the value from
+the passed @params[key] object.
+Otherwise, @key receives whatever <code>value</code> is passed in @params
+@property {Object} @params</em>required - an array of parameters
+expected in @params from the injector widget.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>@property {Object} @elements - a hash <code>{'name':'selector'}</code>
+This hash is processed after widget renders and sets
+<code>@['name']</code> to be a jQuery element inside the widget
+that matches <code>'selector'</code>
+@property {Object} @events - a hash with the following signature:
+<code>{'event @element': 'functionName'} or
+</code>{'event selector': 'functionName'}
+It maps an <code>event</code> on a previously computed <code>@element</code> or
+on every element that matches the <code>selector</code>, to a
+<code>functionName</code> of the current object that acts as a
+handler of that event.
+NOTE! You might want to bind the handler function to the
+current instance, otherwise the application.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><p>CHANNELS
+@property {Array} @subscribed<em>channels - list of channel types the
+widget is bound to. Whenever events are
+published on one of the channels defined
+here, a method named @get</em><channel_name>()
+gets executed. Child widgets must implement
+these methods in order to get updates from
+the channel.
+@property {Object} @aggregated<em>channels - a list of channel types
+bound to a method name which allows the
+widget to access data from multiple channels
+at once.
+@property {Object} @aggregator - internal, holds data from the
+latest events of all channels the widget is
+bound to.
+@property {Array} @loading</em>channels -list of channels types whose
+aggregated events determine the widget's
+transition to a certain new state
+@property {Object} @channel<em>mapping - this is an internal hash that
+maps channel types from @subscribed</em>channels
+to the actual instances of the channel.
+@property {Boolean} @URGENT<em>FOR</em>GC</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><p>STATES
+@property {String} @initial<em>state - internal, holds the name of the
+initial state. NOTE that this is called 'init'.
+@property {Array} @loadingStates - internal, holds a list of states
+for all aggregated channels. The possible states
+supported by a channel are 'init', 'empty',
+'incompatible', 'available'.
+@see WidgetStatesMixin#changeState
+@property {String} @data</em>state -
+@property {Boolean} @STRICT<em>CHANGE</em>STATE</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><p>RENDERING
+@property {Object} @view - instance of Backbone.View
+@property {Object} @el - intance of jQuery, @deprecated
+@property {Boolean} @isDetachedFromDOM - flag indicating if the
+widget is not in the DOM anymore.
+@property {Object} @saved<em>view - instance of Backbone.View, relevant
+for detached widgets, ie. widgets that are
+no longer in the DOM.
+@property {Object} @saved</em>el - instance of jQuery, again only
+relevant for detached widgets.
+@property {Object} @pre<em>render - hash of context processors to be
+executed _before</em> the widget is rendered.
+A context processor is a function that
+modifies the behaviour or presentation of
+the widget in some way.
+NOTE that context processors need to be
+registered globally in
+ubvu<em>application</em>controller before usage.
+@property {Object} @post_render - hash of context processors with
+their parameters to be executed after the
+widget has rendered. Examples: tooltip,
+tinyscrollbar.
+@property {Object} @layout - instance of core/layout class.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><p>@property {Object} @profiler - instance of YUIProfiler class. Does
+what it says on the tin! it's a class and
+function profiler.
+@property {Boolean} @rendered<em>signal</em>sent - flag sent right after
+publishing <code>/new_widget_rendered</code>.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-11"><td class="docs"><div class="pilwrap"><a href="#section-11" class="pilcrow">&#182;</a></div><p>/new<em>widget</em>rendered can be sent only once per widget instance.
+It is sent in one of two cases:</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-12"><td class="docs"><div class="pilwrap"><a href="#section-12" class="pilcrow">&#182;</a></div><p>1) if the widget has no template<em>name, it most probably means
+that it's a proxy widget, so it will send this signal on
+initialize. loading</em>animation will then keep waiting after
+its children. If it has no children, it must be an utility
+widget, so either way it doesn't make sens to wait for it
+to render.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-13"><td class="docs"><div class="pilwrap"><a href="#section-13" class="pilcrow">&#182;</a></div><p>2) if the widget has a template_name, it will send a signal
+on the first un-silenced renderLayout. Most (99%) of renderLayout
+calls are un-silenced, but sometimes we want to make sure when
+the page finishes loading, we see a certain content (aka the
+full content), while when we navigate from page to page it's
+acceptable to see smaller loading animations.</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">rendered_signal_sent: </span><span class="kc">false</span></pre></div></td></tr><tr id="section-14"><td class="docs"><div class="pilwrap"><a href="#section-14" class="pilcrow">&#182;</a></div><p>Initial state of the widget. It is toggled by default when
+the widget starts.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-15"><td class="docs"><div class="pilwrap"><a href="#section-15" class="pilcrow">&#182;</a></div><p>Set it to any of the supported states to start the widget
+in a particular state.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-16"><td class="docs"><div class="pilwrap"><a href="#section-16" class="pilcrow">&#182;</a></div><p>Override the default state using the data-param <em>initial</em>state_
+property.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-17"><td class="docs"><div class="pilwrap"><a href="#section-17" class="pilcrow">&#182;</a></div><p>@see #changeState</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">initial_state: </span><span class="kc">null</span></pre></div></td></tr><tr id="section-18"><td class="docs"><div class="pilwrap"><a href="#section-18" class="pilcrow">&#182;</a></div><p>Singleton instance of class Profiler. Available for all Widgets.</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">profiler: </span><span class="nx">loader</span><span class="p">.</span><span class="nx">get_module</span><span class="p">(</span><span class="s">&#39;profiler&#39;</span><span class="p">)</span></pre></div></td></tr><tr id="section-19"><td class="docs"><div class="pilwrap"><a href="#section-19" class="pilcrow">&#182;</a></div><p>Set this to true to only trigger changeState() whenever there is
+a transition from an old state to a different new state (a transition
+is also triggered if the old state and new state are both 'available')</p>
+</td><td class="code"><div class="highlight"><pre>        <span class="nv">STRICT_CHANGE_STATE: </span><span class="kc">false</span>
+
+        <span class="nv">constructor: </span><span class="nf">(params, template = null) -&gt;</span></pre></div></td></tr><tr id="section-20"><td class="docs"><div class="pilwrap"><a href="#section-20" class="pilcrow">&#182;</a></div><p>Call super module's self-wrapping constructor</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">super</span><span class="p">()</span></pre></div></td></tr><tr id="section-21"><td class="docs"><div class="pilwrap"><a href="#section-21" class="pilcrow">&#182;</a></div><p>Every time a new widget is instatiated, publish a request to <code>new_widget</code>
+In this request, also send the channels the widget will be subscribed to</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-22"><td class="docs"><div class="pilwrap"><a href="#section-22" class="pilcrow">&#182;</a></div><p>Start profiling the rendering of this widget instance. This will end in <code>render</code>.
+To check out the results, in the console, do: loader.get_module('profiler').getFullReport();</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">App</span><span class="p">.</span><span class="nx">general</span><span class="p">.</span><span class="nx">ENABLE_PROFILING</span>
+                <span class="nx">@profiler</span><span class="p">.</span><span class="nx">start</span> <span class="nx">params</span><span class="p">.</span><span class="nx">name</span>
+
+            <span class="vi">@constructed_at = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span>
+            <span class="k">if</span> <span class="nx">template</span>
+                <span class="vi">@template = </span><span class="nx">template</span>
+            <span class="k">if</span> <span class="nx">params</span><span class="p">.</span><span class="nx">template_name</span><span class="o">?</span>
+                <span class="vi">@template_name = </span><span class="nx">params</span><span class="p">.</span><span class="nx">template_name</span>
+            <span class="vi">@params = </span><span class="nx">params</span>
+            <span class="vi">@channel_mapping = </span><span class="nx">params</span><span class="p">.</span><span class="nx">channels</span> <span class="o">or</span> <span class="p">{}</span>
+
+            <span class="nx">@_initParamsDefaults</span><span class="p">()</span>
+            <span class="nx">@_checkForRequiredParams</span><span class="p">()</span>
+            <span class="k">if</span> <span class="o">not</span> <span class="nx">@subscribed_channels</span>
+                <span class="vi">@subscribed_channels = </span><span class="p">[]</span>
+
+            <span class="nx">@_parseDomEvents</span><span class="p">()</span></pre></div></td></tr><tr id="section-23"><td class="docs"><div class="pilwrap"><a href="#section-23" class="pilcrow">&#182;</a></div><p>View initialization must come first, before announceNewWidget method call
+This is because announceNewWidget might cause the widgets' render
+method to be called if data is already available in the datasource
+for the given keys.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@_initializeBackboneView</span><span class="p">()</span></pre></div></td></tr><tr id="section-24"><td class="docs"><div class="pilwrap"><a href="#section-24" class="pilcrow">&#182;</a></div><p>Precompile in Handlebars widget's template must come before announceNewWidget</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@template</span>
+                <span class="vi">@template = </span><span class="nx">Handlebars</span><span class="p">.</span><span class="nx">compile</span><span class="p">(</span><span class="nx">@template</span><span class="p">)</span></pre></div></td></tr><tr id="section-25"><td class="docs"><div class="pilwrap"><a href="#section-25" class="pilcrow">&#182;</a></div><p>Widget initialization must happen as early as possible in the cycle
+of instantiating the widget. This is because some widgets define
+their subscribed<em>channels / aggregated</em>channels dynamically in
+their initialize() method.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@initialize</span><span class="p">()</span></pre></div></td></tr><tr id="section-26"><td class="docs"><div class="pilwrap"><a href="#section-26" class="pilcrow">&#182;</a></div><p>Perform a sanity check that this widget has all the data it needs</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="o">not</span> <span class="nx">@_checkChannels</span><span class="p">(</span><span class="nx">@subscribed_channels</span><span class="p">,</span> <span class="nx">@channel_mapping</span><span class="p">)</span>
+                <span class="nx">logger</span><span class="p">.</span><span class="nx">error</span> <span class="s">&quot;Trying to initialize widget </span><span class="si">#{</span><span class="nx">@params</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s"> without the required channels from controller&quot;</span>
+                <span class="k">return</span></pre></div></td></tr><tr id="section-27"><td class="docs"><div class="pilwrap"><a href="#section-27" class="pilcrow">&#182;</a></div><p>Setup the aggregated channels, which allow a widget to respond
+with a single function on the events for one or more channels.
+For example, a widget might choose to react to any change in
+/mentions' OR '/tags' with the same function (because the stuff
+to draw depends on both types of data).</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@setupAggregatedChannels</span><span class="p">()</span></pre></div></td></tr><tr id="section-28"><td class="docs"><div class="pilwrap"><a href="#section-28" class="pilcrow">&#182;</a></div><p>The initial state can be received as an argument through
+<em>params</em>defaults<em>. If this is the case, overwrite the
+@initial</em>state instance variable with that one.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@_triggerInitialState</span><span class="p">()</span></pre></div></td></tr><tr id="section-29"><td class="docs"><div class="pilwrap"><a href="#section-29" class="pilcrow">&#182;</a></div><p>Make sure that the widgets' event handlers receive nice dicts
+with lots of info about the event that took place on the collection.
+We do this by wrapping the existing functions in others that
+translate the parameters from Backbone.Collections format to ours.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@_setupEventParamsTranslation</span><span class="p">()</span></pre></div></td></tr><tr id="section-30"><td class="docs"><div class="pilwrap"><a href="#section-30" class="pilcrow">&#182;</a></div><p>Hook to events from child widgets</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@_setupChildEvents</span><span class="p">()</span></pre></div></td></tr><tr id="section-31"><td class="docs"><div class="pilwrap"><a href="#section-31" class="pilcrow">&#182;</a></div><p>Publish to the datasource that there is a new widget which
+is interested in certain data channels</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">@announceNewWidget</span><span class="p">()</span>
+
+        <span class="nv">announceNewWidget: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-32"><td class="docs"><div class="pilwrap"><a href="#section-32" class="pilcrow">&#182;</a></div><p>Announce that a new widget has been instantiated.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-33"><td class="docs"><div class="pilwrap"><a href="#section-33" class="pilcrow">&#182;</a></div><p>This will cause the datasource to perform match-making between
+the widget's interests and the available datasources.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nv">message = </span><span class="p">{</span>
+                <span class="nv">name: </span><span class="nx">@params</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+                <span class="nv">widget: </span><span class="nx">@</span>
+                <span class="nv">subscribed_channels: </span><span class="nx">@_getTranslatedSubscribedChannels</span><span class="p">()</span>
+            <span class="p">}</span>
+
+            <span class="nv">pipe = </span><span class="nx">loader</span><span class="p">.</span><span class="nx">get_module</span><span class="p">(</span><span class="s">&#39;pubsub&#39;</span><span class="p">)</span></pre></div></td></tr><tr id="section-34"><td class="docs"><div class="pilwrap"><a href="#section-34" class="pilcrow">&#182;</a></div><p>Announcing that a new widget is available is done in 2 waves:
+- first announce the people interested in the fact that the
+  widget has appeared that will count this (for example,
+  loading animation)
+- then announce the datasource to bind this widget to its
+  channels.</p>
+
+<p>Doing the two publishes instead of one is extremely unfortunate
+because for widget editors, one can encounter aggregated
+channels events before the widget.editor is set by the
+widget_editor.</p>
+
+<p>TODO(andrei): find better way to fix this. Complete braindamage.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">pipe</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&#39;/new_widget&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span>
+            <span class="nx">pipe</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&#39;/new_widget_bind_to_data&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span></pre></div></td></tr><tr id="section-35"><td class="docs"><div class="pilwrap"><a href="#section-35" class="pilcrow">&#182;</a></div><p>If this widget doesn't have a template, it either:
+a) doesn't have any visible representation
+or
+b) spawns other widgets, and those will wait for the data</p>
+
+<p>So it's a sane choice to announce immediately that it has rendered.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="o">not</span> <span class="nx">@template_name</span>
+                <span class="nx">pipe</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&#39;/new_widget_rendered&#39;</span><span class="p">,</span> <span class="nx">@params</span><span class="p">[</span><span class="s">&#39;widget_id&#39;</span><span class="p">],</span> <span class="nx">@params</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">])</span>
+                <span class="vi">@rendered_signal_sent = </span><span class="kc">true</span>
+
+        <span class="nv">_initializeBackboneView: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-36"><td class="docs"><div class="pilwrap"><a href="#section-36" class="pilcrow">&#182;</a></div><p>Initialize the widget associated Backbone.View.
+Setting a view at start will only be done if a dom element
+is sent along with the contructor params</p>
+
+<p>This is always done by the widget starter.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@params</span><span class="p">.</span><span class="nx">el</span>
+                <span class="nx">@setView</span><span class="p">(</span><span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">(</span><span class="nv">el: </span><span class="nx">@params</span><span class="p">.</span><span class="nx">el</span><span class="p">))</span></pre></div></td></tr><tr id="section-37"><td class="docs"><div class="pilwrap"><a href="#section-37" class="pilcrow">&#182;</a></div><p>Propagate "urgent for GC" flag to view class</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="k">if</span> <span class="nx">@URGENT_FOR_GC</span>
+                    <span class="nx">@view</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">addClass</span><span class="p">(</span><span class="s">&#39;urgent_for_gc&#39;</span><span class="p">)</span>
+
+        <span class="nv">_triggerInitialState: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-38"><td class="docs"><div class="pilwrap"><a href="#section-38" class="pilcrow">&#182;</a></div><p>Triggers the initial state of the widget, if there is one.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@params</span><span class="p">.</span><span class="nx">initial_state</span><span class="o">?</span>
+                <span class="vi">@initial_state = </span><span class="nx">@params</span><span class="p">.</span><span class="nx">initial_state</span></pre></div></td></tr><tr id="section-39"><td class="docs"><div class="pilwrap"><a href="#section-39" class="pilcrow">&#182;</a></div><p>Only trigger initial state if one is specified</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">@initial_state</span><span class="o">?</span></pre></div></td></tr><tr id="section-40"><td class="docs"><div class="pilwrap"><a href="#section-40" class="pilcrow">&#182;</a></div><p>Setup state management workflow only if the @loading_channels is a
+populated Array, otherwise the state management defaults to disabled.</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">@loading_channels</span><span class="p">)</span> <span class="o">and</span> <span class="o">not</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isEmpty</span><span class="p">(</span><span class="nx">@loading_channels</span><span class="p">)</span></pre></div></td></tr><tr id="section-41"><td class="docs"><div class="pilwrap"><a href="#section-41" class="pilcrow">&#182;</a></div><p>Create aggregated event handlers based on the loading channels,
+that change the state of the widget based on their type and order</p>
+</td><td class="code"><div class="highlight"><pre>                    <span class="nx">@setupLoadingChannels</span><span class="p">()</span></pre></div></td></tr><tr id="section-42"><td class="docs"><div class="pilwrap"><a href="#section-42" class="pilcrow">&#182;</a></div><p>Trigger initial data state</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="nx">@changeState</span><span class="p">(</span><span class="nx">@initial_state</span><span class="p">)</span>
+
+        <span class="nv">_setupChildEvents: </span><span class="nf">-&gt;</span></pre></div></td></tr><tr id="section-43"><td class="docs"><div class="pilwrap"><a href="#section-43" class="pilcrow">&#182;</a></div><p>Hook to events from child widgets. We're currently only
+listening to render events from child widgets, but more could
+be implemented in the future.</p>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-44"><td class="docs"><div class="pilwrap"><a href="#section-44" class="pilcrow">&#182;</a></div><p>TODO: Big refactoring, make all widgets run around a
+pubsub channel of their own and have this sort of widget events
+run on their respecive channel only, with the option to bubble
+up to parent widgets up to the top widgets of the app
+Only add an event listener if a handler function
+for it appears to be defined</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">return</span> <span class="k">unless</span> <span class="k">typeof</span><span class="p">(</span><span class="nx">@onChildRender</span><span class="p">)</span> <span class="o">is</span> <span class="s">&#39;function&#39;</span></pre></div></td></tr><tr id="section-45"><td class="docs"><div class="pilwrap"><a href="#section-45" class="pilcrow">&#182;</a></div><p>Save handler method reference so it can be removed from pubsub
+when trying to GC widget</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="vi">@_onChildRender = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">onWidgetRender</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">@onChildRender</span><span class="p">)</span>
+
+        <span class="nv">initialize: </span><span class="nf">-&gt;</span>
+
+        <span class="nv">render: </span><span class="nf">-&gt;</span>
+
+        <span class="nv">destroy: </span><span class="o">=&gt;</span>
+            <span class="nv">now = </span><span class="nx">Utils</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span> <span class="o">/</span> <span class="mi">1000</span></pre></div></td></tr><tr id="section-46"><td class="docs"><div class="pilwrap"><a href="#section-46" class="pilcrow">&#182;</a></div><p>If widget has only lived half a second, something is wrong
+and somebody is wasting widgets for nothing.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">now</span> <span class="o">-</span> <span class="nx">@constructed_at</span> <span class="o">&lt;</span> <span class="mf">0.5</span>
+                <span class="nv">cloned_params = </span><span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="nx">@params</span><span class="p">)</span>
+                <span class="k">delete</span> <span class="nx">cloned_params</span><span class="p">[</span><span class="s">&#39;el&#39;</span><span class="p">]</span>
+                <span class="nx">logger</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s">&quot;Widget with id </span><span class="si">#{</span><span class="nx">@params</span><span class="p">[</span><span class="s">&#39;widget_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s"> has lived too little (less than half a second). You&#39;re doing something wrong. (params = </span><span class="si">#{</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">cloned_params</span><span class="p">)</span><span class="si">}</span><span class="s">)&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nx">@saved_view</span></pre></div></td></tr><tr id="section-47"><td class="docs"><div class="pilwrap"><a href="#section-47" class="pilcrow">&#182;</a></div><p>undelegate events</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="nx">@saved_view</span><span class="o">?</span><span class="p">.</span><span class="nx">off</span><span class="o">?</span><span class="p">()</span></pre></div></td></tr><tr id="section-48"><td class="docs"><div class="pilwrap"><a href="#section-48" class="pilcrow">&#182;</a></div><p>unbind element</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="nx">@saved_view</span><span class="o">?</span><span class="p">.</span><span class="nx">unbind</span><span class="o">?</span><span class="p">()</span></pre></div></td></tr><tr id="section-49"><td class="docs"><div class="pilwrap"><a href="#section-49" class="pilcrow">&#182;</a></div><p>remove element</p>
+</td><td class="code"><div class="highlight"><pre>                <span class="nx">@saved_view</span><span class="o">?</span><span class="p">.</span><span class="nx">remove</span><span class="o">?</span><span class="p">()</span>
+
+            <span class="nv">pipe = </span><span class="nx">loader</span><span class="p">.</span><span class="nx">get_module</span><span class="p">(</span><span class="s">&#39;pubsub&#39;</span><span class="p">)</span>
+            <span class="nx">pipe</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s">&#39;/destroy_widget&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="nv">name: </span><span class="nx">@params</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span>
+                <span class="nv">widget: </span><span class="k">this</span><span class="p">})</span></pre></div></td></tr><tr id="section-50"><td class="docs"><div class="pilwrap"><a href="#section-50" class="pilcrow">&#182;</a></div><p>Remove the on child render event listener, if previously set
+TODO: There should be a more elegant way to handle more events
+of this type and unsubscribing them all at once through some
+sort of system (rather than addressing them individually)</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span><span class="p">(</span><span class="nx">@_onChildRender</span><span class="p">)</span>
+                <span class="nx">pipe</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s">&#39;/new_widget_rendered&#39;</span><span class="p">,</span> <span class="nx">@_onChildRender</span><span class="p">)</span>
+
+        <span class="nv">startBeingDetached: </span><span class="o">=&gt;</span></pre></div></td></tr><tr id="section-51"><td class="docs"><div class="pilwrap"><a href="#section-51" class="pilcrow">&#182;</a></div><p>Mark the fact that the widget is currently detached from DOM.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="vi">@isDetachedFromDOM = </span><span class="kc">true</span></pre></div></td></tr><tr id="section-52"><td class="docs"><div class="pilwrap"><a href="#section-52" class="pilcrow">&#182;</a></div><p>Make sure that detached widgets trying to access the DOM fail.</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="vi">@saved_view = </span><span class="nx">@view</span>
+            <span class="vi">@view = </span><span class="kc">null</span>
+            <span class="vi">@saved_el = </span><span class="nx">@el</span>
+            <span class="vi">@el = </span><span class="kc">null</span>
+
+    <span class="nx">Widget</span><span class="p">.</span><span class="nx">includeMixin</span><span class="p">(</span><span class="nx">WidgetAggregatedChannelsMixin</span><span class="p">)</span>
+    <span class="nx">Widget</span><span class="p">.</span><span class="nx">includeMixin</span><span class="p">(</span><span class="nx">WidgetBackboneEventsMixin</span><span class="p">)</span>
+    <span class="nx">Widget</span><span class="p">.</span><span class="nx">includeMixin</span><span class="p">(</span><span class="nx">WidgetChannelsMixin</span><span class="p">)</span>
+    <span class="nx">Widget</span><span class="p">.</span><span class="nx">includeMixin</span><span class="p">(</span><span class="nx">WidgetParamsMixin</span><span class="p">)</span>
+    <span class="nx">Widget</span><span class="p">.</span><span class="nx">includeMixin</span><span class="p">(</span><span class="nx">WidgetRenderingMixin</span><span class="p">)</span>
+    <span class="nx">Widget</span><span class="p">.</span><span class="nx">includeMixin</span><span class="p">(</span><span class="nx">WidgetStatesMixin</span><span class="p">)</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Mon Aug 05 2013 15:56:46 GMT+0300 (EEST)  </div></div></body></html>
