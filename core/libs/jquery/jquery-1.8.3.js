@@ -3727,7 +3727,6 @@ var cachedruns,
 
 	classCache = createCache(),
 	tokenCache = createCache(),
-	compilerCache = createCache(),
 
 	// Regex
 
@@ -5075,10 +5074,8 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 compile = Sizzle.compile = function( selector, group /* Internal Use Only */ ) {
 	var i,
 		setMatchers = [],
-		elementMatchers = [],
-		cached = compilerCache[ expando ][ selector + " " ];
+		elementMatchers = [];
 
-	if ( !cached ) {
 		// Generate a function of recursive functions that can be used to check each element
 		if ( !group ) {
 			group = tokenize( selector );
@@ -5093,10 +5090,7 @@ compile = Sizzle.compile = function( selector, group /* Internal Use Only */ ) {
 			}
 		}
 
-		// Cache the compiled function
-		cached = compilerCache( selector, matcherFromGroupMatchers( elementMatchers, setMatchers ) );
-	}
-	return cached;
+	return matcherFromGroupMatchers( elementMatchers, setMatchers );
 };
 
 function multipleContexts( selector, contexts, results ) {
