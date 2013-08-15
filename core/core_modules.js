@@ -22,7 +22,6 @@ App.main_modules = {
     'core/widget/params': 'core/widget/params',
     'core/widget/rendering': 'core/widget/rendering',
     'core/widget/states': 'core/widget/states',
-    'profiler': 'core/profiler',
     'widget_starter': 'core/widget_starter',
     'channels_utils': 'core/channels_utils',
     'datasource': 'core/datasource/datasource',

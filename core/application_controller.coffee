@@ -27,7 +27,6 @@ define ['cs!layout', 'cs!mozaic_module'], (Layout, Module) ->
                 application controller.
             ###
             modules = ['cs!datasource', 'cs!loading_animation', 'cs!modal_window']
-            if App.general.ENABLE_PROFILING then modules.push 'cs!profiler'
             return modules
 
         injectController: (new_controller_config, controller_params) =>
