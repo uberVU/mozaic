@@ -139,52 +139,79 @@
     // intensively, and usually there are a lot of subscribers for a given source
     // of data. Using setTimeout(0) will give the browser the occasion to keep
     // up the rendering with what's going on :)
-    _triggerCallbacksForOneEvent: function (node, tail, args, callback) {
-        if (node.next == tail) {
-            callback();
+    _triggerCallbacksForOneEvent: function (event, is_all,
+                                            node, tail, callback,
+                                            events, args) {
+        var calls = this._callbacks;
+
+        if (node == tail || node == undefined) {
+            callback.call(this, event, events, args);
             return;
         }
 
-        node = node.next;
-        node.callback.apply(node.context || this, args);
-        var self = this;
-        setTimeout(function() {self._triggerCallbacksForOneEvent(node, tail, args, callback);}, 0);
+        var callback_args = (is_all ? [event].concat(args) : args);
+        node.callback.apply(node.context || this, callback_args);
+
+        var next_fn = function() {
+            Backbone.Events._triggerCallbacksForOneEvent.call(this,
+                                                              event,
+                                                              is_all,
+                                                              node.next,
+                                                              tail,
+                                                              callback,
+                                                              events,
+                                                              args);
+        }
+
+        var delayed = _.bind(next_fn, this);
+
+        setTimeout(delayed, 0);
     },
 
     // Rewrite of the main trigger logic using functional programming.
     //
     // We are calling all callbacks from calls[event], and then
     // all callbacks from calls['all'] for each type of event.
-    _trigger: function(events, calls, args) {
+    _trigger: function(events, args) {
         var event;
-        if (!events || events === undefined || _.isArray(events) === false)
+        if (!events ||
+            events === undefined ||
+            _.isArray(events) === false ||
+            events.length == 0)
           return this;
 
         event = events.shift();
 
-        if (!event)
+        if (!event) {
            return this;
-
-        var self = this;
-        if (calls[event]) {
-            return this._triggerCallbacksForOneEvent(calls[event], calls[event].tail, args, function() {
-                if (calls.all) {
-                    return self._triggerCallbacksForOneEvent(calls.all, calls.all.tail, [event].concat(args), function() {
-                        return self._trigger(events, calls, args);
-                    });
-                } else {
-                    return self._trigger(events, calls, args);
-                }
-            });
-        } else {
-            if (calls.all) {
-                return this._triggerCallbacksForOneEvent(calls.all, calls.all.tail, [event].concat(args), function() {
-                    return self._trigger(events, calls, args);
-                });
-            } else {
-                return self._trigger(events, calls, args);
-            }
         }
+
+        var calls = this._callbacks;
+
+        triggerEventForGenericListeners = function(event, events, args) {
+            Backbone.Events._triggerCallbacksForOneEvent.call(this,
+                                                              event,
+                                                              true,
+                                                              (calls.all || {}).next,
+                                                              (calls.all || {}).tail,
+                                                              function(event, events, args) {
+                                                                  Backbone.Events._trigger.call(this, events, args);
+                                                              },
+                                                              events,
+                                                              args);
+            return this;
+        }
+
+        Backbone.Events._triggerCallbacksForOneEvent.call(this,
+                                                          event,
+                                                          false,
+                                                          (calls[event] || {}).next,
+                                                          (calls[event] || {}).tail,
+                                                          triggerEventForGenericListeners,
+                                                          events,
+                                                          args);
+
+        return this;
     },
 
     // Trigger one more many events, firing all bound callbacks. Callbacks are
@@ -193,11 +220,9 @@
     trigger: function(events) {
       var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
-      all = calls.all;
       events = events.split(eventSplitter);
-
       rest = slice.call(arguments, 1);
-      return this._trigger(events, calls, rest);
+      return Backbone.Events._trigger.call(this, events, rest);
     }
 
   };
@@ -356,6 +381,7 @@
       var model = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        if (options.fetched) options.fetched();
         if (!model.set(model.parse(resp, xhr), options)) return false;
         if (success) success(model, resp);
       };
@@ -626,12 +652,6 @@
         if (!cids[(model = this.models[i]).cid]) continue;
         options.index = i;
 
-        //callback to be executed before the add event is triggered on a collection
-        //very important to set info about the filled collection before notifying hooked widgets
-        //see discussion on issue #846 and
-        //comments in datasource.coffee:_fetchChannelDataFromServer method
-        if (options.fetched) options.fetched();
-
         model.trigger('add', model, this, options);
       }
       return this;
@@ -748,12 +768,6 @@
       this._reset();
       this.add(models, _.extend({silent: true}, options));
 
-      //callback to be executed before the reset event is triggered on a collection
-      //very important to set info about the filled collection before notifying hooked widgets
-      //see discussion on issue #846 and
-      //comments in datasource.coffee:_fetchChannelDataFromServer method
-      if (options.fetched) options.fetched();
-
       if (!options.silent) this.trigger('reset', this, options);
       return this;
     },
@@ -767,6 +781,7 @@
       var collection = this;
       var success = options.success;
       options.success = function(resp, status, xhr) {
+        if (options.fetched) options.fetched();
         collection[options.add ? 'add' : 'reset'](collection.parse(resp, xhr), options);
         if (success) success(collection, resp);
       };
@@ -1244,9 +1259,9 @@
         method = _.bind(method, this);
         eventName += '.delegateEvents' + this.cid;
         if (selector === '') {
-          this.$el.bind(eventName, method);
+          this.$el.on(eventName, null, null, method);
         } else {
-          this.$el.delegate(selector, eventName, method);
+          this.$el.on(eventName, selector, null, method);
         }
       }
     },
@@ -1255,7 +1270,8 @@
     // You usually don't need to use this, but may wish to if you have multiple
     // Backbone views attached to the same DOM element.
     undelegateEvents: function() {
-      this.$el.unbind('.delegateEvents' + this.cid);
+      var eventName = '.delegateEvents' + this.cid;
+      this.$el.off(eventName);
     },
 
     // Performs the initial configuration of a View with a set of options.
