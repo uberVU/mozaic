@@ -3,9 +3,6 @@ define [], () ->
     # To add project specific constants create a new constants file and extend window.Constants
 
     Constants =
-        # Custom error message thrown when a 401 Unauthorized message is received from the server.
-        UNAUTHORIZED_EXCEPTION: '__UNAUTHORIZED__'
-
         TODO_MOCKS: [
             id: 1
             name: "rob the bank",
@@ -31,6 +28,16 @@ define [], () ->
             name: "shake that ass",
             checked: true
         ]
+
+        # Custom error message thrown when a 401 Unauthorized message is received from the server.
+        UNAUTHORIZED_EXCEPTION: '__UNAUTHORIZED__'
+
+        # Data attribute name used to tell WidgetStarter to delay the start of marked widget.
+        DELAY_WIDGET: 'data-delayed'
+        INITIALIZED_WIDGET: 'data-initialized'
+
+        # Class name used for widgets between which page rendering can be broken.
+        PAGE_BREAK_CLASS: 'mozaic-page-break'
 
     window.Constants = Constants
     return Constants
