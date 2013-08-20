@@ -368,6 +368,26 @@ define [
             @view = null
             @saved_el = @el
             @el = null
+        removeReferencesToChannelCallbacks: =>
+            # References to the aggregated functions should be cut off completely
+            @aggregator = null
+
+            # Lose references to the aggregated channel callbacks.
+            # These are in fact wrappers over the user-defined functions
+            # like get_mentions and so on.
+            for aggregate_function of @aggregated_channels
+                @[aggregate_function] = null
+
+            # Lose references to the channel callbacks. Once a widget is
+            # detached, the params translation layer doesn't even send the
+            # events anymore, so it's safe to do this.
+            for channel_key in @_getTranslatedSubscribedChannels()
+                method_name = channels_utils.widgetMethodForChannel(channel_key)
+                @[method_name] = null
+
+            # Aggregated channels is a dictionary whose keys are functions (!!)
+            @aggregated_channels = null
+
 
     Widget.includeMixin(WidgetAggregatedChannelsMixin)
     Widget.includeMixin(WidgetBackboneEventsMixin)

@@ -203,6 +203,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                             individual_item.off(events, widget_method, widget)
                 else if @_getType(channel) == 'api'
                     @data[channel].off(events, widget_method, widget)
+            widget.removeReferencesToChannelCallbacks()
 
         destroyWidget: (widget_data) ->
             ###
