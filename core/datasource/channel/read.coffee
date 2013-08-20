@@ -155,7 +155,8 @@ define ['cs!channels_utils'], (channels_utils) ->
             # where 'reset' event will cause a bindWidgetToRelationalChannel
             # the step 2 above will find last_fetch null thus leaving the widget empty
             fetch_params.fetched = =>
-                meta.last_fetch = Utils.now()
+                if reason != 'streampoll'
+                    meta.last_fetch = Utils.now()
 
             # Define success & error functions as wrappers around callback.
             fetch_params.success = (collection, response) =>
