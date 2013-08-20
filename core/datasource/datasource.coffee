@@ -49,7 +49,7 @@ define [
                         logger.error("Channel template #{k} has invalid parent #{v.parent}")
                         continue
                     parent = @config.channel_templates[v.parent]
-                    @config.channel_templates[k] = _.extend({}, parent, v)
+                    @config.channel_templates[k] = _.extend {}, parent, v
 
             for k, v of @config.channel_types
                 if v.template
@@ -57,7 +57,7 @@ define [
                         logger.error("Channel type #{k} has invalid template #{v.template}")
                         continue
                     template = @config.channel_templates[v.template]
-                    @config.channel_types[k] = _.extend({}, template, v)
+                    @config.channel_types[k] = _.extend {}, template, v
 
         initialize: ->
             logger.info "Initializing data source"
