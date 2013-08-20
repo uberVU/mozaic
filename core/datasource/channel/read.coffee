@@ -187,14 +187,17 @@ define ['cs!channels_utils'], (channels_utils) ->
                 # refreshes AFTER an HTTP request. Therefore, it doesn't make
                 # sense to call it after we copy data around.
                 callback(channel_key, true) if callback
-            fetch_params.error = (collection, response) =>
-                # Ignore response if channel was removed in the meantime
-                return unless @reference_data[channel_key]?
-                callback(channel_key, false) if callback
 
                 if was_first_fetch and (not @_getConfig(channel_key).disable_clone)
                     @_fillWaitingChannels(channel_key)
 
+            if callback
+                #callback defaults to null in about all calls (just one call
+                #sets a value).
+                fetch_params.error = (collection, response) =>
+                    # Ignore response if channel was removed in the meantime
+                    return unless @reference_data[channel_key]?
+                    callback(channel_key, false)
 
             # What channel should receive the data we're about to fetch -
             # the original channel, or that channel's buffer?
