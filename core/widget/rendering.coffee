@@ -11,9 +11,8 @@ define ['cs!layout'], (Layout) ->
                 Run widget's defined pre processors if there are some before
                 the widget is rendered.
             ###
-            if @pre_render?
-                for process, options of @pre_render
-                    ContextProcessors.process(process, @view.$el, options) if @view?
+            for process, options of @pre_render
+                ContextProcessors.process(process, @view.$el, options) if @view?
 
         postRender: ->
             ###
@@ -29,6 +28,8 @@ define ['cs!layout'], (Layout) ->
             @el = view.$el
             # Translate and delegate dom events to view
             view.delegateEvents(@_getTranslatedDomEvents(@events))
+            for process, options of @post_render
+                ContextProcessors.process(process, @view.$el, options) if @view?
 
         renderLayout: (layout_params = {}, stringify = true) ->
             ###
