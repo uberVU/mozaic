@@ -48,7 +48,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             # of a class instance can be overridden dynamically at any point in
             # JavaScript
             if _.isFunction(widget[method_name])
-                return -> widget[method_name](arguments...)
+                return widget[method_name]
             null
 
         _bindWidgetToRelationalChannel: (fake_channel, channel, widget_data) ->
