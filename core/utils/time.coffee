@@ -19,23 +19,6 @@ define [], () ->
             ###
             return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 
-        timeago: (elem, interval, callback) ->
-            ###
-                Can receive any element which has a timestamp in
-                `data-timestamp` attribute and updates the element
-                text every `interval` seconds
-                Used for mentions list
-            ###
-            return setInterval( ->
-                    $(elem).each (idx, el) ->
-                        $el = $(el)
-                        published = $el.data('timestamp') * 1000
-                        $(el).text(moment.timeago(published))
-                    # After timestamps were updated execute callback method if specified
-                    callback() if callback?
-                interval*1000
-            )
-
         getUTCTimestampFromDate: (date, format = null) ->
             ###
                 Get local timestamp (epoch time) from a date of the accepted formats
@@ -47,9 +30,6 @@ define [], () ->
             if $.isArray(format)
                 format = format[0]
             moment.utc(date, format).unix() * 1000
-
-        getUTCTimestamp: ->
-            return new Date().getTime()
 
         getHourFromDate: (date) ->
             ###
