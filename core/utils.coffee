@@ -157,9 +157,11 @@ define ['cs!utils/urls', 'cs!utils/time', 'cs!utils/dom', 'cs!utils/images', 'cs
             pipe = loader.get_module('pubsub')
             f = (widget_id, widget_name) =>
                 widget = loader.widgets[widget_id]
+                # Weirdly enough, the widget might've been already removed
+                return unless widget?
                 return if widgetName and widget_name isnt widgetName
                 return if parentWidget and
-                          not parentWidget.view?.$el.has(widget.view.$el).length
+                          not parentWidget.view?.$el.has(widget.view?.$el).length
 
                 # This handler can be removed automatically by returning true
                 # from inside the callback function
