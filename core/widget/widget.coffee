@@ -6,14 +6,16 @@ define [
     'cs!core/widget/params'
     'cs!core/widget/rendering'
     'cs!core/widget/states'
+    'cs!channels_utils'
 ], (
-    Module,
-    WidgetAggregatedChannelsMixin,
-    WidgetBackboneEventsMixin,
-    WidgetChannelsMixin,
-    WidgetParamsMixin,
-    WidgetRenderingMixin,
+    Module
+    WidgetAggregatedChannelsMixin
+    WidgetBackboneEventsMixin
+    WidgetChannelsMixin
+    WidgetParamsMixin
+    WidgetRenderingMixin
     WidgetStatesMixin
+    channels_utils
 ) ->
 
     class Widget extends Module
@@ -228,7 +230,7 @@ define [
             # is interested in certain data channels
             @announceNewWidget()
 
-        announceNewWidget: ->
+        announceNewWidget: =>
             ###
                 Announce that a new widget has been instantiated.
 
@@ -258,7 +260,7 @@ define [
                 pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
                 @rendered_signal_sent = true
 
-        _initializeBackboneView: ->
+        _initializeBackboneView: =>
             ###
                 Initialize the widget associated Backbone.View.
             ###
@@ -276,7 +278,7 @@ define [
                 if @URGENT_FOR_GC
                     @view.$el.addClass('urgent_for_gc')
 
-        _triggerInitialState: ->
+        _triggerInitialState: =>
             ###
                 Triggers the initial state of the widget, if there is one.
             ###
@@ -293,7 +295,7 @@ define [
                 # Trigger initial data state
                 @changeState(@initial_state)
 
-        _setupChildEvents: ->
+        _setupChildEvents: =>
             ###
                 Hook to events from child widgets. We're currently only
                 listening to render events from child widgets, but more could
@@ -311,9 +313,9 @@ define [
             # when trying to GC widget
             @_onChildRender = Utils.onWidgetRender(null, this, @onChildRender)
 
-        initialize: ->
+        initialize: =>
 
-        render: ->
+        render: =>
 
         destroy: =>
             now = Utils.now() / 1000
