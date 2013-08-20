@@ -67,6 +67,7 @@ define [
             @data = {}
             @meta_data = {}
             @reference_data = {}
+            @channel_config_options = {}
 
             # Setting this to false will cause all fetches to perform
             # synchronous ajax requests (used only for testing).
@@ -125,7 +126,15 @@ define [
                     logger.info("Initializing channel #{channel_guid}")
 
                     channel_type = channel_data.type
-                    channel_params = _.clone(channel_data.params)
+                    channel_params = Utils.deepClone channel_data.params
+
+                    # If channel_config_options is found in channel_params,
+                    # extract it from there, as those params are used for
+                    # initializing the channel, and we don't want it stored
+                    # in channel's @meta_data.
+                    if (params = channel_params['channel_config_options'])?
+                        channel_config_options = params
+                        delete channel_params['channel_config_options']
 
                     # Cannot use @_getType() because channel doesn't exist yet.
                     if channel_type of @config.channel_types
@@ -139,6 +148,21 @@ define [
                             # will be subscribed to that channel at any
                             # specific point in time
                             widgets: []
+
+                        # Save a channel_config_options for each channel instance,
+                        # which holds customizations that will be applied
+                        # over the configuration of the channel. E.g. You need
+                        # the /channel_XXX template to have a refresh interval
+                        # bigger than the default one for some reason.
+                        # e.g.
+                        #     Utils.newDataChannels('/channel_XXX':
+                        #           channel_config_options:
+                        #               refresh_interval: 100000
+                        #     )
+                        # it would affect the new instantiated channel to have
+                        # the 100000 interval, overriding the template's value.
+                        @channel_config_options[channel_guid] =
+                            Utils.deepClone channel_config_options
 
                         resource_type = @config.channel_types[channel_type].type
                         if resource_type == 'relational'

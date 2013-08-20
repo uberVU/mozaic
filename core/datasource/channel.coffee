@@ -117,8 +117,14 @@ define ['cs!channels_utils'], (channels_utils) ->
             # Use @meta_data to find out the actual type of this channel
             channel_type = @meta_data[channel_key].type
 
-            # Finally, retrieve channel type configuration
-            @config.channel_types[channel_type]
+            # The channel config found in datasource.js template.
+            config = @config.channel_types[channel_type]
+
+            # Finally, retrieve channel type configuration, with some
+            # extra channel_config_options applied over it. This allows one
+            # to customize a channel at instantiation.
+            _.extend {}, config, @channel_config_options[channel]
+
 
         _getType: (channel) ->
             ###
