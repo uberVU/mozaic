@@ -45,19 +45,29 @@ define [], () ->
             ###
             previousStates = _.clone(@loadingStates)
             for event, i in params
-                if event.type == 'no_data'
-                    @loadingStates[i] = 'empty'
-                if event.type == 'invalidate'
-                    @loadingStates[i] = 'loading'
-                if event.type in ['sync', 'change', 'reset', 'add', 'destroy']
-                    # Check to see if the data on this specific channel is empty
-                    if @isChannelDataEmpty(event, @loading_channels[i])
-                        @loadingStates[i] = 'empty'
-                    else
-                        # Data has arrived on loading channels, the state should
-                        # be available
-                        @loadingStates[i] = 'available'
+                @loadingStates[i] = @getLoadingStateFromEventAndChannel(
+                    event, @loading_channels[i])
             @transitionState(@loadingStates, previousStates, params)
+
+        getLoadingStateFromEventAndChannel: (event, channel) ->
+            if event.type == 'invalidate'
+                return 'loading'
+            if event.type in ['no_data', 'sync', 'change', 'change_attribute'
+                              'reset', 'add', 'remove', 'destroy']
+                # Check to see if the data on this specific channel is empty
+                if @isChannelDataEmpty(event, channel)
+                    return 'empty'
+                else
+                    # Data has arrived on loading channels, the state should
+                    # be available
+                    return 'available'
+
+            # don't return anything - this was also the default before
+            # refactoring this into a function.
+            # TODO(andrei): study the brain damage caused if we return a
+            # safe default in here.
+            logger.warn("Widget state could not be extracted from #{event.type}
+                        data event on channel #{channel}")
 
         transitionState: (currentStates, previousStates, params) ->
             ###
@@ -74,19 +84,7 @@ define [], () ->
                 If any of the above states (the most important state)
                 is present in the currentStates, transition to it
             ###
-            for state in ['empty', 'loading', 'available']
-                if state in currentStates
-                    # If the state is empty employ a different transition
-                    # strategy: all loading channels must be in an empty
-                    # state to toggle empty. Do nothing if all channels
-                    # are not empty.
-                    if state is 'empty'
-                        if @allStatesEmpty(currentStates)
-                            newState = 'empty'
-                            break
-                    else
-                        newState = state
-                        break
+            newState = @getWidgetStateFromChannelLoadingStates(currentStates)
 
             # Trigger a changeState() if there is a transition from an
             # old state to a new state
@@ -97,6 +95,21 @@ define [], () ->
             # through the STRICT_CHANGE_STATE flag
             else if not @STRICT_CHANGE_STATE and newState is 'available'
                 @changeState.apply(this, _.flatten([newState, params]))
+
+        getWidgetStateFromChannelLoadingStates: (currentStates) ->
+            # If not all states are empty, then empty doesn't matter
+            # at all anymore.
+            if @allStatesEmpty(currentStates)
+                return 'empty'
+
+            for state in ['loading', 'available']
+                if state in currentStates
+                    return state
+
+            # don't return anything - this was also the default before
+            # refactoring this into a function.
+            # TODO(andrei): study the brain damage caused if we return a
+            # safe default in here.
 
         allStatesEmpty: (states) ->
             ###
