@@ -193,7 +193,8 @@ define ['cs!widget'], (Widget) ->
             # should disable the expanding
             return if getSelection()?.toString()
 
-            @modifyChannel('/filters', @getFilterChangesForExpand(item))
+            filter_changes = @getFilterChangesForExpand(item)
+            @modifyChannel('/filters', filter_changes)
 
         getFilterChangesForExpand: (item) ->
             ###
