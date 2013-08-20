@@ -134,6 +134,10 @@ define ['cs!channels_utils'], (channels_utils) ->
                     logger.warn("Couldn't increase count of #{key} " +
                                 "because it was already removed")
                     continue
+                if widget.params.widget_id in @reference_data[key]
+                    logger.warn("Widget #{widget.name} (#{widget.widget_id}) " +
+                                "already subscribed to channel #{key}")
+                    continue
                 # Add reference counter for determining if this channel
                 # is still in use or not
                 @reference_data[key]['reference_count'] ?= 0
