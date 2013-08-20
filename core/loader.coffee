@@ -195,7 +195,12 @@ define [], () ->
 
         destroy_widget: (widget_id) ->
             if loader.widgets[widget_id]
-                loader.widgets[widget_id].destroy()
+                try
+                    loader.widgets[widget_id].destroy()
+                catch err
+                    widget_name = loader.widgets[widget_id].params.name
+                    logger.error("Error while GC-ing widget #{widget_id} " +
+                                 "#{widget_name}")
                 delete loader.widgets[widget_id]
             else
                 loader.born_dead[widget_id] = true
