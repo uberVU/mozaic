@@ -11,7 +11,7 @@ define [], () ->
                 else
                     @stringified_params[k] = v
 
-        renderHTML: (el = null, stringify = true) ->
+        renderHTML: (el = null, stringify = true, callback = null) ->
             ###
                 Load the widgets for the given template
             ###
@@ -32,5 +32,7 @@ define [], () ->
                 if not el
                     el = $('#page-content')
                 el.html(template)
+                if callback?
+                    callback()
 
     return Layout
