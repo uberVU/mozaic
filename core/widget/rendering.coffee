@@ -42,6 +42,7 @@ define ['cs!layout'], (Layout) ->
             # layout.renderHTML(). The logic is that if I try to use those
             # elements in a handler for /new_widget_rendered, for example,
             # it will crash.
+            @_cleanupDomElements()
             @_parseDomElements()
 
             # We can manually trigger the /new_widget_rendered signal
