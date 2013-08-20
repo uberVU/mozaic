@@ -60,7 +60,7 @@ define [], () ->
             ###
             '/' + channels_utils.splitChannel(channel)[0]
 
-        widgetMethodForChannel: (widget, channel_key, skip_check = false) ->
+        widgetMethodForChannel: (channel_key) ->
             ###
                 Returns the name of the widget method that is bound
                 to a given channel's events.
@@ -101,21 +101,9 @@ define [], () ->
 
                The result of the function is the channel id of the newly created
                channel because we might need to use it right away.
-
-               @param{string} alias - name under which the global channel will
-                                      be known from now on
-               @param{Object} params - parameters for the channel initialization
-                                       (defaults to empty dict)
-               @param{string} type - the type of channel (e.g. /social_profiles).
-                                     Defaults to the alias in order to encourage
-                                     intuitive naming of global aliases.
-
-               @return{string} - the globally unique ID of the channel, if we
-                                 managed to create it, or null, if something went
-                                 wrong.
             ###
 
-            # By default, type is not specified, alias is the type of channel
+            # By default, if not type is specified, alias is the type of channel
             type = type or alias
             params = params or {}
 

@@ -111,7 +111,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             channel_callbacks = {}
             for channel in channels
                 channel_key = channels_utils.getChannelKey(channel)
-                channel_callbacks[channel] = channels_utils.widgetMethodForChannel(@, channel_key)
+                channel_callbacks[channel] = channels_utils.widgetMethodForChannel(channel_key)
 
             for channel, channel_callback of channel_callbacks
                 do(channel_callbacks, channel, channel_callback, key) =>

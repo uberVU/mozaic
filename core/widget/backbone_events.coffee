@@ -112,7 +112,7 @@ define ['cs!channels_utils'], (channels_utils) ->
                 do(channel, collection, item, events) =>
                     # Get which method of the widget is responsible for events
                     # of this data channel.
-                    method = channels_utils.widgetMethodForChannel(@, collection)
+                    method = channels_utils.widgetMethodForChannel(collection)
 
                     # Don't overwrite the same function twice (for example, render)
                     if not (method of overwritten_functions)

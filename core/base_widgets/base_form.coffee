@@ -93,7 +93,7 @@ define ['cs!widget', 'cs!channels_utils'], (Widget, channels_utils) ->
                     [channels_utils.formChannel(@channel_key, @model_id)]
             )
             # Setup subscribed channel handler (like /folders for a folder form)
-            @["#{channels_utils.widgetMethodForChannel(@, @channel_key)}"] = @get_subscribed_channel_events
+            @["#{channels_utils.widgetMethodForChannel(@channel_key)}"] = @get_subscribed_channel_events
             # Setup aggregated channel handler for all required data for the form
             # that's on other channels
             if @requiresAggregateData()
