@@ -125,7 +125,7 @@ define ['cs!widget'], (Widget) ->
             @highlight if @results.length then @results.first() else $()
 
             # Update widget's tiny scrollbar
-            Utils.renderScrollbar(@el.find('.tiny_scrollbar'))
+            Utils.renderScrollbar(@view.$el.find('.tiny_scrollbar'))
 
         sort: (a, b, element = true) ->
             ###
