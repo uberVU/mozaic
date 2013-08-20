@@ -32,8 +32,11 @@ define ['cs!layout'], (Layout) ->
                 return
             @preRender()
 
-            @layout = new Layout(@template_name, layout_params)
-            @layout.renderHTML(@view.$el, stringify)
+            layout = new Layout(@template_name, layout_params)
+            layout.renderHTML(@view.$el, stringify, =>
+                if @view.$el.data('wrapped') is true
+                    @view.$el.parent().css('height': '')
+            )
 
             # DOM element parsing must be done as early as possible after
             # layout.renderHTML(). The logic is that if I try to use those
