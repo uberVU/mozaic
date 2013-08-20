@@ -96,6 +96,9 @@ define ['cs!channels_utils'], (channels_utils) ->
             @data[channel].off()
             # Throw away reference to the actual data
             delete @data[channel]
+            # Remove any elements from channel_config_options that could
+            # cause a leak.
+            delete @channel_config_options[channel]
 
         checkForUnusedChannels: ->
             ###
