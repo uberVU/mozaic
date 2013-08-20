@@ -5,7 +5,7 @@ define [], () ->
         trigger_no_data: =>
             @trigger('no_data', this)
 
-        parse: (response) ->
+        parse: (response) =>
             ###
                 Only pass on the objects attribute from the response,
                 the rest of the it being meta information.
@@ -72,7 +72,7 @@ define [], () ->
             ###
             return (@get(arg) for arg in args)
 
-        _onModelEvent: (event, model, collection, options) ->
+        _onModelEvent: (event, model, collection, options) =>
             ###
                 _onModelEvent is an internal Backbone function that it uses
                 to bubble up events from individual models all the way to
