@@ -39,13 +39,10 @@ define ['cs!widget'], (Widget) ->
             ###
             translated = @_translateEventParams('collection', type, params...)
             if translated and translated.collection
-                # Check that the items from the buffer are actually not
-                # part of the underlying collection (a.k.a. they are truly new).
-                # Duplicated items sometimes arrive due to a race in DataSource.
-                length = 0
-                for item in translated.collection.models
-                    if not translated.collection.collection.get(item.id)
-                        length = length + 1
+                # - translated.collection points to the buffer
+                # - translated.collection.collection points to the collection
+                #     of the buffer (thus the original collection)
+                length = translated.collection.collection.new_items_in_buffer()
                 if length > 0
                     @el.show()
                     if length > 100

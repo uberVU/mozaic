@@ -92,4 +92,18 @@ define [], () ->
             # Bubble up all other events as Backbone wishes
             super(event, model, collection, options)
 
+        new_items_in_buffer: =>
+            ###
+                For streampoll-enabled Backbone Collections, count how many
+                new items there are actually in their associated buffer.
+
+                We need to do this because of a datasource / endpoint legacy
+                bug that sometimes delivers duplicate mentions.
+            ###
+            new_items = 0
+            for model in @buffer.models
+                if not @get(model.id)
+                    new_items = new_items + 1
+            return new_items
+
     return BaseCollection
