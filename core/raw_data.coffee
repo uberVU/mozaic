@@ -7,6 +7,14 @@ define [], () ->
             @data = {}
             @default_value = {}
 
+        parse: (response) =>
+            ###
+                Only pass on the objects attribute from the response,
+                the rest of the it being meta information.
+                Fallback to an empty array.
+            ###
+            return response
+
         setDefaultValue: (default_value) =>
             ###
                 Sets the default values for this RawData.
