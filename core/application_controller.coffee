@@ -11,8 +11,8 @@ define ['cs!layout', 'cs!mozaic_module'], (Layout, Module) ->
         initialize: =>
 
         renderLayout: (layout_params = {}, stringify = true) =>
-            @layout = new Layout(@page_template, layout_params)
-            @layout.renderHTML(null, stringify)
+            layout = new Layout(@page_template, layout_params)
+            layout.renderHTML(null, stringify)
 
         action: (controller, params, injectControllerCallback, deleteControllerCallback) =>
             @renderLayout()
