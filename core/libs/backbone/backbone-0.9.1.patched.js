@@ -139,33 +139,26 @@
     // intensively, and usually there are a lot of subscribers for a given source
     // of data. Using setTimeout(0) will give the browser the occasion to keep
     // up the rendering with what's going on :)
-    _triggerCallbacksForOneEvent: function (event, is_all,
-                                            node, tail, callback,
-                                            events, args) {
-        var calls = this._callbacks;
-
-        if (node == tail || node == undefined) {
+    _triggerCallbacksForOneEvent: function(
+      event, is_all, node, tail, callback, events, args) {
+        // At this point all callback for this event have been consumed, and we
+        // need to call the callback (which will start the next event if one
+        // exists)
+        if (node == tail || node === undefined) {
             callback.call(this, event, events, args);
             return;
         }
-
+        // For "all" events, we need to prepend the event itself before the
+        // arguments for this event
         var callback_args = (is_all ? [event].concat(args) : args);
         node.callback.apply(node.context || this, callback_args);
 
-        var next_fn = function() {
-            Backbone.Events._triggerCallbacksForOneEvent.call(this,
-                                                              event,
-                                                              is_all,
-                                                              node.next,
-                                                              tail,
-                                                              callback,
-                                                              events,
-                                                              args);
-        }
-
-        var delayed = _.bind(next_fn, this);
-
-        setTimeout(delayed, 0);
+        // Postpone next callback asynchrounosly until next event loop
+        var nextCallback = function() {
+            this._triggerCallbacksForOneEvent(
+              event, is_all, node.next, tail, callback, events, args);
+        };
+        setTimeout(_.bind(nextCallback, this), 0);
     },
 
     // Rewrite of the main trigger logic using functional programming.
@@ -173,56 +166,112 @@
     // We are calling all callbacks from calls[event], and then
     // all callbacks from calls['all'] for each type of event.
     _trigger: function(events, args) {
-        var event;
-        if (!events ||
-            events === undefined ||
-            _.isArray(events) === false ||
-            events.length == 0)
-          return this;
-
-        event = events.shift();
-
+        // Input events are processed inside the public .trigger method, at
+        // this point they should be non-empty array with event names
+        if (!_.isArray(events) || _.isEmpty(events)) {
+          return;
+        }
+        var event = events.shift();
+        // At this points all events have been consumed
         if (!event) {
-           return this;
+           return;
         }
-
+        // Due do the asynchronous nature of the event triggering, the last
+        // event triggered before an emitter is undelegated will be left with
+        // an structure of that emitter when if finally is picked up by the
+        // async event loop. When this._callbacks no longer exists in an event
+        // callback it means that the emitter was removed in the meantime
         var calls = this._callbacks;
-
-        triggerEventForGenericListeners = function(event, events, args) {
-            Backbone.Events._triggerCallbacksForOneEvent.call(this,
-                                                              event,
-                                                              true,
-                                                              (calls.all || {}).next,
-                                                              (calls.all || {}).tail,
-                                                              function(event, events, args) {
-                                                                  Backbone.Events._trigger.call(this, events, args);
-                                                              },
-                                                              events,
-                                                              args);
-            return this;
+        if (!calls) {
+          return;
         }
-
-        Backbone.Events._triggerCallbacksForOneEvent.call(this,
-                                                          event,
-                                                          false,
-                                                          (calls[event] || {}).next,
-                                                          (calls[event] || {}).tail,
-                                                          triggerEventForGenericListeners,
-                                                          events,
-                                                          args);
-
-        return this;
+        // Create reference to current list of events for "all" listeners, it
+        // takes a few async event loops until getting to them and Backbone
+        // sometimes triggers an event and then detaching the events right
+        // after, since it expects the callbacks to be ran synchronously
+        var all_next = (calls.all || {}).next;
+        var all_tail = (calls.all || {}).tail;
+        // This callback is called after all callbacks of this event are called
+        // for specific listeners (those that subscribed to specific events).
+        // Then we will call each of them one more time, for generic listeners
+        // (those that subscribed to "all" events)
+        var triggerEventForGenericListeners = function(event, events, args) {
+            // This is the callback that will be called after all callbacks for
+            // the current event are consumated. All event callbacks are called
+            // async, but in a successive order: the 2nd event starts when all
+            // callbacks of the first ended
+            var triggerNextEvent = function(event, events, args) {
+              this._trigger(events, args);
+            };
+            // This is the second round of callbacks of the same event, for
+            // "all" event listeners (see 3rd argument) and with the callback
+            // set for starting the next event
+            this._triggerCallbacksForOneEvent(
+              event, true, all_next, all_tail, triggerNextEvent, events, args);
+        };
+        // This is the callback called for the next callback in the current
+        // event
+        var next = (calls[event] || {}).next;
+        var tail = (calls[event] || {}).tail;
+        // Postpone first callback asynchrounosly until next event loop
+        var firstCallback = function() {
+          this._triggerCallbacksForOneEvent(
+            event, false, next, tail, triggerEventForGenericListeners,
+            events, args);
+        };
+        setTimeout(_.bind(firstCallback, this), 0);
     },
 
     // Trigger one more many events, firing all bound callbacks. Callbacks are
     // passed the same arguments as `trigger` is, apart from the event name.
     // Listening for `"all"` passes the true event name as the first argument.
+    //
+    // "events" is a list of events to fire separated by space. Example
+    // usage: this.trigger("event1 event2"). This will cause all callbacks bound
+    // to event1 to be fired, afterwards all callbacks bound to "all" to be
+    // fired (with the first argument set to event1), and the same for event2.
+    //
+    // This is a patched version of the original Backbone.trigger() which works
+    // asynchronously. The main use-case for this is that in Mozaic we can have
+    // hundreds of Backbone.View instances bound to the same events (a.k.a.
+    // the "all" event of a collection) and the page stop beings responsive if
+    // this event is delivered synchronously to all of its subscribers.
+    //
+    // Therefore, the patch makes sure that all these events are delivered
+    // with setTimeout(0) between them, recursively, like this:
+    // - for each event, _trigger() is called in order to start calling the
+    //   direct callbacks for this event: _triggerCallbacksForOneEvent
+    // - after all these callbacks are finished (termination condition is weird
+    //   because of the weird internal structure Backbone.Events uses in order
+    //   to store linked lists of callbacks), triggerEventForGenericListeners
+    //   is called in to take care of the "all" handlers. The termination
+    //   condition is weird again, and when all these handlers are called,
+    //   triggerNextEvent() is called and the game starts again, with one
+    //   less callback.
+    //
+    // Highlights of this patch:
+    // - since Backbone trigger() doesn't exactly have async semantics, your
+    //   callback might end up in the air in a detached state (its being called
+    //   but it is no longer in the callbacks list). This was a problem to be
+    //   expected, but we didn't have any big problems with it so far.
+    // - what's surprising is that you can trigger multiple events at once,
+    //   something Backbone doesn't really use to harness the power of this
+    //   event emitter
+    //
+    // TODO: future work includes one of the following 2 ideas:
+    // - create a global queue of callbacks and make Backbone.Events use
+    //   that synchronously
+    // - keep the synchronous semantic from Backbone but make setTimeout(0)
+    //   automatically from Mozaic receiving end - this is the nicest and I
+    //   wish we had thought about it back when we decided to patch (thanks
+    //   @skidding for the idea, I've also found it on Stack Overflow).
     trigger: function(events) {
       var event, node, calls, tail, args, all, rest;
       if (!(calls = this._callbacks)) return this;
       events = events.split(eventSplitter);
       rest = slice.call(arguments, 1);
-      return Backbone.Events._trigger.call(this, events, rest);
+      this._trigger(events, rest);
+      return this;
     }
 
   };
