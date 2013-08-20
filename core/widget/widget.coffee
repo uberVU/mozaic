@@ -354,6 +354,13 @@ define [
             ###
                 Mark the fact that the widget is currently detached from DOM.
             ###
+            # Avoid detaching a widget more than once, this can cause the
+            # @view reference to be lost and never unbound from DOM events,
+            # leading to leaking detached DOM elements
+            if @isDetachedFromDOM
+                logger.warn("Trying to detach already detached widget " +
+                            "#{@params.name} (#{@params.widget_id})")
+                return
             @isDetachedFromDOM = true
 
             # Make sure that detached widgets trying to access the DOM fail.
