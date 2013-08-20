@@ -171,7 +171,7 @@ define [
                 In this request, also send the channels the widget will be subscribed to
             ###
 
-            @constructed_at = Utils.now() / 1000
+            @constructed_at = Utils.now()
             if template
                 @template = template
             if params.template_name?
