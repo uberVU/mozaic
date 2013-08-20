@@ -1,34 +1,63 @@
 define [], () ->
     dom =
+        checkCloseToViewport: ($el, scroll_element = window, pagesNum = 3) ->
+            ###
+                Check if element $el is in viewport or close to it by
+                #pagesNum number of pages
+            ###
+            if scroll_element is window
+                [elementTop, elementHeight] = [$el.offset().top, $el.height()]
+                {top, height} = @_getViewportRectangle()
+            else
+                # elementTop is top position $el relative to $(scroll_element)
+                # That's why top for $(scroll_element) will always be 0
+                [elementTop, elementHeight] = [$el.position().top, $el.height()]
+                [top, height] = [0, $(scroll_element).height()]
+
+            viewportTop = top - pagesNum*height
+            viewportBottom = top + height + pagesNum*height
+
+            # In the element is outside viewport these situations can happen:
+            # ____ elementTop
+            # ____ elementTop + elementHeight
+            # .... viewportTop
+            # .... viewportBottom
+            # or:
+            # .... viewportTop
+            # .... viewportBottom
+            # ____ elementTop
+            # ____ elementTop + elementHeight
+            isOutsideViewport = elementTop + elementHeight < viewportTop or
+                                viewportBottom < elementTop
+
+            isCloseToViewport =  not isOutsideViewport
+            return isCloseToViewport
+
         checkInViewport: ($el) ->
             ###
                 Checks if a given element is in browser viewport.
                 @param {Object} $el jQueryObject
                 @return {Boolean}
             ###
-            top = $el.offset().top
-            viewportHeight = @getViewportHeight()
-            scrolltop = @getScrolltop()
-            inViewport = (viewportHeight + scrolltop) >= top
+            return @checkCloseToViewport($el, window, 0)
 
-
-        getViewportHeight: ->
+        _getViewportRectangle: () ->
             # Cross-browser viewport height.
             if document.compatMode or not $.support.boxModel
                 if document.compatMode is 'CSS1Compat'
-                    document.documentElement.clientHeight
+                    height = document.documentElement.clientHeight
                 else
-                    document.body.clientHeight
+                    height = document.body.clientHeight
             else
-                window.innerHeight
+                height = window.innerHeight
 
-
-        getScrolltop: ->
             # Cross-browser scrolltop value.
             if document.documentElement.scrollTop
-                document.documentElement.scrollTop
+                top = document.documentElement.scrollTop
             else
-                document.body.scrollTop
+                top = document.body.scrollTop
+
+            return {top: top, height: height}
 
         escape_css_name: (name) ->
             ###
