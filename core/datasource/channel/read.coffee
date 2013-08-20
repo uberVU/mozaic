@@ -167,12 +167,6 @@ define ['cs!channels_utils'], (channels_utils) ->
                 # collected.
                 return unless @reference_data[channel_key]?
 
-                @_checkForNewlyArrivedAndAwaitedModels(channel_key)
-
-                # Only fill waiting channels the first time this
-                # channel receives data.
-                if meta.firstTimeFetch
-                    @_fillWaitingChannels(channel_key)
                 if reason != 'streampoll'
                     meta.waiting_fetches = meta.waiting_fetches - 1
 
