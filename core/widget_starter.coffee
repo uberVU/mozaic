@@ -12,10 +12,6 @@
   - DOM mutation events
   - polling (for those browsers written in Redmond :P)
 
-  spawning
-  ========
-  TODO: explain it.
-
 ###
 
 define [
