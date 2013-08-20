@@ -125,44 +125,32 @@ define [], () ->
             return channel_uid
 
         getGlobalChannel: (alias) ->
-            ###
-                Given an alias, retrieve the unique identifier of the channel
-                found under that alias.
-
-                @param{string} alias - the alias name of the channel
-
-                @return{string} - the unique identifier of the channel with
-                                  the given alias
-            ###
-
-            channels = Mozaic.globalChannels or {}
+            # Make sure that Mozaic.global_channels key exists
+            Mozaic.globalChannels = Mozaic.globalChannels or {}
 
             # Sanity check for retrieving an unknown global channel
-            if not (alias of channels)
+            if not (alias of Mozaic.globalChannels)
                 logger.error("Trying to retrieve inexisting " +
                              "global channel: #{alias}")
                 return null
 
             return Mozaic.globalChannels[alias]
 
+        getAllGlobalChannels: ->
+            ###
+                Retrieve all global channels.
+            ###
+            return Mozaic.globalChannels
+
         isGlobal: (channel) ->
             ###
                 Returns true iff a channel is global.
-
-                @param{string} channel - a channel name
-
-                @return{Boolean} true iff the channel is a reference to a
-                                 global channel
             ###
             return _.str.startsWith(channel, 'GLOBAL/')
 
         removeGlobalPrefix: (channel) ->
             ###
                 Removes the 'GLOBAL' prefix from a given channel.
-
-                @param{string} channel - a channel which is known to be a
-                                          reference to a global channel
-                @return{string} the channel with the global prefix stripped
             ###
             return channel['GLOBAL'.length..]
 
@@ -174,12 +162,6 @@ define [], () ->
 
                 extract the name of the alias from the channel and translate
                 it into the actual channel id of that alias.
-
-                @param{string} channel - a channel which is known to be a
-                                           reference to a global channel
-                @return{string} the translated channel, using the channel uid
-                                of the alias from the global mapping,
-                                if available
             ###
 
             # Nothing to translate, it's not a global channel
@@ -202,12 +184,6 @@ define [], () ->
             ###
                 Translate a bunch of global channels given in the format
                 of widget.channel_mapping.
-
-                @param{dict} channel_mapping - a dictionary from channel to
-                                               channel guid (or reference to
-                                               global channel)
-                @return{dict} a new dictionary with the mapping from the
-                              channel names to the real channel uids
             ###
 
             result = {}
