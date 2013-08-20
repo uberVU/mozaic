@@ -15,14 +15,12 @@ define [], () ->
                 return []
             return response.objects
 
-        postFetch: (response) ->
+        postFetch: (parsed_response, params) ->
             ###
                 Trigger `no_data` post-fetch, in order to make sure the
                 received collection is up to that (empty in this case).
             ###
-            if not _.isArray(objects = response.objects)
-                @trigger_no_data()
-            else if objects.length == 0
+            if (not _.isArray(parsed_response)) or parsed_response.length == 0
                 @trigger_no_data()
 
         get_first_items: ->
