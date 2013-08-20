@@ -164,8 +164,17 @@ define ['cs!widget/base_form', 'cs!channels_utils', 'cs!mozaic_backbone_form'], 
         afterFormCommit: (model) =>
 
         destroy: =>
-            super()
             # Remove cross-reference between Backbone form and form widget
-            delete @form.formWidget if @form
+            delete @form.formWidget if @form?
+            # Undelegate events from both form and its editors (both types
+            # extend Backbone View)
+            for key, field of @form.fields
+                field.editor.undelegateEvents()
+            @form.undelegateEvents()
+            # Remove reference(s) to form container DOM element
+            @form.holder = null
+            @form.options.holder = null
+            @form.remove()
+            super()
 
     return UpdateForm
