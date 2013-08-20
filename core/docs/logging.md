@@ -20,7 +20,7 @@ catch err
 
 ## SentryLogger
 Logs exceptions to Sentry, using the Raven.js library
-
+ 
  - http://raven-js.readthedocs.org/en/latest/
 
 You need to include the static Raven.js and TraceKit dependency in order for this logger to work
