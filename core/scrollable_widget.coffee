@@ -6,12 +6,14 @@ define ['cs!widget'], (Widget) ->
             It is meant to display a list that supports scroll-down
             on a list of items with fetch from the server
         ###
-        scroll_enabled: true
+        params_defaults:
+            scroll_target: (scroll_target) -> if scroll_target == 'widget' then 'widget' else 'window'
 
-        constructor: (params) ->
-            super(params)
+        destroy: =>
+            super()
+            @scroll_element = null
             if @scrollable_channels
-                @wireScrollEvent()
+                @unwireScrollEvent()
 
         changeState: (state, params...) ->
             super(state, params...)
@@ -20,19 +22,50 @@ define ['cs!widget'], (Widget) ->
             else if @scroll_enabled
                 @disableScroll()
 
+        initialize: ->
+            @scroll_enabled = true
+
+            # Decide which element is used for hooking the scroll event on.
+            # This is important, because we can have two types of scroll:
+            # - a window scroll, so the scrollbar is at window level
+            # - the div scroll, when we have a div with a max-height lower
+            #   than the the viewport's height (what you can see in browser),
+            #   in which case the scroll will be triggered on the div itself.
+            @scroll_element = (if @scroll_target == 'widget' then @view.el else window)
+
+            if @scrollable_channels
+                @wireScrollEvent()
+
         wireScrollEvent: ->
             ###
                 Detects when the scroll is on the bottom of the page
                 and triggers the scroll event based on the channels the
                 widget is listening
             ###
-            $(window).scroll(@onScroll)
+            $(@scroll_element).on('scroll', @onScroll)
 
-        onScroll: =>
-            dif = $(window).scrollTop() - $(document).height() + $(window).height()
-            if Math.abs(dif) < 5 and $(document).height() > $(window).height()
+        unwireScrollEvent: ->
+            ###
+                Unwire the scroll event for detecting whether bottom of the
+                page was hit.
+            ###
+            $(@scroll_element).off('scroll', @onScroll)
+
+        onScroll: (e) =>
+            e.preventDefault()
+            e.stopPropagation()
+
+            if @scroll_target == 'window'
+                height_to_scroll = $(document).height() - $(window).height()
+            else if @scroll_target == 'widget'
+                height_to_scroll = @scroll_element.scrollHeight -
+                                   $(@scroll_element).height()
+
+            # Check if we've reached the bottom of how much we can scroll in
+            # the container.
+            dif = $(@scroll_element).scrollTop() - height_to_scroll
+            if Math.abs(dif) < 5 and height_to_scroll > 5
                 @scrollDown()
-            return false
 
         scrollDown: =>
             ###
