@@ -318,7 +318,7 @@ define [
         render: =>
 
         destroy: =>
-            now = Utils.now() / 1000
+            now = Utils.now()
             # If widget has only lived half a second, something is wrong
             # and somebody is wasting widgets for nothing.
             if now - @constructed_at < 0.5
@@ -332,6 +332,10 @@ define [
                 @saved_view.undelegateEvents()
                 @params.el = null
                 @saved_view = null
+
+            # Also, it's not normal for users to be able to trigger anymore
+            # because widget is detached from DOM.
+            @events = null
 
             # Lose references to the DOM elements.
             @_cleanupDomElements()
@@ -364,8 +368,9 @@ define [
             # Make sure that detached widgets trying to access the DOM fail.
             @saved_view = @view
             @view = null
-            @saved_el = @el
-            @el = null
+
+            @template = null
+
         removeReferencesToChannelCallbacks: =>
             # References to the aggregated functions should be cut off completely
             @aggregator = null

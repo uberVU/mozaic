@@ -230,5 +230,5 @@ define ['cs!widget'], (Widget) ->
             return target.closest('.list-item')
 
         destroy: =>
-            super()
             @listViewport.off('scroll', @onScroll)
+            super()
