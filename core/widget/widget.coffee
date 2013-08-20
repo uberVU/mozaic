@@ -324,19 +324,17 @@ define [
             # If widget has only lived half a second, something is wrong
             # and somebody is wasting widgets for nothing.
             if now - @constructed_at < 0.5
-
-            if @saved_view
-                #undelegate events
-                @saved_view?.off?()
-                #unbind element
-                @saved_view?.unbind?()
-                #remove element
-                @saved_view?.remove?()
                 cloned_params = _.omit(@params, 'el')
                 logger.warn "Widget with id #{@params['widget_id']} has lived "+
                             "too little (less than half a second). You're "+
                             "doing something wrong. (params = "+
                             "#{JSON.stringify(cloned_params)})"
+
+            if @saved_view?
+                @saved_view.undelegateEvents()
+                @params.el = null
+                @saved_view = null
+
             # Lose references to the DOM elements.
             @_cleanupDomElements()
 
