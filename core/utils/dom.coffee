@@ -1,5 +1,21 @@
 define [], () ->
     dom =
+        elementHasVerticalScroll: (element) ->
+            ###
+                Finding out if a DOM element actually has the scroll bar
+                visible is not an easy task
+                https://github.com/litera/jquery-scrollintoview/blob/master/jquery.scrollintoview.js#L165-L180
+            ###
+            hasOverflow =
+                auto: true
+                scroll: true
+                visible: false
+                hidden: false
+            overflowY = $(element).css('overflowY')
+            hasOverflow = hasOverflow[overflowY] or false
+
+            return hasOverflow and (element.scrollHeight > element.clientHeight)
+
         checkCloseToViewport: ($el, scroll_element = window, pagesNum = 3) ->
             ###
                 Check if element $el is in viewport or close to it by
