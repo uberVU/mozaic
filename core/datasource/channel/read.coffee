@@ -111,6 +111,15 @@ define ['cs!channels_utils'], (channels_utils) ->
                     # Careful - emtpy dict { } evaluates to true in JavaScript!
                     return
 
+                if reason is 'scroll' and _.isEqual(params, meta.last_params)
+                    logger.warn("Already scrolled #{channel} with the same" +
+                                "params")
+                    return
+
+            # Always the last params inside the channel's meta data. Might be
+            # useful for comparison when creating new ones for a new request
+            meta.last_params = params
+
             # If the encode_POST_as_JSON flag is set, instead of URL-encoding
             # the parameters as for normal forms, send them encoded as JSON.
             if conf.fetch_through_POST and conf.encode_POST_as_JSON
