@@ -1,5 +1,4 @@
 define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_user_data'], (Interceptor, Constants, Utils, CurrentUserData) ->
-    window.ajaxRequests = []
 
     class Auth
         constructor: ->
@@ -9,8 +8,6 @@ define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_use
             Interceptor.addAjaxSendRequestCallback((e, xhr, settings) =>
                 if window.Mozaic.stopping_ajax_requests
                     xhr.abort()
-                else
-                    window.ajaxRequests.push(xhr)
             )
 
         login: (username, password, callback) =>
@@ -68,10 +65,6 @@ define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_use
                 error: error_callback
                 complete: complete_callback
                 type: type
-
-        abortExpiredAjaxRequests: () =>
-            while request = ajaxRequests.shift()
-                request.abort()
 
         startWatchingForUnauthorizedApiAnswers: =>
             ###
@@ -161,7 +154,6 @@ define ['cs!interceptor', 'cs!constants', 'cs!utils', 'cs!collection/current_use
                 or the application bootstrap code in main.js
             ###
             window.Mozaic.stopping_ajax_requests = true
-            @abortExpiredAjaxRequests()
             url = App.general.LOGIN_PAGE
 
             # Encode the URL part added to returnto, and decode it
