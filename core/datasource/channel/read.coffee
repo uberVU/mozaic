@@ -169,6 +169,12 @@ define ['cs!channels_utils'], (channels_utils) ->
 
                 if reason != 'streampoll'
                     meta.waiting_fetches = meta.waiting_fetches - 1
+                else if @data[channel_key].length is 0
+                    # If the collection is empty flush the buffer
+                    # so directly so you don't end in a situation where
+                    # you have to click "Show new mentions" in order to see
+                    # the first mentions of a stream
+                    @_flushChannelBuffer(channel_key)
 
                 was_first_fetch = meta.first_time_fetch
 
