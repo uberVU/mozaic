@@ -1137,6 +1137,8 @@
       $.support.transition && this.$tip.hasClass('fade') ?
         removeWithAnimation() :
         $tip.remove()
+      this.$element.trigger('hidden');
+      return this;
     }
 
   , fixTitle: function () {
