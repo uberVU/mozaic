@@ -175,7 +175,10 @@ define ['cs!mozaic_module'], (Module) ->
             # the user gets a bit of extra closure and sees the last instant
             # step of the progress bar filling up, when widgets catch up with
             # the estimated progress
-            $('#loading-animation').fadeOut()
+            if Utils.inPrintMode()
+                $('#loading-animation').hide()
+            else
+                $('#loading-animation').fadeOut()
             clearInterval(@intervalHandle)
             # Update the global "loading" flag from the application once the
             # loading is done
