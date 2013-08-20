@@ -44,10 +44,14 @@ define ['cs!layout'], (Layout) ->
             # it will crash.
             @_parseDomElements()
 
-            # We can manually trigger the /widget_rendered signal
+            # We can manually trigger the /new_widget_rendered signal
             # using @widgetRenderedOnDemand method where needed
-            unless (@rendered_signal_sent or @widgetRenderedOnDemand)
-                @triggerWidgetRendered()
+            unless (@rendered_signal_sent or @WIDGET_RENDERED_ON_DEMAND)
+                @triggerNewWidgetRendered()
+            # Trigger the /widget_rendered event every time the widget
+            # renders. The /new_widget_rendered on the other hand is
+            # triggered only once.
+            @triggerWidgetRendered()
 
             ###
                 Execute postRender widget method after the widget
@@ -56,6 +60,10 @@ define ['cs!layout'], (Layout) ->
             @postRender()
 
         triggerWidgetRendered: ->
-                pipe = loader.get_module('pubsub')
-                pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
-                @rendered_signal_sent = true
+            pipe = loader.get_module('pubsub')
+            pipe.publish('/widget_rendered', @params['widget_id'], @params['name'])
+
+        triggerNewWidgetRendered: ->
+            pipe = loader.get_module('pubsub')
+            pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
+            @rendered_signal_sent = true
