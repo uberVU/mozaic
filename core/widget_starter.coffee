@@ -29,7 +29,8 @@ define [
         ###
             Monitors the DOM for the appearance of new widgets.
             Loads them up whenever they appear.
-            When new widgets are marked as delayed (i.e with Constanst.DELAY_WIDGET class)
+            When new widgets are marked as delayed
+            (i.e with Constants.DELAY_WIDGET data attribute)
             the starter delayes their execution untill the class is removed.
 
             waiting_list: dictionary of channels, every value
@@ -81,23 +82,39 @@ define [
             # Reference: https://developer.mozilla.org/en-US/docs/Web/API/SVGAnimatedString
             nodeClassName = if nodeClassName?.baseVal? then nodeClassName.baseVal else nodeClassName
 
+            # MutationRecord is passed from MutationObserver
+            # See the initialize method
             isMutationRecord =
                 mutation.type is 'attributes' and
-                mutation.attributeName is 'class' and
+                mutation.attributeName is Constants.DELAY_WIDGET and
                 nodeClassName? and
-                nodeClassName.indexOf('mozaic-widget') isnt -1 and # Must be widget.
+                # Must be widget.
+                nodeClassName.indexOf('mozaic-widget') isnt -1 and
                 mutation.oldValue? and
-                mutation.oldValue.indexOf(Constants.DELAY_WIDGET) isnt -1 and # Should have been delayed
-                nodeClassName.indexOf(Constants.DELAY_WIDGET) is -1 # Should not be delayed anymore
+                # Should have been delayed
+                mutation.oldValue is 'true' and
+                # Should not be delayed anymore
+                # The newValue won't come in the MutationRecord
+                # https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+                # and we'll take it from the target element
+                not (mutation.target.getAttribute(mutation.attributeName) is 'true')
 
-            isMutationEvent = # for DOM Mutation Events
-                mutation.attrChange is 1 and # MODIFICATION type change.
-                mutation.attrName is 'class' and # Changed attr should be a class.
-                mutation.newValue? and
-                mutation.newValue.indexOf('mozaic-widget') isnt -1 and # Element should be a widget.
-                mutation.newValue.indexOf(Constants.DELAY_WIDGET) is -1 and # Element should no longer be delayed.
+            # This is needed to support the deprecated MutationEvents
+            # which were replaced by MutationOberver
+            # It seems to be used by older versions of IE (older than 11)
+            # https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+            isMutationEvent =
+                # MODIFICATION type change
+                mutation.attrChange is 1 and
+                mutation.attrName is Constants.DELAY_WIDGET and
+                nodeClassName? and
+                # Must be widget
+                nodeClassName.indexOf('mozaic-widget') isnt -1 and
                 mutation.prevValue? and
-                mutation.prevValue.indexOf(Constants.DELAY_WIDGET) isnt -1 # Element was previously marked as delayed.
+                # Should have been delayed
+                mutation.prevValue is 'true' and
+                # Should not be delayed anymore
+                not (mutation.newValue is 'true')
 
             return isMutationRecord or isMutationEvent
 
@@ -121,7 +138,7 @@ define [
                     subtree: true
                     attributes: true # Listen for attribute changes as well.
                     attributeOldValue: true # Pass in the old attribute value, we need it to check if it had Constants.DELAY_WIDGET class.
-                    attributeFilter: ['class'] # Pass only class attribute changes
+                    attributeFilter: [Constants.DELAY_WIDGET] # Pass only class attribute changes
 
             else if document.addEventListener?
                 document.addEventListener "DOMNodeInserted", (e) =>
@@ -144,7 +161,7 @@ define [
                     $('.mozaic-widget').each (idx, el) ->
                         $el = $(el)
                         # Do nothing if the widget is either already initialized or delayed
-                        if $el.hasClass('mozaic-initialized') or $el.hasClass(Constants.DELAY_WIDGET)
+                        if $el.attr(Constants.INITIALIZED_WIDGET) is 'true' or $el.attr(Constants.DELAY_WIDGET) is 'true'
                             return
 
                         setTimeout ->
@@ -167,19 +184,19 @@ define [
 
             # If the current element is an mozaic-widget but it's not delayed
             if $el.hasClass('mozaic-widget') and
-               not $el.hasClass(Constants.DELAY_WIDGET)
+               not ($el.attr(Constants.DELAY_WIDGET) is "true")
                 widgets.push($el)
 
             # Find all its children widgets, while filtering out delayed
             # widgets
-            $el.find(".mozaic-widget")
-               .not(".#{Constants.DELAY_WIDGET}").each (i, el) ->
-                widgets.push($(el))
+            for mozaic_widget_el in $el.find(".mozaic-widget:not([#{Constants.DELAY_WIDGET}='true'])")
+                widgets.push($(mozaic_widget_el))
 
             # Shouldn't try to initialize an empty list
             @initializeNewWidgets(widgets) if widgets.length
 
         checkRemovedNode: ($el) ->
+
             markForGarbageCollection = @markForGarbageCollection
             # If the removed element is a widget, garbage collect it.
             # Be careful, some widgets are removed from the DOM
@@ -188,8 +205,8 @@ define [
             if $el.hasClass('mozaic-widget')
                 markForGarbageCollection($el)
             # Find all its children widgets and garbage collect them
-            $el.find('.mozaic-widget').each (idx, el) ->
-                markForGarbageCollection(el)
+            for child_widget_el in $el.find('.mozaic-widget')
+                markForGarbageCollection(child_widget_el)
 
             false
 
@@ -208,7 +225,7 @@ define [
                 which will immediately cause it to start ignoring data events.
             ###
             guid = $(el).data('guid')
-            return unless guid or @destroyed_widgets[guid]
+            return if not guid or @destroyed_widgets[guid]
 
             # First mark it as detached
             loader.mark_as_detached(guid)
@@ -301,10 +318,10 @@ define [
             $el.attr('data-guid', _.uniqueId('widget-'))
 
         initializeWidget: ($el) =>
-            if $el.hasClass('mozaic-initialized')
+            if $el.attr(Constants.INITIALIZED_WIDGET) is 'true'
                 return false
             # First thing, mark the widget as initialized
-            $el.addClass('mozaic-initialized')
+            $el.attr(Constants.INITIALIZED_WIDGET, true)
 
             name = $el.data('widget')
 
