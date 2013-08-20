@@ -160,6 +160,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             ###
             logger.info "Cloning #{channel_guid} from #{source_channel_guid}"
             @meta_data[channel_guid].cloned_from = source_channel_guid
+            @meta_data[channel_guid].waiting_for_cloned_data = false
             # Mark the new clone as having been recently fetched.
             @meta_data[channel_guid].last_fetch = @meta_data[source_channel_guid].last_fetch
             dest = @data[channel_guid]

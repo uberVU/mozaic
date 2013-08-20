@@ -255,7 +255,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             ###
             duplicates = @_getChannelDuplicates(channel_guid)
             for dest_channel_guid in duplicates
-                if not @meta_data[dest_channel_guid].last_fetch?
+                if (not @meta_data[dest_channel_guid].last_fetch?) and (@meta_data[dest_channel_guid].waiting_for_cloned_data)
                     # If dest_channel does not yet have data, clone into it
                     # by using this channel as clone source.
                     @_cloneChannel(dest_channel_guid, channel_guid)
