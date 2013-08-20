@@ -103,8 +103,6 @@ define [
             @property {Object} @saved_view - instance of Backbone.View, relevant
                                     for detached widgets, ie. widgets that are
                                     no longer in the DOM.
-            @property {Object} @saved_el - instance of jQuery, again only
-                                    relevant for detached widgets.
             @property {Object} @pre_render - hash of context processors to be
                                     executed _before_ the widget is rendered.
                                     A context processor is a function that
@@ -117,8 +115,6 @@ define [
                                     their parameters to be executed after the
                                     widget has rendered. Examples: tooltip,
                                     tinyscrollbar.
-            @property {Object} @layout - instance of core/layout class.
-
             @property {Boolean} @rendered_signal_sent - flag sent right after
                                     publishing `/new_widget_rendered`.
         ###
