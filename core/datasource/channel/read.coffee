@@ -192,6 +192,10 @@ define ['cs!channels_utils'], (channels_utils) ->
                 return unless @reference_data[channel_key]?
                 callback(channel_key, false) if callback
 
+                if was_first_fetch and (not @_getConfig(channel_key).disable_clone)
+                    @_fillWaitingChannels(channel_key)
+
+
             # What channel should receive the data we're about to fetch -
             # the original channel, or that channel's buffer?
             # (The first fetch should always be into the real channel).
