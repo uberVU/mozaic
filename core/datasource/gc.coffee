@@ -86,6 +86,12 @@ define ['cs!channels_utils'], (channels_utils) ->
             if @data[channel].models?
                 for model in @data[channel].models
                     model.off()
+            # If the underlying channel supports this operation, empty it.
+            # For relational channels, this means that the collection is emptied
+            # and the collection is unbound from the model events (remember,
+            # a collection is subscribed to widget events via _onModelEvent).
+            if @data[channel].reset?
+                @data[channel].reset([])
             # Unbind all remaining widgets (should be none!)
             @data[channel].off()
             # Throw away reference to the actual data
