@@ -335,6 +335,8 @@ define [
                 @saved_view?.unbind?()
                 #remove element
                 @saved_view?.remove?()
+            # Lose references to the DOM elements.
+            @_cleanupDomElements()
 
             pipe = loader.get_module('pubsub')
             pipe.publish('/destroy_widget', {

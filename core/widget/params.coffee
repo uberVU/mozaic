@@ -135,3 +135,13 @@ define ['cs!channels_utils'], (channels_utils) ->
             if @elements
                 for name, selector of @elements
                     @[name] = @view.$el.find(selector)
+
+        _cleanupDomElements: ->
+            ###
+                Clean-up references to the DOM elements so that at least
+                if this widget remains in memory, no detached DOM elements
+                remain.
+            ###
+            if @elements
+                for name, selector of @elements
+                    @[name] = null
