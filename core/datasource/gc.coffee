@@ -180,24 +180,25 @@ define ['cs!channels_utils'], (channels_utils) ->
                 The datasource is responsible for this because it's also
                 responsible for binding the widget to channel events.
             ###
-            for fake_channel, channel of widget.channel_mapping
-                if not (channel of @meta_data)
+            for reference, translated of widget._getTranslatedSubscribedChannels()
+                channel_key = channels_utils.getChannelKey(translated)
+                if not (channel_key of @meta_data)
                     logger.warn('Could not unbind widget from collection ' +
-                                 channel + ' because it was already gone')
+                                 channel_key + ' because it was already gone')
                     continue
 
                 # Start unbinding the widget to the existing channel.
-                widget_method = @_getWidgetMethod(fake_channel, widget)
-                [collection, item, events] = channels_utils.splitChannel(fake_channel)
+                widget_method = @_getWidgetMethod(reference, widget)
+                [collection, item, events] = channels_utils.splitChannel(translated)
 
                 # For relational channel, we have item-level unbinding and
                 # collection-level unbinding, depending on the type of widget
                 # subscription.
-                if @_getType(channel) == 'relational'
+                if @_getType(channel_key) == 'relational'
                     if item == "all"
-                        @data[channel].off(events, widget_method, widget)
+                        @data[channel_key].off(events, widget_method, widget)
                     else
-                        individual_item = @data[channel].get(item)
+                        individual_item = @data[channel_key].get(item)
                         # Here we might have a problem: when resetting a
                         # collection, there is no way to keep references to the
                         # old widgets so that we unbind events from them.
@@ -205,8 +206,9 @@ define ['cs!channels_utils'], (channels_utils) ->
                         # the BaseModel class.
                         if individual_item
                             individual_item.off(events, widget_method, widget)
-                else if @_getType(channel) == 'api'
-                    @data[channel].off(events, widget_method, widget)
+                else if @_getType(channel_key) == 'api'
+                    @data[channel_key].off(events, widget_method, widget)
+
             widget.removeReferencesToChannelCallbacks()
 
         destroyWidget: (widget_data) ->
