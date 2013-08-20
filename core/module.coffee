@@ -23,9 +23,9 @@ define [], () ->
             @_bindMethodsFromMixins()
             @_wrapInstance()
 
-        initialize: ->
+        initialize: =>
 
-        destroy: ->
+        destroy: =>
 
         _bindMethodsFromMixins: =>
             ###
