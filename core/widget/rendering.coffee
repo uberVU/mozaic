@@ -19,15 +19,6 @@ define ['cs!layout'], (Layout) ->
                 Run widget's defined post processors if there are some after
                 the widget is rendered.
             ###
-
-        setView: (view) ->
-            @view = view
-            # DEPRECATED: The @el is set only for backwards compatiblity
-            # since some dated widgets depend on it. @view.$el should be
-            # used insteand.
-            @el = view.$el
-            # Translate and delegate dom events to view
-            view.delegateEvents(@_getTranslatedDomEvents(@events))
             for process, options of @post_render
                 ContextProcessors.process(process, @view.$el, options) if @view?
 

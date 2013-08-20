@@ -271,8 +271,12 @@ define [
             #
             # This is always done by the widget starter.
             if @params.el
-                @setView(new Backbone.View(el: @params.el))
-                # Propagate "urgent for GC" flag to view class
+                @view = new Backbone.View(
+                    el: @params.el
+                )
+                @view.widget_id = @params.widget_id
+                @view.delegateEvents(@_getTranslatedDomEvents(@events))
+
                 if @URGENT_FOR_GC
                     @view.$el.addClass('urgent_for_gc')
 
