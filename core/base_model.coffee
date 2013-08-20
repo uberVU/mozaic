@@ -186,4 +186,10 @@ define [], () ->
                                   old_success(model, response)
             super(options)
 
-    return BaseModel
+        getCollectionIndex: =>
+            ###
+                Get the index at which a models is situated inside its parent
+                collection
+            ###
+            return null unless @collection?
+            return _.indexOf(@collection.models, this)
