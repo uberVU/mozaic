@@ -228,6 +228,17 @@ define [
             ###
             while widget = widgets.shift()
                 do (widget) =>
+                # Ignore widget if one its ancestors has already been detached
+                # from DOM (this prevents race coditions where a parent widget
+                # would be detached from DOM, and only after it being marked
+                # for GC would its children start coming up and being picked up
+                # by the widget starter---children that shouldn't init anymore)
+                # $.contains seems like the fastest way to go:
+                # http://stackoverflow.com/a/11943707/128816
+                unless $.contains(document.documentElement, $widget[0])
+                    logger.warn("Detached widget #{$widget.data('widget')} " +
+                                "is trying to initialize")
+                    return
                     # Set the GUID synchronously so that the widget can be
                     # picked up instantly in case it get removed from the DOM
                     # very quickly and needs to be GCed
