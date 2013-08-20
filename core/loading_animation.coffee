@@ -268,7 +268,7 @@ define ['cs!mozaic_module'], (Module) ->
             ###
             # Clearly we shouldn't wait for widgets if they don't have a
             # template to begin with
-            return true unless widget.template_name?
+            return true unless widget.view?
             # Don't skip any widget in print mode, we need to make sure things
             # are rendered completely when we make the capture
             return false if Utils.inPrintMode()
