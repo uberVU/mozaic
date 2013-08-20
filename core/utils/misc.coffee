@@ -82,3 +82,12 @@ define [], () ->
                     truncatedString += suffix
                 break
         return truncatedString
+
+    deepClone: (obj) ->
+        ###
+            Method does deep clone to nested objects.
+            WARNING! make sure the objects you want to clone are not too
+            deeply nested. In that case you will get a javascript call
+            stack exceeded error.
+        ###
+        $.extend true, {}, obj

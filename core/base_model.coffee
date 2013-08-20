@@ -179,13 +179,13 @@ define [], () ->
                 # Set the old value back
                 @set(attribute, unsynced_values[i], { silent: true })
 
-        destroy: (options) =>
+        destroy: (options = {}) =>
             ###
                 Overwrite the destroy method to provide an easy hook
                 for models to execute code after the model is successfully
                 deleted.
             ###
-            options = _.clone(options) or {}
+            options = Utils.deepClone options
             old_success = options.sucess or =>
             options.success = (model, response) =>
                                   @postDelete(model)

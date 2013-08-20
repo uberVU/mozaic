@@ -140,8 +140,7 @@ define [], () ->
                     # Don't instantiate widgets which should have already been
                     # garbage collected.
                     if loader.born_dead[id]
-                        cloned_params = _.clone(params)
-                        delete cloned_params['el']
+                        cloned_params = Utils.deepClone (_.omit params, 'el')
                         logger.warn("Widget with id #{id} was born dead (params = #{JSON.stringify(cloned_params)}). You're doing something wrong.")
                         delete loader.born_dead[id]
                         return
@@ -151,8 +150,7 @@ define [], () ->
                 # Don't instantiate widgets which should have already been
                 # garbage collected.
                 if loader.born_dead[id]
-                    cloned_params = _.clone(params)
-                    delete cloned_params['el']
+                    cloned_params = Utils.deepClone (_.omit params, 'el')
                     logger.warn("Widget with id #{id} was born dead (params = #{JSON.stringify(cloned_params)}). You're doing something wrong.")
                     delete loader.born_dead[id]
                     return

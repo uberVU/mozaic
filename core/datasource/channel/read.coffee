@@ -59,7 +59,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             if conf.fetch_through_POST and conf.encode_POST_as_JSON
                 params_for_fetch = JSON.stringify(params)
             else
-                params_for_fetch = _.clone(params)
+                params_for_fetch = Utils.deepClone params
 
             # Channel has an associated URL. Fetch data from that URL.
             fetch_params =
