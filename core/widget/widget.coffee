@@ -247,21 +247,10 @@ define [
 
             pipe = loader.get_module('pubsub')
 
-            # Announcing that a new widget is available is done in 2 waves:
-            # - first announce the people interested in the fact that the
-            #   widget has appeared that will count this (for example,
-            #   loading animation)
-            # - then announce the datasource to bind this widget to its
-            #   channels.
-            #
-            # Doing the two publishes instead of one is extremely unfortunate
-            # because for widget editors, one can encounter aggregated
-            # channels events before the widget.editor is set by the
-            # widget_editor.
-            #
-            # TODO(andrei): find better way to fix this. Complete braindamage.
-            pipe.publish('/new_widget', message)
-            pipe.publish('/new_widget_bind_to_data', message)
+            # Announce the creation of the widget first, and once all callbacks
+            # of /new_widget have been called, announce a new event that makes
+            # the widget ready for business, such as reciving data for channels
+            pipe.publish('/new_widget /widget_ready', message)
 
             # If this widget doesn't have a template, it either:
             # a) doesn't have any visible representation

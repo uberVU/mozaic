@@ -82,7 +82,7 @@ define [
             # Announcements that new widgets are available
             # This binds the widgets' methods to the proper channel events
             # (we need this because channels are private to the DataSource)
-            @pipe.subscribe('/new_widget', (data) => @newWidget(data))
+            @pipe.subscribe('/widget_ready', (data) => @newWidget(data))
 
             # Announcements that widgets were removed
             # This binds the widgets' methods to the proper channel events
