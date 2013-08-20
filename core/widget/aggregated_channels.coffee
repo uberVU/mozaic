@@ -15,7 +15,10 @@ define ['cs!channels_utils'], (channels_utils) ->
                 has been initialized with id = 123 in its parameters, and there
                 is a data channel "mention/{{id}}", this will return "mention/123".
             ###
-            (@replaceTokensWithParams(channel) for channel in @subscribed_channels)
+            result = []
+            for channel in @subscribed_channels
+                result.push(@replaceTokensWithParams(channel))
+            return result
 
         _getTranslatedSubscribedChannels: ->
             new_channels = channels_utils.translateChannels(@subscribed_channels, @channel_mapping)
