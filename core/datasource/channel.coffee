@@ -40,6 +40,8 @@ define ['cs!channels_utils'], (channels_utils) ->
                     eternal: eternal
                     collection_class: collection_class
                     model_class: @data[name].model
+                    first_time_fetch: true
+
                 @meta_data[name].populate_on_init = conf.populate_on_init or params.populate_on_init
 
                 if @meta_data[name].populate_on_init and params._initial_data_
@@ -91,6 +93,8 @@ define ['cs!channels_utils'], (channels_utils) ->
                     params: params
                     eternal: eternal
                     collection_class: collection_class
+                    first_time_fetch: true
+
                 # If there is a default value for this channel, set it.
                 if 'default_value' of conf
                     @data[name].setDefaultValue(conf.default_value)
