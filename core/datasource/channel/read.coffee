@@ -202,7 +202,7 @@ define ['cs!channels_utils'], (channels_utils) ->
             # What channel should receive the data we're about to fetch -
             # the original channel, or that channel's buffer?
             # (The first fetch should always be into the real channel).
-            if reason == 'streampoll' and @_getBufferSize(channel) and @meta_data[channel_key].last_fetch?
+            if reason == 'streampoll' and @_getBufferSize(channel)
                 receiving_channel = @data[channel_key].buffer
                 # If the buffer is full, avoid doing any more fetches.
                 if receiving_channel.length >= conf.buffer_size
