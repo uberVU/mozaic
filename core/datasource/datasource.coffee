@@ -216,46 +216,34 @@ define [
                 for data (in fetching state), and when it receives data, it
                 will fill this channel as well (via _fillWaitingChannels).
             ###
-            # Get the channel's start_immediately configuration. It tells us
-            # whether we should fetch channel data from server right after
-            # channel instantiation. Defaults to true
-            start_immediately = @_getConfig(channel_guid).start_immediately
-            if not start_immediately?
-                start_immediately = true
+            conf = @_getConfig(channel_guid)
+            meta = @meta_data[channel_guid]
 
-            # Cloning / fetching logic:
-            duplicates = @_getChannelDuplicates(channel_guid)
-            if duplicates.length == 0 or @_getConfig(channel_guid).disable_clone
-                # 1) No channel duplicates exist, perform fetch.
-                refresh_interval = @_getRefreshInterval(channel_guid)
-                if refresh_interval > 0
-                    if start_immediately
-                        # Fetch the initial data for the channel
-                        @_fetchChannelDataFromServer(channel_guid)
+            # We should completely ignore the data cloning or an initial fetch
+            # if the channel is populated on init
+            if not meta.populate_on_init
+                # Cloning / fetching logic:
+                duplicates = @_getChannelDuplicates(channel_guid)
+                if duplicates.length == 0 or conf.disable_clone
+                    # 1) No channel duplicates exist, perform fetch.
+                    @_fetchChannelDataFromServer(channel_guid)
                 else
-                    # Fetch the initial data for the channel
-                    if not @meta_data[channel_guid].populate_on_init and start_immediately
-                        @_fetchChannelDataFromServer(channel_guid)
+                    # If at least one duplicate was fetched (has data), use it
+                    # as a cloning source. Otherwise, this channel will wait
+                    # for data.
+                    duplicate_channel_guid = null
+                    for other_channel_guid in duplicates
+                        if @meta_data[other_channel_guid].last_fetch?
+                            duplicate_channel_guid = other_channel_guid
+                            break
+                    if duplicate_channel_guid
+                        @_cloneChannel(channel_guid, duplicate_channel_guid)
                     else
-                        # If this channel was populated on init, mark it
-                        # as having data.
-                        @meta_data[channel_guid].last_fetch = Utils.now()
+                        logger.info "Channel #{channel_guid} is waiting for data"
+                        meta.waiting_for_cloned_data = true
             else
-                # If at least one duplicate was fetched (has data), use it
-                # as a cloning source. Otherwise, this channel will wait
-                # for data.
-                duplicate_channel_guid = null
-                for other_channel_guid in duplicates
-                    if @meta_data[other_channel_guid].last_fetch?
-                        duplicate_channel_guid = other_channel_guid
-                        break
-                if duplicate_channel_guid
-                    @_cloneChannel(channel_guid, duplicate_channel_guid)
-                else
-                    logger.info "Channel #{channel_guid} is waiting for data"
-
-            # Setup periodic refresh if needed.
-            @_startRefreshing(channel_guid)
+                # If this channel was populated on init, mark it as having data
+                meta.last_fetch = Utils.now()
 
             # Announce widget starter a new channel is available
             @pipe.publish('/initialized_channel', {name: channel_guid})
