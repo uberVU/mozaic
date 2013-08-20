@@ -119,9 +119,6 @@ define [
                                     tinyscrollbar.
             @property {Object} @layout - instance of core/layout class.
 
-            @property {Object} @profiler - instance of YUIProfiler class. Does
-                                    what it says on the tin! it's a class and
-                                    function profiler.
             @property {Boolean} @rendered_signal_sent - flag sent right after
                                     publishing `/new_widget_rendered`.
         ###
@@ -160,9 +157,6 @@ define [
         ###
         initial_state: null
 
-        # Singleton instance of class Profiler. Available for all Widgets.
-        profiler: loader.get_module('profiler')
-
         # Set this to true to only trigger changeState() whenever there is
         # a transition from an old state to a different new state (a transition
         # is also triggered if the old state and new state are both 'available')
@@ -176,11 +170,6 @@ define [
                 Every time a new widget is instatiated, publish a request to `new_widget`
                 In this request, also send the channels the widget will be subscribed to
             ###
-
-            # Start profiling the rendering of this widget instance. This will end in `render`.
-            # To check out the results, in the console, do: loader.get_module('profiler').getFullReport();
-            if App.general.ENABLE_PROFILING
-                @profiler.start params.name
 
             @constructed_at = Utils.now() / 1000
             if template

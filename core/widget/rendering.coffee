@@ -60,11 +60,6 @@ define ['cs!layout'], (Layout) ->
             ###
             @postRender()
 
-            # Stop profiler. It was started at the beginning of `constructor`
-            # To check out the results, in the console, do: loader.get_module('profiler').getFullReport();
-            if App.general.ENABLE_PROFILING
-                @profiler.stop @params.name
-
         triggerWidgetRendered: ->
                 pipe = loader.get_module('pubsub')
                 pipe.publish('/new_widget_rendered', @params['widget_id'], @params['name'])
