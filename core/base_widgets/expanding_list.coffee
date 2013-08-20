@@ -205,7 +205,7 @@ define ['cs!widget'], (Widget) ->
                 provide custom URL parameters.
             ###
             filterChange = {}
-            filterChange[@filter_key] = item.data('id')
+            filterChange[@filter_key] = item.data(@filter_key)
             return filterChange
 
         onRetract: (e) =>
