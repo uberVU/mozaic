@@ -226,8 +226,7 @@ define [
             ###
                 Asynchrounous batch initializing of new widgets
             ###
-            while widget = widgets.shift()
-                do (widget) =>
+            while $widget = widgets.shift()
                 # Ignore widget if one its ancestors has already been detached
                 # from DOM (this prevents race coditions where a parent widget
                 # would be detached from DOM, and only after it being marked
@@ -239,15 +238,19 @@ define [
                     logger.warn("Detached widget #{$widget.data('widget')} " +
                                 "is trying to initialize")
                     return
+                do ($widget) =>
+                    # Prevent from a widget to be picked up more than once by
+                    # the widget starter
+                    return if $widget.data('guid')
                     # Set the GUID synchronously so that the widget can be
                     # picked up instantly in case it get removed from the DOM
                     # very quickly and needs to be GCed
-                    @addGuidToWidget(widget)
+                    @addGuidToWidget($widget)
 
                     # Initialize the widget asynchronously in order to avoid
                     # hogging the browser (expecially IE) by having too many
                     # recursive calls or even reaching a maximum call stack
-                    setTimeout((=> @initializeWidget(widget)), 0)
+                    setTimeout((=> @initializeWidget($widget)), 0)
 
         startWidget: (params) =>
             ###
