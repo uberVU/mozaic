@@ -313,7 +313,7 @@ define [
             widget_id = $el.data('guid')
 
             # Extract widget initialization parameters from the DOM
-            params = $.parseJSON($el.attr('data-params')) or {}
+            params = $.parseJSON($el.attr('data-params') or '{}')
             params['el'] = $el
             params['name'] = name
             params['widget_id'] = widget_id
