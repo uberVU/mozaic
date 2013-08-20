@@ -5,6 +5,63 @@ define ['cs!channels_utils'], (channels_utils) ->
             Includes methods to read from a http endpoint
         ###
 
+        _afterChannelDataArrived: (channel_key, arrived_content, reason='refresh') ->
+            ###
+                This function gets called after data is inserted into a
+                given channel of the datasource.
+
+                The reasons for this getting called can be multiple:
+
+                - an AJAX request triggered via Backbone.Collections.fetch()
+                  has finished (see success callback from
+                  _fetchChannelDataFromServer)
+
+                - channel receives data from "initial data" mechanism, where
+                  you are able to specify initial data that you got from
+                  somewhere else to fill the channel. For example: if you
+                  are displaying a list of tweets, and the API endpoint gives
+                  you the first 2 replies for each tweet, you can create
+                  channels with "initial data" containing those first 2 replies
+
+                - channel receives data from a "brother from another mother",
+                  that is it's a cloned channel and his brother already has
+                  data.
+            ###
+            meta = @meta_data[channel_key]
+
+            # Get the collection that has just received items.
+            #
+            # In the case of streampoll requests, because a stremapoll channel
+            # corresponds to 2 Backbone Collections (the normal one, and the
+            # buffer one) we have to be careful to select the correct collection
+            # on which to run postFetch.
+            collection = @data[channel_key]
+            if reason == 'streampoll'
+                collection = collection.buffer
+
+            # If there are widgets waiting for new items to arrive in the
+            # channel, we will subscribe them to the newly arrived models'
+            # events right now.
+            @_checkForNewlyArrivedAndAwaitedModels(channel_key)
+
+            # If collection has defined a callback for "after data has arrived"
+            # call that too. In Mozaic's case, in base_collection, we define
+            # this callback in order to propagate the "no data" has arrived
+            # event that's missing from Backbone.
+            if _.isFunction(collection.postFetch)
+                collection.postFetch(arrived_content, meta.params)
+
+            if meta.first_time_fetch
+                # Refreshing should only start after data has arrived into the
+                # channel for the first time, regardless of the method of
+                # arrival.
+                @_startRefreshing(channel_key)
+
+            # Since this function is called every time data arrives, make sure
+            # that we don't start refreshing the same channel twice (or any
+            # other operation that depends on the first arrival of data).
+            meta.first_time_fetch = false
+
         _fetchChannelDataFromServer: (channel, reason='refresh', callback=null) ->
             ###
                 Fetch the data for the channel given the params.
@@ -110,11 +167,16 @@ define ['cs!channels_utils'], (channels_utils) ->
                 if reason != 'streampoll'
                     meta.waiting_fetches = meta.waiting_fetches - 1
 
-                # Call the post fetching callback if the collection
-                # has one set
-                if _.isFunction(collection.postFetch)
-                    collection.postFetch(response)
+                was_first_fetch = meta.first_time_fetch
 
+                # NOTE: we don't really use "xhr" for collection.parse, and
+                # neither does Backbone.js, so we're just leaving it out!
+                @_afterChannelDataArrived(channel_key, collection.parse(response, null), reason)
+
+                # callback should not be moved to _afterChannelDataArrived
+                # because we're only using it right now to re-schedule new
+                # refreshes AFTER an HTTP request. Therefore, it doesn't make
+                # sense to call it after we copy data around.
                 callback(channel_key, true) if callback
             fetch_params.error = (collection, response) =>
                 # Ignore response if channel was removed in the meantime

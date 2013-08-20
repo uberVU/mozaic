@@ -49,6 +49,8 @@ define ['cs!channels_utils'], (channels_utils) ->
                     # Avoid creating empty models
                     if not _.isEmpty(params._initial_data_)
                         @data[name].add(params._initial_data_)
+                        # Post-process the newly "arrived" data in the channel
+                        @_afterChannelDataArrived(name, params._initial_data_)
                     delete params._initial_data_
                     # The url of a collection is set after fetching server
                     # data, but for collections with initial data the fetch
@@ -100,6 +102,8 @@ define ['cs!channels_utils'], (channels_utils) ->
                     if params.populate_on_init?
                         delete params['populate_on_init']
                     @data[name].set(params)
+                    # Post-process the newly "arrived" data in the channel
+                    @_afterChannelDataArrived(name, params)
                 @_finishChannelInitialization(name)
 
         _getConfig: (channel) ->
@@ -156,14 +160,27 @@ define ['cs!channels_utils'], (channels_utils) ->
                 silence = { silent: true }
                 for model in source.models
                     dest.add(model.clone(), silence)
+
+                # Post-process items in the main channel after they have
+                # "arrived".
+                @_afterChannelDataArrived(channel_guid, source.toJSON())
+
                 # Trigger the golden news
                 dest.trigger('reset', dest)
                 # Clone buffer
                 if 'buffer' of source
                     for model in source.buffer.models
                         dest.buffer.add(model.clone(), silence)
+
+                    # Pretend that there was just recently a finished streampoll
+                    # with the same results as the accumulated results of the
+                    # streampolls of the channel we're cloning from
+                    @_afterChannelDataArrived(channel_guid, source.buffer.toJSON(), 'streampoll')
+
                 # Clone url property
                 if 'url' of source
                     dest.url = source.url
             else if channel_type == 'api'
                 dest.set(source.data)
+                # Post-process the newly "arrived" data in the channel
+                @_afterChannelDataArrived(channel_guid, source.data)
