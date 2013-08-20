@@ -28,6 +28,13 @@ define [], () ->
             logger.info "Loading module #{path}"
 
             require [original_path], (Module) ->
+                # For some reason, after changing window.location to redirect
+                # a page, require calls a few callbacks with undefined
+                # references on its last breaths
+                unless Module?
+                    logger.error("Module #{path} returned a null reference")
+                    return
+
                 if not (path of loader.modules)
                     loader.modules[path] = {module: Module}
                 if instantiate
