@@ -80,6 +80,12 @@ define ['cs!channels_utils'], (channels_utils) ->
                 delete @data[channel].buffer.collection
                 @data[channel].buffer.off()
                 delete @data[channel].buffer
+            # Unbind individual models from a collection from all widgets.
+            # This is only a sanity check, because all the widgets should be
+            # already unbound.
+            if @data[channel].models?
+                for model in @data[channel].models
+                    model.off()
             # Unbind all remaining widgets (should be none!)
             @data[channel].off()
             # Throw away reference to the actual data
