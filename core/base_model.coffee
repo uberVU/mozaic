@@ -8,13 +8,6 @@ define [], () ->
         # and overwritten in the model, if they exist.
         sync_with_server: []
 
-        initialize: ->
-            # Add global unsyncable attributes on top of model specific ones
-            # TODO: This is commented out for now because the stream wizard
-            # depends on it. We should find a way to wire this property through
-            # our local channels without sending it to the server
-            #@unsyncable_attributes.push('form')
-
         validate: (attributes, options) ->
             ###
                 Check to see if the model is already in collection and
