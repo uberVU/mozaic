@@ -294,7 +294,7 @@ define(['coffee-script'], function (CoffeeScript) {
                 //sourceURL trick, so skip it if enabled.
                 /*@if (@_jscript) @else @*/
                 if (!config.isBuild) {
-                    text += '\n//# sourceMappingURL=data:application/json;base64,' + Base64.encode(compiled.v3SourceMap || '') + '\n//# sourceURL=' + path;
+                    text += '\n//@ sourceMappingURL=data:application/json;base64,' + Base64.encode(compiled.v3SourceMap || '') + '\n//@ sourceURL=' + path;
                 }
                 /*@end@*/
 
