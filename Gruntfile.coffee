@@ -13,6 +13,6 @@ module.exports = (grunt) ->
       shell.exec("cp -R core core~")
       shell.exec("rm -rf core~/libs")
 
-      shell.exec("python script.py")
+      shell.exec("python generate-documentation.py core~")
       shell.exec("docco-husky core~")
       shell.exec("rm -rf core~")
