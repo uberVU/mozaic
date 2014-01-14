@@ -1,6 +1,8 @@
 # Creating a new URL route
 
-First of all, a new route implies a new Controller*. But before creating the Controller, let's register the new path for the app router.
+Our internal [Router component](https://github.com/uberVU/mozaic/blob/master/core/router.coffee) is built on top of [Backbone.Router](http://backbonejs.org/#Router). We're extending it to route URL to Controllers.
+
+So registering a new route is made out of two steps: registering the new URL path and creating a new Controller to point to.
 
 ## 1. Registering the route
 
@@ -18,11 +20,13 @@ App.urls = {
 };
 ```
 
-It's as simple as it looks like, here's a valid path: `http://localhost:8000/#/users/13?show_friends=true`, where the resulting filters will be `{user_id: 13, show_friends: true}`
+Here's a valid path for this example: `http://localhost:8000/#/users/13?show_friends=true`, where the resulting filters will be `{user_id: 13, show_friends: true}`
+
+Notice how the url path begins a hash. This is how Backbone.Router works (cross-browser) in changing the URL of a HTML page without reloading it completely, thus allowing us to capture that URL change and reload only a portion of the page's content. Read more about window.location.hash and [Single Page Apps](http://en.wikipedia.org/wiki/Single-page_application) to grasp this concept better.
 
 ## 2. Creating the controller
 
-\* A Controller is a Widget subclass designed for being loaded at root level --- the first widget in a page, has no parent
+A Controller is a Widget subclass designed for being loaded at root level --- the first widget in a page, has no parent
 
 A visible difference between a Controller and a regular Widget is that Controllers don't have their template path defined inside its class definition, but inside the App.urls entry. This is a page layout and is visible within the urls configuration.
 
