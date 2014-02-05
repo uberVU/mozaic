@@ -1,0 +1,21 @@
+{
+  "name": "mozaic",
+  "description": "mozaic",
+  "version": "0.0.1",
+  "devDependencies": {
+    "requirejs": "2.1.6",
+    "coffee-script": "1.6.2",
+    "uglify-js": "2.2.5",
+    "handlebars": "1.0.10",
+    "walk": "2.2.1",
+    "grunt": "0.4.1",
+    "grunt-contrib-qunit": "0.1.1",
+    "grunt-qunit-junit": "0.1.0-alpha",
+    "grunt-cli": "0.1.8",
+    "extend": "1.1.3",
+    "shelljs": "0.1.4",
+    "grunt-coffeelint": "0.0.6",
+    "docco-husky": "0.3.3"
+  },
+  "dependencies": {}
+}
