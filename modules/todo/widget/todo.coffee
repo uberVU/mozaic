@@ -18,7 +18,7 @@ define ['cs!widget'], (Widget) ->
                 Whenever any field of a TODO item changes, re-render it completely.
             ###
             # TODO, remove itself when undefined
-            if not params or not params.type == 'change'
+            if not params or params.type isnt 'change'
                 return
 
             # Fetch model
